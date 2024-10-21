@@ -37,11 +37,10 @@ public class BullBoss : MonoBehaviour
     {
         isSkillActive = true;
 
-        yield return new WaitForSeconds(2f); // ��� �ð�
+        yield return new WaitForSeconds(2f); 
 
-        nav.isStopped = true; // �������� ����
+        nav.isStopped = true; 
 
-        // 1���� 3���� ���� �� ���� (���� ��ų ����)
         int randomSkill = Random.Range(1, 4);
 
         // ���õ� ��ų�� ���� �ٸ� �ൿ ����
@@ -73,12 +72,17 @@ public class BullBoss : MonoBehaviour
     public void die()
     {
         anim.SetTrigger("die");
-        nav.isStopped = true;
         isSkillActive = true;
         if (QuestManager.instance.QuestDiscount(0))
         {
             QuestManager.instance.StartQuest();
         }
+        StartCoroutine(DestroyEnemy());
+    }
+    IEnumerator DestroyEnemy()
+    {
+        yield return new WaitForSeconds(2f);
+        Destroy(gameObject);
     }
     public void Attack1()
     {

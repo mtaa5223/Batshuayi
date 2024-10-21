@@ -26,12 +26,6 @@ public class ColliderCheck : MonoBehaviour
             switch (QuestManager.instance.QuestID)
             {
                 case 0:
-                    if (other.CompareTag("Animal") && QuestManager.instance.isQuestStart == true)
-                    {
-                        cutScene.SetActive(true);
-                        QuestManager.instance.QuestDiscount(0);
-                    }
-                    break;
                 case 2:
                     if (other.CompareTag("Animal") && QuestManager.instance.isQuestStart == true)
                     {
@@ -40,13 +34,8 @@ public class ColliderCheck : MonoBehaviour
                     }
                     break;
                 case 5:
-                    if (other.CompareTag("Player") && QuestManager.instance.isQuestStart == true)
-                    {
-                        cutScene.SetActive(true);
-                        QuestManager.instance.QuestDiscount(0);
-                    }
-                    break;
                 case 7:
+                case 9:
                     if (other.CompareTag("Player") && QuestManager.instance.isQuestStart == true)
                     {
                         cutScene.SetActive(true);

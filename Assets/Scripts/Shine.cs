@@ -7,6 +7,7 @@ public class Shine : MonoBehaviour
     public GameObject TimeLine;
     public Text ShineID;
     public int count;
+    public GameObject Portal;
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player") && QuestManager.instance.QuestID == 8)
@@ -22,5 +23,4 @@ public class Shine : MonoBehaviour
             TimeLine.SetActive(true);
         }
     }
-    
 }

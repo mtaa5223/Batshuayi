@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 public class Crab : MonoBehaviour
 {
-    public Transform player;  // �÷��̾ Ÿ������ ����
+    public Transform player;  
     public Rigidbody rigid;
     private NavMeshAgent nav;
     private bool isSkillActive = false;

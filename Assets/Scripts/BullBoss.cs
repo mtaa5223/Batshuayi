@@ -37,9 +37,9 @@ public class BullBoss : MonoBehaviour
     {
         isSkillActive = true;
 
-        yield return new WaitForSeconds(2f); 
+        yield return new WaitForSeconds(2f);
 
-        nav.isStopped = true; 
+        nav.isStopped = true;
 
         int randomSkill = Random.Range(1, 4);
 
@@ -99,7 +99,7 @@ public class BullBoss : MonoBehaviour
         particle[2].SetActive(true);
         StartCoroutine(Paticle3());
     }
-    IEnumerator Paticle1()   
+    IEnumerator Paticle1()
     {
         yield return new WaitForSeconds(1f);
         particle[0].SetActive(false);

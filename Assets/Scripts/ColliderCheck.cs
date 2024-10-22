@@ -36,6 +36,7 @@ public class ColliderCheck : MonoBehaviour
                 case 5:
                 case 7:
                 case 9:
+                case 11:
                     if (other.CompareTag("Player") && QuestManager.instance.isQuestStart == true)
                     {
                         cutScene.SetActive(true);

@@ -6,21 +6,31 @@ public class Shine : MonoBehaviour
 {
     public GameObject TimeLine;
     public Text ShineID;
-    public int count;
+    public  int count;  
     public GameObject Portal;
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player") && QuestManager.instance.QuestID == 8)
         {
             count++;
             QuestManager.instance.QuestDiscount(0);
-            ShineID.text = "±‚æÔ¡∂∞¢ : " + count;   
+            ShineID.text = "Í∏∞ÏñµÏ°∞Í∞Å : " + count;   
         }
         if (count == 1)
-        {
-            QuestManager.instance.questNameText.text = "";
+        {   QuestManager.instance.questNameText.text = "";
             QuestManager.instance.questDescriptionText.text = "";
             TimeLine.SetActive(true);
         }
+        
+    }
+    void Update()
+    {
+         if(count == 1 && QuestManager.instance.QuestID == 9){
+            QuestManager.instance.StartQuest();
+    
+    }
     }
 }
+
+

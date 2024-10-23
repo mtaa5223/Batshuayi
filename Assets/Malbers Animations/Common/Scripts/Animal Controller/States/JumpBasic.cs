@@ -24,7 +24,8 @@ namespace MalbersAnimations.Controller
         [Tooltip("Smooth Value for Changing Speed Movement on the Air")]
         public FloatReference AirSmooth = new(5);
 
-
+        [Tooltip("Keep the  Up Inertia from platforms or going upwards to keep the height of the jump")]
+        public BoolReference KeepUPIntertia = new(true);
 
         [Tooltip("Amount of jumps the character can do (Double and Triple Jumps)")]
         public IntReference Jumps = new(1);
@@ -81,6 +82,9 @@ namespace MalbersAnimations.Controller
             }
         }
 
+        public Vector3 StartingSpeedDirection { get; private set; }
+
+        public override bool KeepForwardMovement => !activeJump.AirControl.Value;
 
         public int JumpsPerformanced { get; set; }
         //{
@@ -134,6 +138,7 @@ namespace MalbersAnimations.Controller
             StartedJumpLogicTime = 0;
             JumpStartTime = Time.time;
             IsDoubleJump = false;
+            StartingSpeedDirection = Vector3.zero;
             //Debugging("Reset Jump Values");
         }
 
@@ -163,7 +168,11 @@ namespace MalbersAnimations.Controller
             JumpStartTime = Time.time;
             animal.GravityTime = activeJump.StartGravityTime;
             StartingSpeedDirection = animal.HorizontalVelocity;            //Store the Starting SpeedDirection
+
             Debugging("[Basic Jump] Activate JumpLogic");
+
+            animal.platform = null;
+            LastPlatform = null;
         }
 
         public override void Activate()
@@ -182,12 +191,23 @@ namespace MalbersAnimations.Controller
                 IsPersistent = true;                                //IMPORTANT!!!!! DO NOT ELIMINATE!!!!!  causing issues
 
                 animal.currentSpeedModifier.animator = 1;
-                animal.ResetGravityValues();                        //Reset the Gravity
+                animal.Gravity_ResetValues();                        //Reset the Gravity
                 StartingSpeedDirection = animal.HorizontalVelocity;            //Store the Starting SpeedDirection
                 FindJumpProfile();
+
             }
+
+            LastPlatform = animal.platform;
+
+
+            animal.UpInertia_Clear(); //Clear the Up Intertia
+                                      // if (Vector3.Dot(animal.Inertia, animal.UpVector) > 0)
+            if (animal.platform != null)
+                animal.UpInertia_Store(); //This is used for Jumping on a platform to get the inertia from the platform
         }
 
+
+        private Transform LastPlatform;
 
         /// <summary> Use this to lock jumps profiles and not use the Vertical to check which is the valid profile </summary>
         public void LockJumpProfile(int index)
@@ -228,6 +248,8 @@ namespace MalbersAnimations.Controller
             {
                 var PosibleJump = new JumpDoubleProfile() { JumpNumber = -1 };
 
+
+
                 foreach (var j in multipleJumps)                          //Save/Search the Current Jump Profile by the Lowest Speed available
                 {
                     if (JumpsPerformanced == j.JumpNumber) PosibleJump = j;
@@ -246,10 +268,8 @@ namespace MalbersAnimations.Controller
                     IsDoubleJump = true;
                 }
             }
-
             SetEnterStatus(JumpNumber);
         }
-
 
 
         public override void EnterCoreAnimation()
@@ -266,9 +286,7 @@ namespace MalbersAnimations.Controller
             //Debug.Log($"Speed: {Speed}");
             if (activeJump.ClampForward > 0) Speed = Mathf.Clamp(Speed, 0, activeJump.ClampForward); //Clamp the Speed Forward to avoid Acceleration
                                                                                                      // Debug.Log($"Speed After Clamp: {Speed}");
-
-
-            //  Debug.Log($"Speed JUMP: {Speed}");
+                                                                                                     //  Debug.Log($"Speed JUMP: {Speed}");
             if (animal.HasExternalForce)
             {
                 var HorizontalForce = Vector3.ProjectOnPlane(animal.ExternalForce, animal.UpVector);    //Remove Horizontal Force
@@ -278,7 +296,6 @@ namespace MalbersAnimations.Controller
                 var HorizontalSpeed = HorizontalInertia - HorizontalForce;
                 Speed = HorizontalSpeed.magnitude / ScaleFactor; //Remove the scaleFactor since it will be added later 
             }
-
 
             //Remove all Speed if the External Force does not allows it
             if (!animal.ExternalForceAirControl) Speed = 0;
@@ -304,11 +321,18 @@ namespace MalbersAnimations.Controller
             if (IsDoubleJump)
             {
                 ActivateJump();
+                animal.UpInertia_Clear(); //Clear the Up Intertia on Double Jump
             }
             //if it does not require to Wait for the Animator to call
             else if (!activeJump.WaitForAnimation)
             {
                 ActivateJump();
+            }
+            else
+            {
+                var PlatLastPos = animal.Last_Platform_Pos;
+                animal.SetPlatform(LastPlatform); //No Code Involved
+                animal.Last_Platform_Pos = PlatLastPos;
             }
         }
 
@@ -319,7 +343,6 @@ namespace MalbersAnimations.Controller
             return activeJump.AirControl.Value ? base.Speed_Direction() : StartingSpeedDirection;
         }
 
-        private Vector3 StartingSpeedDirection;
         public override void EnterTagAnimation()
         {
             if (CurrentAnimTag == JumpStartHash && !animal.RootMotion)
@@ -357,7 +380,6 @@ namespace MalbersAnimations.Controller
                 AllowExit();
             }
         }
-        public override bool KeepForwardMovement => !activeJump.AirControl.Value;
 
         public override void OnStateMove(float deltaTime)
         {
@@ -367,6 +389,12 @@ namespace MalbersAnimations.Controller
 
                 if (ActivateJumpLogic)
                 {
+                    //Keep the Up Momentum
+                    if (KeepUPIntertia.Value/* && Vector3.Dot(animal.UpInertia, animal.UpVector) > 0*/)
+                    {
+                        animal.UpInertia_Apply();
+                    }
+
                     if (activeJump.JumpPressed.Value)
                     {
                         if (!InputValue) justJumpPressed = false;
@@ -383,14 +411,12 @@ namespace MalbersAnimations.Controller
                         CurrentSpeedPos = Mathf.Lerp(CurrentSpeedPos, AirMovement, (AirSmooth != 0 ? (deltaTime * AirSmooth) : 1));
                     }
 
-
                     Vector3 ExtraJumpHeight = (UpVector * activeJump.Height.Value);
                     animal.AdditivePosition += deltaTime * JumpPressHeight_Value * ScaleFactor * ExtraJumpHeight;     //Up Movement
 
                     //If we still can apply movement
                     if (StartedJumpLogicTime < activeJump.JumpTime)
                         IsPersistent = false; //Let other High Priority States to play
-
 
                     //Apply Fake Gravity
                     if (!animal.IgnoreModeGravity)
@@ -400,8 +426,6 @@ namespace MalbersAnimations.Controller
                         animal.GravityOffset = (JumpPressHeight_Value * ScaleFactor * ExtraJumpHeight);     //Send the Values of the Height to stored 
                         animal.GravityTime++;
                     }
-
-
                 }
                 else //Keep RootMotion
                 {
@@ -413,38 +437,40 @@ namespace MalbersAnimations.Controller
             }
         }
 
+
+
         public override void TryExitState(float deltaTime)
         {
             if (!ActivateJumpLogic) return; //The Jump logic has not being activated yet
 
-            var GoingDown = Vector3.Dot(DeltaPos, Gravity) > 0; //Check if is falling down
+            // var GoingDown = Vector3.Dot(DeltaPos, Gravity) > 0; //Check if is falling down
 
             //  Debug.Log($"TryExitState  StartedJumpLogicTime: {StartedJumpLogicTime:F2}   GoingDown {GoingDown}");
 
-            Debug.DrawRay(animal.Main_Pivot_Point, Height * activeJump.JumpInterruptRay * Gravity, Color.white);
+            //Debug.DrawRay(animal.Main_Pivot_Point, Height * activeJump.JumpInterruptRay * Gravity, Color.white);
 
-            if (Physics.Raycast(animal.Main_Pivot_Point, Gravity, out var Hit, Height * activeJump.JumpInterruptRay, GroundLayer, IgnoreTrigger))
-            {
-                if (Hit.distance < Height)
-                {
-                    if (GoingDown)
-                    {
-                        //SUPER IMPORTANT!!! this is when the Animal is falling from a great height
-                        animal.Teleport_Internal(Hit.point);
-                        //var GroundedPos = Vector3.Project(Hit.point - animal.transform.position, Gravity);
-                        //animal.Teleport_Internal(animal.transform.position + GroundedPos);
-                        animal.ResetUPVector();
-                        Debugging("[Allow Exit] - Interrupt Ray Touched Ground FORCE ALIGMENT");
-                    }
-                    else
-                    {
-                        Debugging("[Allow Exit] - Interrupt Ray Touched Smooth align");
-                    }
+            //if (Physics.Raycast(animal.Main_Pivot_Point, Gravity, out var Hit, Height * activeJump.JumpInterruptRay, GroundLayer, IgnoreTrigger))
+            //{
+            //    if (Hit.distance < Height)
+            //    {
+            //        if (GoingDown)
+            //        {
+            //            //SUPER IMPORTANT!!! this is when the Animal is falling from a great height
+            //            animal.Teleport_Internal(Hit.point);
+            //            //var GroundedPos = Vector3.Project(Hit.point - animal.transform.position, Gravity);
+            //            //animal.Teleport_Internal(animal.transform.position + GroundedPos);
+            //            animal.ResetUPVector();
+            //            Debugging("[Allow Exit] - Interrupt Ray Touched Ground FORCE ALIGMENT");
+            //        }
+            //        else
+            //        {
+            //            Debugging("[Allow Exit] - Interrupt Ray Touched Smooth align");
+            //        }
 
-                    animal.Grounded = true; //IMPORTANT!
-                    AllowExit();
-                }
-            }
+            //        animal.Grounded = true; //IMPORTANT!
+            //        AllowExit();
+            //    }
+            //}
 
 
             if (StartedJumpLogicTime >= activeJump.JumpTime)
@@ -473,8 +499,8 @@ namespace MalbersAnimations.Controller
         }
 
 
-#if UNITY_EDITOR
 
+#if UNITY_EDITOR
         public override void SetSpeedSets(MAnimal animal)
         {
             //Do nothing... the Fall is an automatic State, the Fall Speed is created internally
@@ -581,7 +607,7 @@ namespace MalbersAnimations.Controller
         public string name;
 
         [Header("Double Jump")]
-        [Tooltip("Multiple Jump Number (Is it a Double or a Triple Jump. Default is 0. This is the Value for the [Enter State Status]")]
+        [Tooltip("Multiple Jump Number (Is it a Double or a Triple Jump. Default is 2 for Double Jump. This is the Value for the [Enter State Status]")]
         public int JumpNumber;
 
         [Tooltip("Duration of the Jump logic")]

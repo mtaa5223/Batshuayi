@@ -9804,13 +9804,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114000010090856012, guid: 449dc45bbcfcaec4d94509c08b6852fe,
         type: 3}
+      propertyPath: m_AimSide
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000010090856012, guid: 449dc45bbcfcaec4d94509c08b6852fe,
+        type: 3}
       propertyPath: Editor_Tabs1
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 114000010090856012, guid: 449dc45bbcfcaec4d94509c08b6852fe,
         type: 3}
       propertyPath: Editor_Tabs2
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114000010090856012, guid: 449dc45bbcfcaec4d94509c08b6852fe,
         type: 3}
@@ -10160,9 +10165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Align: 0
-  AlignPos: 0
   AlignTime: 0.15
-  AlignDistance: 1
   PickDelay:
     UseConstant: 1
     ConstantValue: 0.15
@@ -10188,6 +10191,10 @@ MonoBehaviour:
     ConstantValue: 0
     Variable: {fileID: 0}
   m_Amount:
+    UseConstant: 1
+    ConstantValue: 1
+    Variable: {fileID: 0}
+  canBePicked:
     UseConstant: 1
     ConstantValue: 1
     Variable: {fileID: 0}
@@ -10249,6 +10256,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  OnPickedFailed:
+    m_PersistentCalls:
+      m_Calls: []
   OnPrePicked:
     m_PersistentCalls:
       m_Calls:
@@ -10295,7 +10305,19 @@ MonoBehaviour:
   PreDroppedReaction:
     rid: -2
   rb: {fileID: 1862501093}
+  DestroyRbOnPick:
+    UseConstant: 1
+    ConstantValue: 0
+    Variable: {fileID: 0}
   m_colliders: []
+  kinematicOnPick:
+    UseConstant: 1
+    ConstantValue: 1
+    Variable: {fileID: 0}
+  disableColliders:
+    UseConstant: 1
+    ConstantValue: 1
+    Variable: {fileID: 0}
   EditorTabs: 0
   references:
     version: 2

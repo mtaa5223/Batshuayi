@@ -28,7 +28,7 @@ namespace MalbersAnimations
 
         #endregion
 
-        protected Vector3 m_InputAxis;
+        //   protected Vector3 m_InputAxis;
 
         public virtual void SetMoveCharacter(bool val) => MoveCharacter = val;
 
@@ -128,22 +128,30 @@ namespace MalbersAnimations
             vertical = Vertical.GetAxis;
             upDown = UpDown.GetAxis;
 
-            m_InputAxis = new Vector3(horizontal, upDown, vertical);
+            MoveAxis = new Vector3(horizontal, upDown, vertical);
 
-            OnMoveAxis(m_InputAxis); //BroadCast the Horizontal and vertical values
-            MovementEvent.Invoke(m_InputAxis); //Invoke the Event for the Movement AXis
+            OnMoveAxis(MoveAxis); //BroadCast the Horizontal and vertical values
+            MovementEvent.Invoke(MoveAxis); //Invoke the Event for the Movement AXis
 
 
-            mCharacterMove?.SetInputAxis(MoveCharacter ? m_InputAxis : Vector3.zero);
+            mCharacterMove?.SetInputAxis(MoveCharacter ? MoveAxis : Vector3.zero);
 
             base.SetInput();
+        }
+
+        protected override bool IsJoystickInput()
+        {
+            if (horizontal != 0 && Mathf.Abs(horizontal) < 1) return true; //Meaning the Stick on the Joystic is moving slowly horizontally
+            if (vertical != 0 && Mathf.Abs(vertical) < 1) return true; //Meaning the Stick on the Joystic is moving slowly vertically
+
+            return base.IsJoystickInput();
         }
 
         public virtual void Horizontal_Enable(bool value) => Horizontal.active = value;
         public virtual void UpDown_Enable(bool value) => UpDown.active = value;
         public virtual void Vertical_Enable(bool value) => Vertical.active = value;
 
-        public void ResetInputAxis() => m_InputAxis = Vector3.zero;
+        public void ResetInputAxis() => MoveAxis = Vector3.zero;
 
     }
 }

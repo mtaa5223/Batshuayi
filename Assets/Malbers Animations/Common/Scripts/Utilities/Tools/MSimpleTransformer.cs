@@ -18,6 +18,9 @@ namespace MalbersAnimations.Utilities
         [Tooltip("This is the object to move. Must be child of this gameobject")]
         [RequiredField] public Transform Object;
 
+        [Tooltip("Once: The animation will be applied once and then the Component will be disabled\n" +
+            "Ping Pong: The animation will be played on forward and backards forever\n" +
+            "Repeat: The animation will be played on repeat forever.")]
         public LoopType loopType;
 
         public FloatReference StartDelay = new();

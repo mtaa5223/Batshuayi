@@ -36,12 +36,12 @@ public class Enemy1 : MonoBehaviour
 
         yield return new WaitForSeconds(5f);
 
-        nav.isStopped = true; 
+        nav.isStopped = true;
 
-  
+
         int randomSkill = Random.Range(1, 3);
 
-  
+
         switch (randomSkill)
         {
             case 1:
@@ -52,18 +52,18 @@ public class Enemy1 : MonoBehaviour
                 Attack2();
                 anim.SetTrigger("Attack2");
                 break;
- 
+
         }
 
         yield return new WaitForSeconds(3f);
 
         nav.isStopped = false;
-        isSkillActive = false; 
+        isSkillActive = false;
     }
     public void die()
     {
-
         anim.SetTrigger("die");
+        Debug.Log("awdddd");
         nav.isStopped = true;
         isSkillActive = true;
 
@@ -73,7 +73,7 @@ public class Enemy1 : MonoBehaviour
         }
         StartCoroutine(DestroyEnemy());
 
-    } 
+    }
     IEnumerator DestroyEnemy()
     {
         yield return new WaitForSeconds(2f);
@@ -96,7 +96,7 @@ public class Enemy1 : MonoBehaviour
     {
         yield return new WaitForSeconds(3f);
         particle[0].SetActive(false);
-        
+
     }
     IEnumerator Paticle2()
     {

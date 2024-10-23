@@ -104,7 +104,7 @@ namespace MalbersAnimations
             OnValueChanged = serializedObject.FindProperty("OnValueChanged");
         }
 
-        protected override void DrawEvents()
+        protected override void DrawElemets()
         {
             using (new UnityEditor.EditorGUILayout.VerticalScope(UnityEditor.EditorStyles.helpBox))
             {

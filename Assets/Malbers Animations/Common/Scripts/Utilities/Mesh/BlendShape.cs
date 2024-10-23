@@ -21,6 +21,7 @@ namespace MalbersAnimations.Utilities
         [Tooltip("Max Value to use on the blendshapes")]
         public float Max = 100;
 
+        [Tooltip("Start with a random shape on Start")]
         public bool random;
         public int PinnedShape;
 

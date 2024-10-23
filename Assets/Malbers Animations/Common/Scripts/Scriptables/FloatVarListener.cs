@@ -1,16 +1,16 @@
-﻿using MalbersAnimations.Scriptables;
-using MalbersAnimations.Events;
-using UnityEngine;
+﻿using MalbersAnimations.Events;
+using MalbersAnimations.Scriptables;
 using System.Collections;
+using UnityEngine;
 
 namespace MalbersAnimations
 {
     [AddComponentMenu("Malbers/Variables/Float Listener (Local Float)")]
     [HelpURL("https://malbersanimations.gitbook.io/animal-controller/secondary-components/variable-listeners-and-comparers")]
-    public class FloatVarListener : VarListener
+    public class FloatVarListener : VarListener, IAnimatorCurve
     {
         public FloatReference value;
-        public FloatEvent Raise = new FloatEvent();
+        public FloatEvent Raise = new();
 
         public virtual float Value
         {
@@ -34,7 +34,7 @@ namespace MalbersAnimations
         }
 
         public virtual void Invoke(float value) { if (Enable) Raise.Invoke(value); }
-        public virtual void Invoke(int value) => Invoke((float) value);
+        public virtual void Invoke(int value) => Invoke((float)value);
         public virtual void Invoke(IDs value) => Invoke((float)value.ID);
         public virtual void Invoke(IntVar value) => Invoke((float)value.Value);
         public virtual void Invoke(FloatVar value) => Invoke(value.Value);
@@ -62,7 +62,7 @@ namespace MalbersAnimations
 
             StopAllCoroutines();
 
-            StartCoroutine(I_FloatInTime(Value,0,time));
+            StartCoroutine(I_FloatInTime(Value, 0, time));
         }
 
 
@@ -73,7 +73,7 @@ namespace MalbersAnimations
 
             StopAllCoroutines();
 
-            StartCoroutine(I_FloatInTime(0,Value, time));
+            StartCoroutine(I_FloatInTime(0, Value, time));
         }
 
 
@@ -99,14 +99,14 @@ namespace MalbersAnimations
         }
 
 
-        IEnumerator I_FloatInTime(float start,float end,float time)
+        IEnumerator I_FloatInTime(float start, float end, float time)
         {
-           
+
             float currentTime = 0;
 
             while (currentTime <= time)
             {
-                Value = Mathf.Lerp(start,end, currentTime / time);
+                Value = Mathf.Lerp(start, end, currentTime / time);
 
                 Debug.Log("Value = " + Value);
 
@@ -138,6 +138,11 @@ namespace MalbersAnimations
             Value = end;
             yield return null;
         }
+
+        public void AnimatorCurve(int ID, float value)
+        {
+            if (this.ID == ID) SetValue(value);
+        }
     }
 
 
@@ -147,7 +152,7 @@ namespace MalbersAnimations
     [UnityEditor.CustomEditor(typeof(FloatVarListener)), UnityEditor.CanEditMultipleObjects]
     public class FloatVarListenerEditor : VarListenerEditor
     {
-        private UnityEditor.SerializedProperty  Raise;
+        private UnityEditor.SerializedProperty Raise;
 
         private void OnEnable()
         {
@@ -155,10 +160,10 @@ namespace MalbersAnimations
             Raise = serializedObject.FindProperty("Raise");
         }
 
-        protected override void DrawEvents()
+        protected override void DrawElemets()
         {
             UnityEditor.EditorGUILayout.PropertyField(Raise);
-            base.DrawEvents();
+            base.DrawElemets();
         }
     }
 #endif

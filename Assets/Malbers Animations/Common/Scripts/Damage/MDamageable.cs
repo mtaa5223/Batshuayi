@@ -443,6 +443,14 @@ namespace MalbersAnimations
                 First_Change = true;
                 MTools.SetDirty(this);
             }
+
+            ////CustomPatch: validate if trying to set the Root to self
+            //if (Root == this)
+            //{
+            //    Root = null;
+
+            //    Debug.LogWarning($"Not allowed for the {nameof(Root)} property to point to itself on {gameObject.name} {nameof(MDamageable)}.", this);
+            //}
         }
 
         private void OnDrawGizmosSelected()

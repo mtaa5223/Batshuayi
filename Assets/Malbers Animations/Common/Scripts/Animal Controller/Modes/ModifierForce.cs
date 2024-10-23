@@ -60,22 +60,24 @@ namespace MalbersAnimations.Controller
 
             mode.Animal.Force_Add(mode.Animal.transform.TransformDirection(Direction), Force * multiplier, EnterAceleration, ResetGravity);
 
+
+            mode.Animal.UpInertia_Clear();
         }
 
         public override void OnModeMove(Mode mode)
         {
-            if (m_Time > 0 &&
-                m_Time < Time.time - mode.ActivationTime &&
-                mode.Animal.ExternalForce != Vector3.zero)
+            if (m_Time > 0 && MTools.ElapsedTime(mode.ActivationTime, m_Time)
+                && mode.Animal.ExternalForce != Vector3.zero)
             {
                 mode.Animal.Force_Remove(ExitAceleration);
             }
-            else
-            {
-                if (NoY) mode.Animal.additivePosition.y = 0; ;
-            }
 
-            if (ResetGravity) { mode.Animal.GravityOffset = Vector3.zero; }
+            if (NoY) mode.Animal.additivePosition.y = 0;
+            if (ResetGravity)
+            {
+                mode.Animal.GravityOffset = Vector3.zero;
+                mode.Animal.GravityTime--;
+            }
         }
 
         public override void OnModeExit(Mode mode) => mode.Animal.Force_Remove(ExitAceleration);

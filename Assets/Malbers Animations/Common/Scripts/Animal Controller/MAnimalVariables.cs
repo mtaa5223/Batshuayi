@@ -289,8 +289,11 @@ namespace MalbersAnimations.Controller
         public float height = 1f;
 
         /// <summary>Height from the ground to the hip multiplied for the Scale Factor</summary>
-        public float Height => (height) * ScaleFactor;
-
+        public float Height
+        {
+            get => (height) * ScaleFactor;
+            set => height = value;
+        }
         /// <summary>The Scale Factor of the Animal.. if the animal has being scaled this is the multiplier for the raycasting things </summary>
         public float ScaleFactor => transform.localScale.y;
 
@@ -328,10 +331,12 @@ namespace MalbersAnimations.Controller
             get => currentStance;
             set
             {
-                if (value == currentStance) return;              //Do nothing if we are already on the same Stance
+                if (value == currentStance) return;     //Do nothing if we are already on the same Stance
                 if (value == null) return;              //Do nothing with empty IDs
-                if (!enabled) return;                   //Do nothing if is not active
-                if (Sleep) return;                      //Do nothing if is not active
+
+                //if (!enabled) return;                   //Do nothing if is not active
+                //if (Sleep) return;                      //Do nothing if is not active
+
                 if (value == currentStance) return;     //Change only when the values are different
 
                 SetAdvancedStance(value);
@@ -400,6 +405,15 @@ namespace MalbersAnimations.Controller
                     else
                     {
                         CheckCacheModeInput();
+                    }
+
+                    if (ActiveStance.OverrideCapsule)
+                    {
+                        ActiveStance.newCapsule.Modify(MainCollider);
+                    }
+                    else
+                    {
+                        Reset_MainCollider();
                     }
                 }
             }
@@ -611,7 +625,7 @@ namespace MalbersAnimations.Controller
         private void DebLogAdditiveRot() => additiveRotLog ^= true;
 
         [ContextMenuItem("Debug AdditivePos", nameof(DebLogAdditivePos))]
-        [ContextMenuItem("Debug AdditiveRot", nameof(DebLogAdditiveRot))]
+        //  [ContextMenuItem("Debug AdditiveRot", nameof(DebLogAdditiveRot))]
         /// <summary>Is this animal is the main Player?</summary>
         public BoolReference isPlayer = new(true);
 
@@ -642,7 +656,7 @@ namespace MalbersAnimations.Controller
 #if UNITY_EDITOR  
 
                 if (additivePosLog)
-                    Debug.Log($"Additive Pos:  {(additivePosition / DeltaTime)} ", this);
+                    Debug.Log($"Additive Pos:  {(additivePosition / DeltaTime)}", this);
 #endif
             }
         }
@@ -669,11 +683,28 @@ namespace MalbersAnimations.Controller
             set
             {
                 t.position = value;
-                // Debug.Log("Position" + value);
+
+#if UNITY_EDITOR
+                if (additivePosLog)
+                {
+                    Debug.Log("CurrentPos" + value);
+                    Debug.Log($"LP: {LastPosition} ");
+                }
+#endif
             }
         }
 
-
+        /// <summary>World Position on the last Frame</summary>
+        public Vector3 LastPosition { get; internal set; }
+        //{
+        //    set
+        //    {
+        //        m_LastPosition = value;
+        //        //  Debug.Log($"LP: {m_LastPosition} ");
+        //    }
+        //    get => m_LastPosition;
+        //}
+        //Vector3 m_LastPosition;
 
 
         /// <summary>Animal Transform.rotation</summary>
@@ -711,11 +742,14 @@ namespace MalbersAnimations.Controller
         //Vector3 m_DeltaPos;
 
 
-        /// <summary>World Position on the last Frame</summary>
-        public Vector3 LastPosition { get; internal set; }
+
 
         /// <summary>Velocity acumulated from the last Frame</summary>
         public Vector3 Inertia => DeltaPos / DeltaTime;
+
+        /// <summary>UpIntertia from the Fall and Jump States</summary>
+        public Vector3 UpInertia { get; internal set; }
+
 
         /// <summary>Difference between the Current Rotation and the desire Input Rotation </summary>
         public float DeltaAngle { get; internal set; }
@@ -899,11 +933,10 @@ namespace MalbersAnimations.Controller
                     }
                     else
                     {
-                        ResetGravityValues();
-
+                        Gravity_ResetValues();
+                        UpInertia_Clear();
                         GravityExtraPower = 1;
                         Force_Reset();
-
                         UpDownAdditive = 0; //Reset UpDown Additive 
                         UsingUpDownExternal = false; //Reset UpDown Additive 
                         GravityMultiplier = 1;
@@ -914,7 +947,6 @@ namespace MalbersAnimations.Controller
                     SetBoolParameter(hash_Grounded, grounded.Value);
 
                     OnGrounded.Invoke(value);
-
                     //Debug.Log("Grounded = " + value);
                 }
             }
@@ -925,6 +957,9 @@ namespace MalbersAnimations.Controller
 
         /// <summary>Add an External Force to the Animal</summary>
         public Vector3 ExternalForce { get; set; }
+
+
+
 
         /// <summary>Current External Force the animal current has</summary>
         public Vector3 CurrentExternalForce { get; set; }
@@ -1197,7 +1232,7 @@ namespace MalbersAnimations.Controller
                 if (value && InTimeline) //Check if we are exiting a Timeline
                 {
                     TryActivateState();
-                    ResetGravityValues();
+                    Gravity_ResetValues();
 
                     if (RB) RB.isKinematic = defaultKinematic; //Make sure is not set to kinematic
                 }
@@ -1269,7 +1304,7 @@ namespace MalbersAnimations.Controller
 
         public bool CanStrafe { get => m_CanStrafe.Value; set => m_CanStrafe.Value = value; }
 
-        private float StrafeDeltaValue;
+        public float StrafeDeltaValue { get; internal set; }
         //private float HorizontalAimAngle_Raw;
 
         public Aim Aimer;
@@ -1397,7 +1432,7 @@ namespace MalbersAnimations.Controller
             }
             internal set
             {
-                //  Debug.Log("******value = " + value.name); 
+                //Debug.Log("******value = " + value.name);
 
                 // if (currentSpeedModifier.name != value.name)
                 {
@@ -1572,6 +1607,7 @@ namespace MalbersAnimations.Controller
         [SerializeField] private Vector3Reference m_gravityDir = new(Vector3.down);
 
         [SerializeField] private FloatReference m_gravityPower = new(9.8f);
+        private float defaultGravityPower;
 
         [SerializeField] private IntReference m_gravityTime = new(10);
         [Tooltip("Clamp Gravity Speed. Zero will ignore this")]
@@ -1584,7 +1620,6 @@ namespace MalbersAnimations.Controller
         /// <summary>Multiplier Added to the  Gravity Direction</summary>
         public float GravityMultiplier { get; internal set; }
 
-
         public float GravityTime { get; internal set; }
         //{
         //    get => m_GravityTime;
@@ -1595,7 +1630,6 @@ namespace MalbersAnimations.Controller
         //    }
         //}
         //int m_GravityTime;
-
 
         public float GravityPower { get => m_gravityPower.Value * (GravityMultiplier * ActiveState.GravityMultiplier); set => m_gravityPower.Value = value; }
 
@@ -1678,9 +1712,12 @@ namespace MalbersAnimations.Controller
             get => freemovement;
             set
             {
-                freemovement = value;
-                OnFreeMovement.Invoke(value);
-                //Debug.Log($"Free Move: {value}");
+                if (freemovement != value)
+                {
+                    freemovement = value;
+                    OnFreeMovement.Invoke(value);
+                    //Debug.Log($"Free Move: {value}");
+                }
             }
         }
         /// <summary>Enable Disable the Global Sprint</summary>
@@ -1741,8 +1778,9 @@ namespace MalbersAnimations.Controller
             {
                 useGravity = value;
 
-                if (!useGravity) ResetGravityValues();//Reset Gravity Logic when Use gravity is false
-                                                      //  Debug.Log("useGravity = " + useGravity);
+                if (!useGravity) Gravity_ResetValues();//Reset Gravity Logic when Use gravity is false
+
+                // Debug.Log("useGravity = " + useGravity);
             }
         }
 
@@ -1860,8 +1898,8 @@ namespace MalbersAnimations.Controller
 
         #region Platform
         public Transform platform;
-        protected Vector3 Last_Platform_Pos;
-        protected Quaternion Last_Platform_Rot;
+        public Vector3 Last_Platform_Pos { get; set; }
+        public Quaternion Last_Platform_Rot { get; set; }
         #endregion  
 
         #region Extras

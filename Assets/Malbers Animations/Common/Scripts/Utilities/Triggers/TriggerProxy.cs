@@ -13,12 +13,10 @@ namespace MalbersAnimations.Utilities
 {
     /// <summary>
     /// This is used when the collider is in a different gameObject and you need to check the Collider Events
-    /// Create this component at runtime and subscribe to the UnityEvents
-    /// </summary>
+    /// Create this component at runtime and subscribe to the UnityEvents </summary>
     [AddComponentMenu("Malbers/Utilities/Colliders/Trigger Proxy")]
     public class TriggerProxy : MonoBehaviour
     {
-
         [Tooltip("Hit Layer for the Trigger Proxy")]
         [SerializeField] private LayerReference hitLayer = new(-1);
         public LayerMask Layer { get => hitLayer.Value; set => hitLayer.Value = value; }
@@ -41,9 +39,9 @@ namespace MalbersAnimations.Utilities
 
         public BoolReference useOnTriggerStay = new();
 
-        [Tooltip("Trigger will be disabled the first time")]
+        [Tooltip("Trigger will be disabled the first time it finds a valid collider")]
         public BoolReference OneTimeUse = new();
-        [Tooltip("Do not Interact with static objects")]
+        [Tooltip("Do not Interact with static colliders")]
         public BoolReference ignoreStatic = new();
 
 
@@ -90,6 +88,7 @@ namespace MalbersAnimations.Utilities
 
         public void OnTriggerEnter(Collider other)
         {
+
             if (TrueConditions(other))
             {
                 GameObject realRoot = FindRealRoot(other);
@@ -126,10 +125,7 @@ namespace MalbersAnimations.Utilities
 
         public void TriggerExit(Collider other, bool remove)
         {
-            if (TrueConditions(other))
-            {
-                RemoveTrigger(other, remove);
-            }
+            if (TrueConditions(other)) RemoveTrigger(other, remove);
         }
 
         public void RemoveTrigger(Collider other, bool remove)
@@ -194,6 +190,8 @@ namespace MalbersAnimations.Utilities
                 EnteringGameObjects = new();
             }
         }
+
+
         /// <summary>Add a Trigger Target to every new Collider found</summary>
         private void AddTarget(Collider other)
         {
@@ -207,8 +205,6 @@ namespace MalbersAnimations.Utilities
 
 
         /// <summary>OnTrigger exit Logic</summary>
-
-
         internal void RemoveTarget(Collider other, bool remove)
         {
             var TT = TriggerTarget.set.Find(x => x.m_collider == other);

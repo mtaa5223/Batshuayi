@@ -184,6 +184,7 @@ namespace MalbersAnimations.Controller
             activeAnimal.InputSource?.Enable(true);         //Enable the Input for the Player
             if (activeAnimal.MainCollider) activeAnimal.MainCollider.enabled = (true);
             activeAnimal.SetMainPlayer();
+            activeAnimal.Anim.Rebind();
             Respawned = true;
         }
 
@@ -219,7 +220,6 @@ namespace MalbersAnimations.Controller
                         {
                             this.Delay_Action(RespawnTime, () =>
                             {
-
                                 SceneAnimal();
 
                                 if (!activeAnimal.enabled)

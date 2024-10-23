@@ -594,7 +594,7 @@ namespace MalbersAnimations.Utilities
             var hit = new RaycastHit()
             {
                 distance = MaxDistance,
-                point = ray.GetPoint(100)
+                point = ray.GetPoint(MaxDistance)
             };
 
             return CalculateRayCasting(UseRaycasting, ray, ref hit);
@@ -748,12 +748,17 @@ namespace MalbersAnimations.Utilities
 
         private void OnDrawGizmosSelected()
         {
-            if (debug && enabled && !Application.isPlaying)
+            if (debug && enabled && !Application.isPlaying
+#if UNITY_EDITOR
+                &&
+             UnityEditorInternal.InternalEditorUtility.GetIsInspectorExpanded(this)  //Show Gizmos only when the Inspector is Open
+#endif
+                )
             {
                 Gizmos.color = Color.green;
                 if (AimOrigin != null)
                 {
-                    //  Gizmos.DrawRay(AimOrigin.position, AimOrigin.forward * MaxDistance);
+                    Gizmos.DrawRay(AimOrigin.position, AimOrigin.forward * MaxDistance);
                     if (rayRadius.Value > 0)
                     {
 

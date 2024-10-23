@@ -1,4 +1,3 @@
-using UnityEditor;
 using UnityEngine;
 
 namespace MalbersAnimations
@@ -460,33 +459,33 @@ namespace MalbersAnimations
 
         }
 
-        public static void DrawThickLine(Vector3 start, Vector3 end, float thickness = 2f)
-        {
-#if UNITY_EDITOR && MALBERS_DEBUG
-            Camera c = Camera.current;
-            if (c == null) return;
+        //        public static void DrawThickLine(Vector3 start, Vector3 end, Color color, float thickness = 2f)
+        //        {
+        //#if UNITY_EDITOR && MALBERS_DEBUG
+        //            Camera c = Camera.current;
+        //            if (c == null) return;
 
-            // Only draw on normal cameras
-            if (c.clearFlags == CameraClearFlags.Depth || c.clearFlags == CameraClearFlags.Nothing)
-            {
-                return;
-            }
+        //            // Only draw on normal cameras
+        //            if (c.clearFlags == CameraClearFlags.Depth || c.clearFlags == CameraClearFlags.Nothing)
+        //            {
+        //                return;
+        //            }
+        //            Handles.color = color;
+        //            // Only draw the line when it is the closest thing to the camera
+        //            // (Remove the Z-test code and other objects will not occlude the line.)
+        //            var prevZTest = Handles.zTest;
+        //            Handles.zTest = UnityEngine.Rendering.CompareFunction.LessEqual;
 
-            // Only draw the line when it is the closest thing to the camera
-            // (Remove the Z-test code and other objects will not occlude the line.)
-            var prevZTest = Handles.zTest;
-            Handles.zTest = UnityEngine.Rendering.CompareFunction.LessEqual;
+        //            Handles.color = Gizmos.color;
+        //            Handles.DrawAAPolyLine(thickness * 10, new Vector3[] { start, end });
 
-            Handles.color = Gizmos.color;
-            Handles.DrawAAPolyLine(thickness * 10, new Vector3[] { start, end });
-
-            Handles.zTest = prevZTest;
-#endif
-        }
+        //            Handles.zTest = prevZTest;
+        //#endif
+        //        }
 
         public static void GizmoRay(Vector3 p1, Vector3 dir, float width = 2f)
         {
-#if UNITY_EDITOR && MALBERS_DEBUG
+#if UNITY_EDITOR 
 
             var p2 = p1 + dir;
 
@@ -511,7 +510,7 @@ namespace MalbersAnimations
 
                 for (int i = 0; i < count; i++)
                 {
-                    Vector3 o = 0.99f * n * width * ((float)i / (count - 1) - 0.5f);
+                    Vector3 o = ((float)i / (count - 1) - 0.5f) * 0.99f * width * n;
                     Vector3 origin = c.ScreenToWorldPoint(scp1 + o);
                     Vector3 destiny = c.ScreenToWorldPoint(scp2 + o);
                     Gizmos.DrawLine(origin, destiny);
@@ -523,8 +522,6 @@ namespace MalbersAnimations
         public static void DrawLine(Vector3 p1, Vector3 p2, float width = 2f)
         {
 #if UNITY_EDITOR && MALBERS_DEBUG
-
-
             int count = 1 + Mathf.CeilToInt(width); // how many lines are needed.
             if (count == 1)
             {

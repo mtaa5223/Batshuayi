@@ -46,13 +46,15 @@ namespace MalbersAnimations.Controller
 
             var NewCharacter = Characters[NextIndex];
 
-
             if (currentChar != NewCharacter)
             {
+                var LastInputAxis = currentChar.RawInputAxis;
                 Swap(currentChar, NewCharacter);
                 currentChar = NewCharacter;
                 currentCharIndex = NextIndex;
+
                 OnSwap.Invoke(NewCharacter.gameObject);
+                NewCharacter.InputSource.MoveAxis = LastInputAxis;
             }
         }
 

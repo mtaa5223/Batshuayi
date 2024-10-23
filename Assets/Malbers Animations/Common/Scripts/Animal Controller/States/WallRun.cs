@@ -154,7 +154,7 @@ namespace MalbersAnimations.Controller
         {
             base.Activate();
             SetEnterStatus(RightSide ? 1 : -1); //Set the correct Animatino
-            animal.ResetGravityValues();
+            animal.Gravity_ResetValues();
             UpImpulse = Vector3.Project(animal.DeltaPos, animal.UpVector);   //Clean the Vector from Forward and Horizontal Influence    
             Has_UP_Impulse = Vector3.Dot(UpImpulse, animal.UpVector) > 0;
         }
@@ -278,7 +278,7 @@ namespace MalbersAnimations.Controller
 
         public override void AllowStateExit()
         {
-            animal.ResetGravityValues();
+            animal.Gravity_ResetValues();
         }
 
         public override void PostExitState()

@@ -157,6 +157,10 @@ namespace MalbersAnimations.Controller.AI
         [Tooltip("If the AI Animal is scaled, use the scale factor to find the Target")]
         public bool UseScale = true;
 
+
+        [Tooltip("If the AI Animal was assigned a new target, the current playing mode will be interrupted")]
+        public bool InterruptModeOnTarget = true;
+
         [Tooltip("It will clear the Target if the component is disabled")]
         public bool ClearTargetOnDisable = true;
 
@@ -218,6 +222,8 @@ namespace MalbersAnimations.Controller.AI
         /// <summary>Default Stopping Distance</summary>
         public virtual float StoppingDistance { get => stoppingDistance; set => stoppingDistance = value; }
         public virtual float AdditiveStopDistance { get => additiveStopDistance; set => additiveStopDistance = value; }
+
+        public virtual Vector3 AgentDesiredVelocity => Agent.desiredVelocity;
 
         /// <summary>  Check if the Animal is Waiting on Target with multiple targeters</summary>
         public bool IsWaitingOnTarget// { get; set; }
@@ -503,7 +509,7 @@ namespace MalbersAnimations.Controller.AI
 
             if (StateIsBlockingAgent) //Check if we are on a State that does not require the Agent
             {
-                if (Agent.isOnNavMesh) Agent.ResetPath(); //Reset the Path of the Agent
+                if (Agent && Agent.isOnNavMesh) Agent.ResetPath(); //Reset the Path of the Agent
 
                 ActiveAgent = false; //Disable the Agent
             }
@@ -597,15 +603,16 @@ namespace MalbersAnimations.Controller.AI
                         }
                         else
                         {
-                            if (Agent.desiredVelocity != Vector3.zero)
-                                AIDirection = Agent.desiredVelocity.normalized;
-
+                            NormalizeDirection();
                             Move();   //Calculate the AI DIRECTION
                         }
                     }
                 }
             }
         }
+
+
+
 
         private void LookTargetOnArrival()
         {
@@ -709,15 +716,20 @@ namespace MalbersAnimations.Controller.AI
                     if (IsWayPoint != null) DestinationPosition = Agent.destination; //Important use the Cast value on the terrain.
                 }
 
-                if (Agent.desiredVelocity != Vector3.zero)
-                {
-                    AIDirection = Agent.desiredVelocity.normalized;
-                }
+                NormalizeDirection();
 
                 HasArrived = false;
             }
 
             Debuging($"<color=green>Calculate Path to: <B>{DestinationPosition}</B></color>");
+        }
+
+        private void NormalizeDirection()
+        {
+            if (AgentDesiredVelocity != Vector3.zero)
+            {
+                AIDirection = AgentDesiredVelocity.normalized;
+            }
         }
 
 
@@ -1001,6 +1013,8 @@ namespace MalbersAnimations.Controller.AI
                     DestinationPosition = GetTargetPosition();
 
                     CalculatePath();
+
+                    if (InterruptModeOnTarget && animal.IsPlayingMode) animal.Mode_Interrupt(); //Interrupt a mode if is playing to go to the next target.
 
                     Move();
                     Debuging($"<color=yellow>is travelling to <B>Target: [{newTarget.name}]</B> → [{DestinationPosition}]  Index [{Index}]</color>");
@@ -1573,7 +1587,7 @@ namespace MalbersAnimations.Controller.AI
         protected SerializedProperty
             stoppingDistance, additiveStopDistance,
             SlowingDistance, LookAtOffset, targett, UpdateAI, slowingLimit, targetHeight, StopOnTargetTooHigh, UseScale, ClearTargetOnDisable,
-            agent, animal, PointStoppingDistance, OnTargetPositionArrived, OnTargetArrived,
+            agent, animal, PointStoppingDistance, OnTargetPositionArrived, OnTargetArrived, InterruptModeOnTarget,
             // disableInput, enableInput,
             AirDestinationState, OnDisabled, OnEnabled,
             OnTargetSet, debugGizmos, debugStatus, debug, Editor_Tabs1, nextTarget,
@@ -1605,6 +1619,7 @@ namespace MalbersAnimations.Controller.AI
             DisableInputAIOn = serializedObject.FindProperty("DisableInputAIOn");
 
             OnTargetSet = serializedObject.FindProperty("OnTargetSet");
+            InterruptModeOnTarget = serializedObject.FindProperty("InterruptModeOnTarget");
             OnTargetArrived = serializedObject.FindProperty("OnTargetArrived");
             OnTargetPositionArrived = serializedObject.FindProperty("OnTargetPositionArrived");
             stoppingDistance = serializedObject.FindProperty("stoppingDistance");
@@ -1688,6 +1703,7 @@ namespace MalbersAnimations.Controller.AI
                     EditorGUILayout.PropertyField(targett, new GUIContent("Target", "Target to follow"));
                     EditorGUILayout.PropertyField(nextTarget, new GUIContent("Next Target", "Next Target the animal will go"));
                     EditorGUILayout.PropertyField(ClearTargetOnDisable);
+                    EditorGUILayout.PropertyField(InterruptModeOnTarget);
 
                 }
             }

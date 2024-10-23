@@ -298,7 +298,7 @@ namespace MalbersAnimations.Controller
                 if (Physics.Raycast(Point, Gravity, out RaycastHit landHit, Dist, LandOn, IgnoreTrigger))
                 {
                     FlyAllowExit(landHit);
-                    Debugging($"[AllowExit] Can Land on <{landHit.collider.name}> [Using Blocking Bone]");
+                    Debugging($"[AllowExit] Can Land on <{landHit.collider.name}> [Using Blocking Bone: {BlockingBone != null}]");
                     return;
                 }
 
@@ -488,14 +488,14 @@ namespace MalbersAnimations.Controller
 
                 var width = 2f;
 
-                var PointDown = Gravity.normalized * (LandMultiplier) * animal.transform.lossyScale.y;
+                var PointDown = (LandMultiplier) * animal.transform.lossyScale.y * Gravity.normalized;
 
                 MDebug.DrawLine(animal.Main_Pivot_Point, animal.Main_Pivot_Point + PointDown, width);
 
                 if (BlockingBone)
                 {
                     var HitPoint = BlockingBone.TransformPoint(BoneOffsetPos);
-                    MDebug.DrawLine(HitPoint, HitPoint + Gravity * BlockLandDist * animal.transform.lossyScale.y, width);
+                    MDebug.DrawLine(HitPoint, HitPoint + animal.transform.lossyScale.y * BlockLandDist * Gravity, width);
                 }
 
                 if (AvoidSurface && !Application.isPlaying)

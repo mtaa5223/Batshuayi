@@ -11,7 +11,7 @@ namespace MalbersAnimations
 
         /// <summary>Allows the Input to move the Character (Use Axis)</summary>
         bool MoveCharacter { get; set; }
-         
+
         /// <summary>Returns the Input Action by its name</summary>
         IInputAction GetInput(string input);
         void EnableInput(string input);
@@ -30,11 +30,19 @@ namespace MalbersAnimations
         void ResetInput(string name);
 
         /// <summary>BroadCast the Move Axis Value so any component can listen to it (x-> Horizontal, Y-> UpDown Z-> Forward-Vertical </summary> 
-        System.Action<Vector3> OnMoveAxis {  get; set; }
+        System.Action<Vector3> OnMoveAxis { get; set; }
 
-        ///// <summary>BroadCast the Up DOwn Value so any component can listen to it</summary> 
-        //System.Action<float> UpDown {  get; set; }
+        Vector3 MoveAxis { get; set; }
 
+        // void SetMoveAxis(Vector3 move);
+
+        /// <summary>  Send the source to the Input so it can extract the values from it.
+        /// The horse uses this to extrat the Player Input Component from the Rider </summary>
+        /// <param name="player"></param>
+        void PlayerInput(IInputSource player);
+
+        /// <summary> Reference of the IInputSource Transform</summary>
+        Transform transform { get; }
     }
 
     public interface IInputAction
@@ -46,11 +54,11 @@ namespace MalbersAnimations
         bool GetValue { get; }
 
         string Name { get; }
- 
+
         BoolEvent InputChanged { get; }
     }
-   
-    
+
+
 
     /// <summary> Common Entries for all Inputs on the Store </summary>
     public interface IInputSystem
@@ -61,7 +69,7 @@ namespace MalbersAnimations
         bool GetButtonUp(string button);
         bool GetButton(string button);
     }
-     
+
     /// <summary>Function Needed for moving Characters</summary>
     public interface ICharacterMove
     {

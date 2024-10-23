@@ -12,7 +12,7 @@ namespace MalbersAnimations.Controller
 
         [Tooltip("Range on the Animation that the Attack Trigger will be Active")]
         [MinMaxRange(0, 1)]
-        public RangedFloat AttackActivation = new RangedFloat(0.3f, 0.6f);
+        public RangedFloat AttackActivation = new(0.3f, 0.6f);
        
         private bool isOn, isOff;
         private IMDamagerSet[] damagers;

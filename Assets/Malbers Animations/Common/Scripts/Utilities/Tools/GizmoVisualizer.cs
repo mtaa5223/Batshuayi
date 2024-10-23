@@ -14,6 +14,7 @@ namespace MalbersAnimations
         {
             Cube,
             Sphere,
+            Rect,
         }
         public bool UseColliders;
         public GizmoType gizmoType;
@@ -23,9 +24,12 @@ namespace MalbersAnimations
         public bool DrawAxis;
         [Min(0)] public float AxisSize = 0.65f;
 
-        private Collider _collider;
+        [SerializeField] private Collider _collider;
+        public bool DrawLineTo;
+        [Hide(nameof(DrawLineTo))]
+        public Transform ConnectTo;
 
-
+        public Vector3 Rect = Vector3.one;
 
         //public StatModifier modifier;
 
@@ -65,11 +69,24 @@ namespace MalbersAnimations
 
             var DebugColorWire = new Color(DebugColor.r, DebugColor.g, DebugColor.b, 1);
 
+
+            Gizmos.color = DebugColorWire;
+
             if (DrawAxis)
             {
-                UnityEditor.Handles.color = DebugColor;
-                UnityEditor.Handles.ArrowHandleCap(0, transform.position, transform.rotation, AxisSize, EventType.Repaint);
+                Handles.color = DebugColor;
+                Handles.ArrowHandleCap(0, transform.position, transform.rotation, AxisSize, EventType.Repaint);
             }
+
+            if (DrawLineTo && ConnectTo)
+            {
+                Gizmos.color = DebugColor;
+                // Handles.color = DebugColorWire;
+                MDebug.DrawLine(transform.position, ConnectTo.position, 2);
+                //Handles.DrawDottedLine(transform.position, ConnectTo.position, 5);
+            }
+
+
 
             Gizmos.matrix = transform.localToWorldMatrix;
 
@@ -93,9 +110,16 @@ namespace MalbersAnimations
                     Gizmos.color = DebugColor;
                     Gizmos.DrawSphere(Vector3.zero, debugSize);
                     break;
+                case GizmoType.Rect:
+                    Gizmos.color = DebugColorWire;
+                    Gizmos.DrawWireCube(Vector3.zero, Rect * debugSize);
+                    Gizmos.color = DebugColor;
+                    Gizmos.DrawCube(Vector3.zero, Rect * debugSize);
+                    break;
                 default:
                     break;
             }
+
         }
 
         void OnDrawGizmosSelected()
@@ -118,6 +142,9 @@ namespace MalbersAnimations
                     break;
                 case GizmoType.Sphere:
                     Gizmos.DrawWireSphere(Vector3.zero, debugSize);
+                    break;
+                case GizmoType.Rect:
+                    Gizmos.DrawWireCube(Vector3.zero, Rect * debugSize);
                     break;
             }
         }
@@ -179,7 +206,7 @@ namespace MalbersAnimations
     public class GizmoVisualizerEditor : Editor
     {
 
-        SerializedProperty UseColliders, gizmoType, debugSize, DebugColor, DrawAxis, AxisSize;
+        SerializedProperty UseColliders, gizmoType, debugSize, DebugColor, DrawAxis, AxisSize, DrawLineTo, ConnectTo, Rect;
 
 
         private void OnEnable()
@@ -190,6 +217,9 @@ namespace MalbersAnimations
             DebugColor = serializedObject.FindProperty("DebugColor");
             DrawAxis = serializedObject.FindProperty("DrawAxis");
             AxisSize = serializedObject.FindProperty("AxisSize");
+            DrawLineTo = serializedObject.FindProperty("DrawLineTo");
+            ConnectTo = serializedObject.FindProperty("ConnectTo");
+            Rect = serializedObject.FindProperty("Rect");
         }
         public override void OnInspectorGUI()
         {
@@ -222,6 +252,19 @@ namespace MalbersAnimations
                     EditorGUIUtility.labelWidth = 0;
                 }
             }
+
+            if (gizmoType.enumValueIndex == 2)
+            {
+                EditorGUILayout.PropertyField(Rect);
+            }
+
+            using (new GUILayout.HorizontalScope())
+            {
+                EditorGUILayout.PropertyField(DrawLineTo);
+                EditorGUILayout.PropertyField(ConnectTo, GUIContent.none);
+            }
+
+
             serializedObject.ApplyModifiedProperties();
         }
     }

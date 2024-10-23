@@ -1,4 +1,9 @@
+#if UNITY_6000_0_OR_NEWER
+using Unity.Cinemachine;
+#else
 using Cinemachine;
+#endif
+
 using MalbersAnimations.Events;
 using MalbersAnimations.Scriptables;
 using System;
@@ -35,13 +40,16 @@ namespace MalbersAnimations
 
         [Tooltip("What object to follow")]
         public TransformReference Target;
-        [Tooltip("Reference of a Transform to get the Up Vector, so the camera can be aligned with it vector")]
-        public TransformReference upVector;
-
-        public Transform CamPivot { get; set; }
 
         [Tooltip("Camera Input Values (Look X:Horizontal, Look Y: Vertical)")]
         public Vector2Reference look = new();
+
+        [SerializeField] private bool useUpVector = false;
+
+        [Hide(nameof(useUpVector))]
+        [Tooltip("Reference of a Transform to get the Up Vector, so the camera can be aligned with it vector")]
+        public TransformReference upVector;
+
 
         [Header("Camera Properties")]
         [Tooltip("Sensitivity to rotate the X Axis")]
@@ -63,10 +71,13 @@ namespace MalbersAnimations
         public BoolReference invertY = new();
 
         [Header("Mouse Keyboard and GamePad")]
+
+        public StringReference CurrentDevice = new("Mouse");
+
         [Tooltip("Is the camera using Mouse Input (true) or a Gamepad (False)")]
         public BoolReference UsingMouse = new(true);
         [Tooltip("Extra Multiplier for the Rotation sensitivity when using a gamepad")]
-        public FloatReference GamepadMult = new(100);
+        public FloatReference GamepadMult = new(1000);
 
         public BoolEvent OnActiveCamera = new();
 
@@ -80,7 +91,7 @@ namespace MalbersAnimations
         public Transform UpVector { get => upVector; set => upVector.Value = value; }
         public bool UnScaledTime { get => unscaledTime; set => unscaledTime.Value = value; }
 
-
+        public Transform CamPivot { get; set; }
         /// <summary>  Active Camera using the same Cinemachine Brain </summary>
        // public ThirdPersonFollowTarget ActiveThirdPersonCamera { get; set; }
 
@@ -99,14 +110,20 @@ namespace MalbersAnimations
         private ICinemachineCamera ThisCamera;
 
         private bool Active { get; set; }
+        public bool UseUpVector { get => useUpVector; set => useUpVector = value; }
 
         #endregion
 
 
+
+
+#if UNITY_6000_0_OR_NEWER
+        //CINEMACHINE 3
+        private CinemachineThirdPersonFollow CM3PFollow;
+#else
         //CINEMACHINE 2
         private Cinemachine3rdPersonFollow CM3PFollow;
-        ////CINEMACHINE 3
-        //private CinemachineThirdPersonFollow CM3PFollow;
+#endif
 
 
         [Disable] public float _cinemachineTargetYaw;
@@ -123,16 +140,19 @@ namespace MalbersAnimations
         // Start is called before the first frame update
         void Awake()
         {
-            if (Brain == null) Brain = FindAnyObjectByType<CinemachineBrain>();
+            if (Brain == null) Brain = FindFirstObjectByType<CinemachineBrain>();
 
+
+#if UNITY_6000_0_OR_NEWER
+            //CINEMACHINE 3
+            CM3PFollow = this.FindComponent<CinemachineThirdPersonFollow>();
+#else
             //CINEMACHINE 2
             CM3PFollow = this.FindComponent<Cinemachine3rdPersonFollow>();
 
-            ////CINEMACHINE 3
-            //CM3PFollow = this.FindComponent<CinemachineThirdPersonFollow>();
+#endif
 
-
-            if (CM3PFollow != null)
+            // if (CM3PFollow != null)
             {
                 CM3PFollow.CameraDistance = CameraDistance;
                 CM3PFollow.CameraSide = CameraSide;
@@ -148,26 +168,31 @@ namespace MalbersAnimations
 
             CreateCameraPivot();
 
+
+#if UNITY_6000_0_OR_NEWER
+            //CINEMACHINE 3
+            //Find the Cinemachine camera Target
+            if (TryGetComponent(out ThisCamera))
+                (ThisCamera as CinemachineCamera).Target.TrackingTarget = CamPivot.transform;
+#else
             //CINEMACHINE 2
             //Find the Cinemachine camera target
             if (TryGetComponent(out ThisCamera) && ThisCamera.Follow == null)
                 ThisCamera.Follow = CamPivot.transform;
-
-            ////CINEMACHINE 3
-            ////Find the Cinemachine camera Target
-            //if (TryGetComponent(out ThisCamera))
-            //    (ThisCamera as CinemachineCamera).Target.TrackingTarget = CamPivot.transform;
+#endif
 
 
             //Set the Up Vector to the Camera Brain
             this.Delay_Action(1,
                 () =>
-                //CINEMACHINE 2
-                Brain.m_WorldUpOverride = UpVector
 
-                // //CINEMACHINE 3
-                //Brain.WorldUpOverride = UpVector
-
+#if UNITY_6000_0_OR_NEWER
+                 //CINEMACHINE 3
+                Brain.WorldUpOverride = UpVector
+#else
+                 //CINEMACHINE 2
+                 Brain.m_WorldUpOverride = UpVector
+#endif
                 );
 
             CinemachineCore.CameraUpdatedEvent.AddListener(UpdateCameraEvent); //Listen to the Camera Updated Event
@@ -175,6 +200,11 @@ namespace MalbersAnimations
             CameraMove(0, 0); //Position (Late Update Only)
 
             StartCoroutine(ICameraRotation()); //Rotation (Late Update Only)
+
+
+            if (CurrentDevice.Variable != null)
+                CurrentDevice.Variable.OnValueChanged += SetMouseFromDevice;
+
         }
 
         private void OnDisable()
@@ -182,6 +212,15 @@ namespace MalbersAnimations
             CinemachineCore.CameraUpdatedEvent.RemoveListener(UpdateCameraEvent); //Remove Listener to the Camera Updated Event
             StopAllCoroutines();
             TPFCameras.Remove(this);
+
+
+            if (CurrentDevice.Variable != null)
+                CurrentDevice.Variable.OnValueChanged -= SetMouseFromDevice;
+        }
+
+        private void SetMouseFromDevice(string deviceName)
+        {
+            UsingMouse.Value = (deviceName.Contains(CurrentDevice.ConstantValue)); //ConstantValue is Mouse!
         }
 
         private void CreateCameraPivot()
@@ -221,17 +260,25 @@ namespace MalbersAnimations
                 {
                     BrainActiveCamera = camBrain.ActiveVirtualCamera;
 
-                    var IsThirdPFT = (BrainActiveCamera as CinemachineVirtualCameraBase).GetComponent<ThirdPersonFollowTarget>();
-
-                    ActiveCM_NOT3rdPerson = IsThirdPFT == null ? BrainActiveCamera : null; //Store the Active Camera if is NOT a Third Person Follow Camera
+                    if (BrainActiveCamera == null)
+                    {
+                        ActiveCM_NOT3rdPerson = null;
+                    }
+                    else
+                    {
+                        var IsThirdPFT = (BrainActiveCamera as CinemachineVirtualCameraBase).GetComponent<ThirdPersonFollowTarget>();
+                        ActiveCM_NOT3rdPerson = IsThirdPFT == null ? BrainActiveCamera : null; //Store the Active Camera if is NOT a Third Person Follow Camera
+                    }
                 }
 
-                //Camera Movement-----
-
+                //-------Camera Movement-----
+#if UNITY_6000_0_OR_NEWER
+                //CINEMACHINE 3
+                if (Brain.UpdateMethod == CinemachineBrain.UpdateMethods.LateUpdate)
+#else
                 //CINEMACHINE 2
                 if (Brain.m_UpdateMethod == CinemachineBrain.UpdateMethod.LateUpdate)
-                ////CINEMACHINE 3
-                //if (Brain.UpdateMethod == CinemachineBrain.UpdateMethods.LateUpdate)
+#endif
                 {
                     CameraPos(UnScaledTime ? Time.unscaledDeltaTime : Time.deltaTime);
                 }
@@ -288,7 +335,6 @@ namespace MalbersAnimations
                     return;
                 }
 
-
                 CameraMove(LerpPosition, deltaTime);
                 SetCameraSide(CameraSide);
             }
@@ -326,7 +372,7 @@ namespace MalbersAnimations
                 // Cinemachine will follow this target
                 var TargetRotation = Quaternion.Euler(_cinemachineTargetPitch, _cinemachineTargetYaw, 0.0f);
 
-                if (UpVector) TargetRotation = Quaternion.FromToRotation(Vector3.up, UpVector.up) * TargetRotation;
+                if (UseUpVector && UpVector) TargetRotation = Quaternion.FromToRotation(Vector3.up, UpVector.up) * TargetRotation;
 
                 if (lerp > 0)
                     CamPivot.rotation = Quaternion.Lerp(CamPivot.rotation, TargetRotation, deltaTime * lerp); //NEEDED FOR SMOOTH CAMERA MOVEMENT
@@ -367,9 +413,6 @@ namespace MalbersAnimations
         public void SetLookX(float x) => look.x = x;
         public void SetLookY(float y) => look.y = y;
         public void SetLook(Vector2 look) => this.look.Value = look;
-
-
-
         public void SetTarget(Transform target) => Target.Value = target;
 
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
@@ -382,27 +425,28 @@ namespace MalbersAnimations
 
         public void SetPriority(bool value)
         {
-            if (ThisCamera == null) return;
+            if (!TryGetComponent(out ThisCamera)) return;
 
-//#if UNITY_6000_0_OR_NEWER
-            //if (ThisCamera is CinemachineCamera cam)
-            //    {
-            //        if (value)
-            //        {
-            //            cam.Priority.Value = priority;
-            //            cam.Priority.Enabled = true;
-            //        }
-            //        else
-            //        {
-            //            cam.Priority.Value = -1;
-            //            cam.Priority.Enabled = false;
-            //        }
-            //    }            
-//#else 
+#if UNITY_6000_0_OR_NEWER
+            //CINEMACHINE 3
+            if (ThisCamera is CinemachineCamera cam)
+            {
+                if (value)
+                {
+                    cam.Priority.Value = priority;
+                    cam.Priority.Enabled = true;
+                }
+                else
+                {
+                    cam.Priority.Value = -1;
+                    cam.Priority.Enabled = false;
+                }
+            }
+#else
+            //CINEMACHINE 2
             ThisCamera.Priority = value ? priority : -1;
-//#endif
+#endif
         }
-
         public void SetCameraSide(bool value) => SetCameraSide(value ? 1 : 0);
 
         public void SetCameraSide(float value)
@@ -418,24 +462,16 @@ namespace MalbersAnimations
 
         public void TargetTeleport(bool BehindTarget)
         {
-            //Update the Active Camera if we are the active camera
-            // if (ThisCamera == Brain.ActiveVirtualCamera)
-            {
-                //Remove the damping for 5 frames so the camera can teleport correctly
-                var OldDamp = CM3PFollow.Damping;
-                CM3PFollow.Damping = Vector3.zero;
-                // Debug.Log("TELEPORT");
+            //Remove the damping for 5 frames so the camera can teleport correctly
+            var OldDamp = CM3PFollow.Damping;
+            CM3PFollow.Damping = Vector3.zero;
 
+            CameraMove(0, 0); //Teleport the Camera to the Target
 
-                CameraMove(0, 0); //Teleport the Camera to the Target
-
-                //  Brain.ManualUpdate(); //Force the Brain to update the Camera
-
-                this.Delay_Action(5, () => CM3PFollow.Damping = OldDamp);
-            }
-
+            this.Delay_Action(5, () => CM3PFollow.Damping = OldDamp);
             if (BehindTarget) YawBehindTarget();
         }
+
 
         public void YawBehindTarget()
         {
@@ -449,29 +485,6 @@ namespace MalbersAnimations
         }
 
 
-
-        //private IEnumerator ICameraPosition()
-        //{
-        //    if (updateMode == UpdateType.FixedUpdate)
-        //    {
-        //        var wait = new WaitForFixedUpdate();
-
-        //        while (true)
-        //        {
-        //            yield return wait;
-        //            CameraPos(UnScaledTime ? Time.fixedUnscaledDeltaTime : Time.fixedDeltaTime);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        while (true)
-        //        {
-        //            CameraPos(UnScaledTime ? Time.unscaledDeltaTime : Time.deltaTime);
-        //            yield return null;
-        //        }
-        //    }
-        //}
-
 #if UNITY_EDITOR
 
         private void OnValidate()
@@ -484,7 +497,7 @@ namespace MalbersAnimations
         {
             Target.UseConstant = false;
             Target.Variable = MTools.GetInstance<TransformVar>("Camera Target");
-
+            CurrentDevice = new StringReference(MTools.GetInstance<StringVar>("Current Device"));
 
             if (CamPivot == null)
             {

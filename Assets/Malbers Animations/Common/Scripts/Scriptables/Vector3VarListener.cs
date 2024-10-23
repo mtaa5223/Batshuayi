@@ -81,7 +81,7 @@ namespace MalbersAnimations
             OnTrue = serializedObject.FindProperty("OnValue");
         }
 
-        protected override void DrawEvents()
+        protected override void DrawElemets()
         {
             UnityEditor.EditorGUILayout.PropertyField(OnTrue);
         }

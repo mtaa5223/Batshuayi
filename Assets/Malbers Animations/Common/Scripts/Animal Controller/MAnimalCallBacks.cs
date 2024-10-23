@@ -103,44 +103,16 @@ namespace MalbersAnimations.Controller
         #endregion
 
         #region Gravity
+
         /// <summary>Resets the gravity to the default Vector.Down value</summary>
-        public virtual void ResetGravityDirection()
-        {
-            GroundChangesGravity(false);
-        }
+        public virtual void Gravity_ResetDirection() => Gravity_DirectionFromGround(false);
 
-        /// <summary>Clears the Gravity Logic</summary>
-        internal void ResetGravityValues()
-        {
-            GravityTime = m_gravityTime;
-            GravityStoredVelocity = Vector3.zero;
-            GravityOffset = Vector3.zero;
-            // GravityResult = Vector3.zero;
-            //GravityExtraPower = 1;
-            //Debug.Log($"animal.GravityExtraPower  REAER{GravityExtraPower}");
-
-        }
-        internal void ResetUPVector()
-        {
-            if (RB && !RB.isKinematic)
-                RB.linearVelocity = Vector3.ProjectOnPlane(RB.linearVelocity, UpVector);
-
-            AdditivePosition = Vector3.ProjectOnPlane(AdditivePosition, UpVector);
-            DeltaPos = Vector3.ProjectOnPlane(DeltaPos, UpVector);
-
-            InertiaPositionSpeed = Vector3.ProjectOnPlane(InertiaPositionSpeed, UpVector); //Remove the UpDown Inertia
-
-            DeltaVelocity = Vector3.ProjectOnPlane(DeltaVelocity, UpVector);
-
-            ResetGravityValues();
-        }
-
-        /// <summary> IDeltaRootMotiom  </summary>
-        public virtual void ResetDeltaRootMotion() => Reset_Movement();
+        /// <summary>Resets the gravity power to the default value</summary>
+        public virtual void Gravity_ResetPower() => GravityPower = defaultGravityPower;
 
         /// <summary>The Ground will change the Gravity Direction. Using the ground Normal as reference</summary>
         /// <param name="value"> Enable/Disable the logic</param>
-        public virtual void GroundChangesGravity(bool value)
+        public virtual void Gravity_DirectionFromGround(bool value)
         {
             ground_Changes_Gravity.Value = value;
             OnGroundChangesGravity.Invoke(value);
@@ -153,6 +125,38 @@ namespace MalbersAnimations.Controller
             }
         }
 
+        /// <summary>Clears the Gravity Logic</summary>
+        internal virtual void Gravity_ResetValues()
+        {
+            GravityTime = m_gravityTime;
+            GravityStoredVelocity = Vector3.zero;
+            GravityOffset = Vector3.zero;
+        }
+
+        internal void ResetUPVector()
+        {
+            if (RB && !RB.isKinematic)
+                RB.linearVelocity = Vector3.ProjectOnPlane(RB.linearVelocity, UpVector);
+
+            AdditivePosition = Vector3.ProjectOnPlane(AdditivePosition, UpVector);
+            DeltaPos = Vector3.ProjectOnPlane(DeltaPos, UpVector);
+
+            InertiaPositionSpeed = Vector3.ProjectOnPlane(InertiaPositionSpeed, UpVector); //Remove the UpDown Inertia
+
+            DeltaVelocity = Vector3.ProjectOnPlane(DeltaVelocity, UpVector);
+
+            Gravity_ResetValues();
+        }
+
+
+        /// <summary>Clears the Gravity Logic</summary>
+        public virtual void ResetGravityValues() => Gravity_ResetValues();
+
+
+        /// <summary> IDeltaRootMotiom  </summary>
+        public virtual void ResetDeltaRootMotion() => Reset_Movement();
+
+
 
         /// <summary>Aling the character instantly to the Gravity Direction</summary>
         public virtual void AlignToGravity()
@@ -160,6 +164,11 @@ namespace MalbersAnimations.Controller
             Quaternion AlignRot = Quaternion.FromToRotation(t.up, UpVector) * Rotation;  //Calculate the orientation to Terrain 
             Rotation = AlignRot;
         }
+
+        /// <summary>The Ground will change the Gravity Direction. Using the ground Normal as reference</summary>
+        /// <param name="value"> Enable/Disable the logic</param>
+        public virtual void GroundChangesGravity(bool value) => Gravity_DirectionFromGround(value);
+
         #endregion
 
         #region Stances
@@ -302,7 +311,8 @@ namespace MalbersAnimations.Controller
         public virtual void TryAnimParameter(int Hash, int value)
         {
             // Debug.Log($"ANIMAL Int hash:{Hash}, value{value}");
-            if (Hash != 0) SetIntParameter(Hash, value);
+            if (Hash != 0)
+                SetIntParameter(Hash, value);
         }
 
         public virtual void TryAnimParameter(int Hash, bool value)
@@ -828,8 +838,6 @@ namespace MalbersAnimations.Controller
                 return;
             }
 
-
-
             //ActiveMode.PlayingMode = false;
             ActiveMode = null;
             ModeTime = 0;
@@ -839,8 +847,6 @@ namespace MalbersAnimations.Controller
         /// <summary> Re-Check all the Sprint conditions and Invoke the Sprint Event </summary>
         public virtual void SprintUpdate() => Sprint = sprint; //Check Again the sprint everytime a new state is active IMPORTANT
         public virtual void Sprint_Set(bool value) => Sprint = value;
-
-
 
         /// <summary>Set IntID to -2 to exit the Mode Animation</summary>
         public virtual void Mode_Interrupt()
@@ -1231,6 +1237,12 @@ namespace MalbersAnimations.Controller
                     speedSet.StartVerticalIndex = activeIndex; //Set the Start Vertical Index as the new Speed 
                 }
             }
+            else
+            {
+                CurrentSpeedIndex = activeIndex; //Change the current active speed to the first index
+
+                Debug.Log($"SpeedSet_Set_Active: {activeIndex}");
+            }
         }
 
 
@@ -1317,7 +1329,7 @@ namespace MalbersAnimations.Controller
                 fall.FallCurrentDistance = 0;
             }
 
-            if (ResetGravity) ResetGravityValues();
+            if (ResetGravity) Gravity_ResetValues();
 
             ExternalForceAirControl = ForceAirControl;
         }
@@ -1327,7 +1339,7 @@ namespace MalbersAnimations.Controller
         public virtual void Force_Remove(float Aceleration = 0)
         {
             //if (debugStates)
-            //    Debug.Log("Force Removed", this);
+            //  Debug.Log("Force Removed", this);
 
             ExternalForceAcel = Aceleration;
             ExternalForce = Vector3.zero;
@@ -1360,6 +1372,26 @@ namespace MalbersAnimations.Controller
 
             return false;
         }
+
+
+        public virtual void UpInertia_Store()
+        {
+            UpInertia = Vector3.Project(Inertia, UpVector); //Store the Up Vector
+
+            //  Debug.Log($"UpInertia {UpInertia} ... DeltaPlatformPos{DeltaPlatformPos}");
+        }
+
+        public virtual void UpInertia_Apply()
+        {
+            if (UpInertia == Vector3.zero) return;
+
+            Position += UpInertia * DeltaTime;
+            //AdditivePosition += UpInertia * DeltaTime;
+
+            //  Debug.Log($"Apply!!! UpInertia {UpInertia}");
+        }
+
+        public virtual void UpInertia_Clear() => UpInertia = Vector3.zero;
 
         /// <summary> Use the height for aligning to the ground not the Pivots  </summary>
         public bool CheckIfGrounded_Height()
@@ -1443,12 +1475,16 @@ namespace MalbersAnimations.Controller
 
         private void SetDefaultMainColliderValues()
         {
-            if (MainCollider)
-                MainCapsuleDefault = new OverrideCapsuleCollider(MainCollider);
+            if (MainCollider) MainCapsuleDefault = new(MainCollider);
+
+            MainCapsuleDefault.modify = (CapsuleModifier)(-1);
         }
 
         /// <summary>  Resets the MainCollider of the Animal Controller  </summary>
-        public void Reset_MainCollider() => MainCapsuleDefault.Modify(MainCollider);
+        public void Reset_MainCollider()
+        {
+            MainCapsuleDefault.Modify(MainCollider);
+        }
 
 
 

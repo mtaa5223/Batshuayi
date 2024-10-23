@@ -1,5 +1,7 @@
 fileFormatVersion: 2
 guid: 358c718a8aab6284ab1dee6af28bf1e7
+labels:
+- AllCreature
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 2100000
@@ -10,6 +12,6 @@ AssetOrigin:
   serializedVersion: 1
   productId: 79902
   packageName: Horse Animset Pro (Riding System)
-  packageVersion: 4.4.5a
+  packageVersion: 4.4.6
   assetPath: Assets/Malbers Animations/Common/Shaders/Water.mat
-  uploadId: 690759
+  uploadId: 701090

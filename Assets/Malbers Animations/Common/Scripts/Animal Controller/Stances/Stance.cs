@@ -48,6 +48,12 @@ namespace MalbersAnimations.Controller
         [Tooltip("Stances to Block while this stance is active")]
         public List<StanceID> DisableStances = new();
 
+
+        [Tooltip("When the stance is playing ,it will override the main capsule collider to fit better the stance")]
+        public bool OverrideCapsule = false;
+
+        public OverrideCapsuleCollider newCapsule = new();
+
         /// <summary> Current Stored Input Value </summary>
         public bool InputValue { get; set; }
 
@@ -67,12 +73,12 @@ namespace MalbersAnimations.Controller
             set
             {
                 persistent.Value = value;
-                 //Debug.Log($" Persistent [{ID.name} ] {value}");
+                //Debug.Log($" Persistent [{ID.name} ] {value}");
             }
         }
 
         /// <summary>Current Activated Stance on the Animal</summary>
-        public bool Active  { get; set; }
+        public bool Active { get; set; }
         //{
         //    get => acti;
         //    set
@@ -278,11 +284,11 @@ namespace MalbersAnimations.Controller
 
             return activeStateID.Included(states, Include);
 
-           /* var ContainState = states.Contains(activeStateID); //Find if the Active State is on the list
-            if (ContainState && !Include) return false;
-            if (!ContainState && Include) return false;
+            /* var ContainState = states.Contains(activeStateID); //Find if the Active State is on the list
+             if (ContainState && !Include) return false;
+             if (!ContainState && Include) return false;
 
-            return true;*/
+             return true;*/
         }
 
 

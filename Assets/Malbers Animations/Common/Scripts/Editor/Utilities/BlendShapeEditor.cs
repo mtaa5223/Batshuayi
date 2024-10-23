@@ -11,7 +11,7 @@ namespace MalbersAnimations.Utilities
         BlendShape M;
         // private MonoScript script;
         protected int index = 0;
-        SerializedProperty blendShapes, preset, LODs, mesh, random,   PinnedShape, Min, Max;
+        SerializedProperty blendShapes, preset, LODs, mesh, random, PinnedShape, Min, Max;
 
         private void OnEnable()
         {
@@ -22,7 +22,7 @@ namespace MalbersAnimations.Utilities
             LODs = serializedObject.FindProperty("LODs");
             mesh = serializedObject.FindProperty("mesh");
             random = serializedObject.FindProperty("random");
-            
+
             Min = serializedObject.FindProperty("Min");
             Max = serializedObject.FindProperty("Max");
             PinnedShape = serializedObject.FindProperty("PinnedShape");
@@ -59,17 +59,24 @@ namespace MalbersAnimations.Utilities
                                     if (M.mesh) EditorUtility.SetDirty(M.mesh);
 
                                 }
+
                                 if (GUILayout.Button(new GUIContent("↺", "Reset Blend Shapes to Zero"), GUILayout.Width(30)))
                                 {
                                     M.ResetToZero();
-                                     EditorUtility.SetDirty(target);
+                                    EditorUtility.SetDirty(target);
 
-                                   if (M.mesh) EditorUtility.SetDirty(M.mesh);
+                                    if (M.mesh) EditorUtility.SetDirty(M.mesh);
 
                                     foreach (var item in M.LODs)
                                     {
                                         if (item) EditorUtility.SetDirty(item);
                                     };
+                                }
+
+                                using (new EditorGUI.DisabledGroupScope(preset.objectReferenceValue != null))
+                                {
+                                    random.boolValue = GUILayout.Toggle(random.boolValue,
+                                        new GUIContent("R", "Make Randoms Blend Shapes at Start"), EditorStyles.miniButton, GUILayout.Width(30));
                                 }
                             }
 
@@ -134,11 +141,7 @@ namespace MalbersAnimations.Utilities
                                         EditorGUILayout.LabelField(new GUIContent("Pin Shape:              (" + pin + ") |" + M.mesh.sharedMesh.GetBlendShapeName(pin) + "|", "Current Shape Store to modigy When accesing public methods from other scripts"));
                                     }
 
-                                    using (new EditorGUI.DisabledGroupScope(preset.objectReferenceValue != null))
-                                    {
-                                        random.boolValue = GUILayout.Toggle(random.boolValue,
-                                            new GUIContent("R", "Make Randoms Blend Shapes at Start"), EditorStyles.miniButton, GUILayout.Width(30));
-                                    }
+
                                 }
 
                                 using (new GUILayout.VerticalScope(EditorStyles.helpBox))
@@ -229,7 +232,7 @@ namespace MalbersAnimations.Utilities
                             }
                         }
                     }
-                    
+
                 }
             }
             if (EditorGUI.EndChangeCheck())

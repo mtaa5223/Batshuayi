@@ -33,11 +33,11 @@ namespace MalbersAnimations.IK
         public float GetProcessorAnimWeight(Animator animator)
             => AnimParameterHash != 0 ? animator.GetFloat(AnimParameterHash) : 1;
 
-
-
-        internal virtual void OnSceneGUI(IKSet set, Animator animator, UnityEngine.Object target, int index)
-        {
-
-        }
+        internal virtual void OnSceneGUI(IKSet set, Animator animator, UnityEngine.Object target, int index) { }
     }
+
+
+    public enum UpVectorType { VectorUp, Local, Global }
+
+
 }

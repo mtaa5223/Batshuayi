@@ -1,9 +1,9 @@
-﻿using UnityEngine; 
+﻿using UnityEngine;
 
 namespace MalbersAnimations.Scriptables
 {
     ///<summary> Store a list of Materials</summary>
-    [CreateAssetMenu(menuName = "Malbers Animations/Collections/Audio Clip Set", order = 1000)]
+    [CreateAssetMenu(menuName = "Malbers Animations/Variables/AudioClip List", order = 2000)]
     public class AudioClipListVar : ScriptableList<AudioClip>
     {
 
@@ -15,9 +15,14 @@ namespace MalbersAnimations.Scriptables
         [Range(0, 1)]
         public float SpatialBlend = 1;
 
+        public bool PlayRandom = true;
+        private int CurrentIndex;
+
         public void Play(AudioSource source)
         {
-            var clip = Item_GetRandom();
+            var clip = PlayRandom ? Item_GetRandom() : Item_Get(CurrentIndex);
+            CurrentIndex++;
+
             source.clip = clip;
             source.pitch = pitch.RandomValue;
             source.volume = volume.RandomValue;
@@ -28,7 +33,7 @@ namespace MalbersAnimations.Scriptables
 
         public void Play()
         {
-            var NewGO = new GameObject() { name = "Audio [" + this.name +"]"};
+            var NewGO = new GameObject() { name = "Audio [" + this.name + "]" };
             var source = NewGO.AddComponent<AudioSource>();
             source.spatialBlend = 1f;
             var clip = Item_GetRandom();

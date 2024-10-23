@@ -118,8 +118,10 @@ namespace MalbersAnimations.Scriptables
             {
                 if (!ValidObject(variable.objectReferenceValue)) return; //Do not Paint vectors
 
-                SerializedObject objs = new SerializedObject(variable.objectReferenceValue);
+                SerializedObject objs = new(variable.objectReferenceValue);
+
                 var Var = objs.FindProperty("value");
+
                 EditorGUI.BeginChangeCheck();
                 EditorGUI.PropertyField(variableRect, Var, GUIContent.none);
                 if (EditorGUI.EndChangeCheck())
@@ -131,7 +133,7 @@ namespace MalbersAnimations.Scriptables
         }
 
 
-        private static bool ValidObject(Object val) => (val is IntVar) || (val is FloatVar && val is not FloatRangeVar) || (val is BoolVar) || (val is StringVar);
+        private static bool ValidObject(Object val) => (val is IntVar) || (val is FloatVar && val is not FloatRangeVar) || (val is BoolVar) /*|| (val is StringVar)*/;
 
         //public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         //{

@@ -156,10 +156,10 @@ namespace MalbersAnimations
 
         [Tooltip("Tranform Reference for the Left Hand. The weapon will be parented to this transform when is equipped")]
         [ContextMenuItem("Find Left Hand", nameof(FindLHand))]
-        public Transform LeftHandEquipPoint;
+        [RequiredField] public Transform LeftHandEquipPoint;
         [Tooltip("Tranform Reference for the Right Hand. The weapon will be parented to this transform when is equipped")]
         [ContextMenuItem("Find Right Hand", nameof(FindRHand))]
-        public Transform RightHandEquipPoint;
+        [RequiredField] public Transform RightHandEquipPoint;
 
 
         private void FindRHand()
@@ -396,8 +396,8 @@ namespace MalbersAnimations
         //#region Bones References 
         //public Transform RightShoulder { get; set; }
         //public Transform LeftShoulder { get; set; }
-        public Transform RightHand { get; set; }
-        public Transform LeftHand { get; set; }
+        public Transform RightHand { get => RightHandEquipPoint; set => RightHandEquipPoint = value; }
+        public Transform LeftHand { get => LeftHandEquipPoint; set => LeftHandEquipPoint = value; }
         //public Transform Head { get; set; }
         //public Transform Chest { get; set; }
         //#endregion

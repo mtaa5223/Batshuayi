@@ -34,8 +34,12 @@ namespace MalbersAnimations.Utilities
         public void LerpMaterial(Component go) => LerpMaterial(go.gameObject);
         public void LerpMaterial(GameObject go)
         {
-            var all = go.transform.root.GetComponentsInChildren<SkinnedMeshRenderer>();
-            var all2 = go.transform.root.GetComponentsInChildren<MeshRenderer>();
+            var Core = go.GetComponentInParent<IObjectCore>();
+
+            if (Core != null) go = Core.transform.gameObject; //Get the Root of the Object Core
+
+            var all = go.GetComponentsInChildren<SkinnedMeshRenderer>();
+            var all2 = go.GetComponentsInChildren<MeshRenderer>();
 
             foreach (var item in all) LerpMaterial(item);
             foreach (var item in all2) LerpMaterial(item);

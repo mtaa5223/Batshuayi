@@ -270,8 +270,6 @@ namespace MalbersAnimations
             float arcDegree = 360.0f / total;
             var rot = arcDegree * index;
 
-            //Debug.Log($"total: {total} ..  arcDegree: {arcDegree} ");
-
             if (float.IsNaN(rot) || float.IsInfinity(rot)) rot = 0; //Weird bug
 
             // Debug.Log($"rot: {rot}");
@@ -293,7 +291,8 @@ namespace MalbersAnimations
 
         public float GetTargeterStoppingDistance(int index)
         {
-            if (Targeters == 1 && index == 0) return StopDistance(); //Use the default if there's only one targeter
+            if (TargetsLimits == 0 || Targeters == 1) return StopDistance();
+            //if (Targeters == 1 && index == 0) return StopDistance(); //Use the default if there's only one targeter
 
             //Sent the Wait Target Distance for the Outside waiting ones
             return index > TargetsLimits - 1 ? WaitTargeterDistance : TargeterStopDistance;

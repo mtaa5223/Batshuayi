@@ -18,6 +18,10 @@ MonoBehaviour:
     UseConstant: 1
     ConstantValue: {x: 0, y: 0, z: 1}
     Variable: {fileID: 0}
+  UseInputAxis:
+    UseConstant: 1
+    ConstantValue: 0
+    Variable: {fileID: 0}
   Force:
     UseConstant: 1
     ConstantValue: 15
@@ -32,9 +36,14 @@ MonoBehaviour:
     Variable: {fileID: 0}
   ExitAceleration:
     UseConstant: 1
-    ConstantValue: 2
+    ConstantValue: 5
     Variable: {fileID: 0}
   ResetGravity:
     UseConstant: 1
     ConstantValue: 1
     Variable: {fileID: 0}
+  NoY:
+    UseConstant: 1
+    ConstantValue: 0
+    Variable: {fileID: 0}
+  stateMultipliers: []

@@ -15,7 +15,7 @@ MonoBehaviour:
   Description: 'Sends true if the animal is on the Free Movement State.
 
     (Fly-Underwater)'
-  debug: 0
+  debug: 1
   m_int:
     UseConstant: 1
     ConstantValue: 0

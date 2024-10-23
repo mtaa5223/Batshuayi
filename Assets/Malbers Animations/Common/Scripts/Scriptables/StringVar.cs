@@ -24,7 +24,7 @@ namespace MalbersAnimations.Scriptables
         {
             get => value;
             set
-            { 
+            {
                 this.value = value;
                 OnValueChanged(value);         //If we are using OnChange event Invoked
 
@@ -35,6 +35,7 @@ namespace MalbersAnimations.Scriptables
         }
 
         public virtual void SetValue(StringVar var) => Value = var.Value;
+        public virtual void SetValue(string var) => Value = var;
         public virtual void SetValue(UnityEngine.Object var) => Value = var.name;
 
         public static implicit operator string(StringVar reference) => reference.Value;
@@ -42,7 +43,7 @@ namespace MalbersAnimations.Scriptables
 
     [System.Serializable]
     public class StringReference : ReferenceVar
-    { 
+    {
         public string ConstantValue;
         [RequiredField] public StringVar Variable;
 
@@ -50,6 +51,12 @@ namespace MalbersAnimations.Scriptables
         {
             UseConstant = true;
             ConstantValue = string.Empty;
+        }
+
+        public StringReference(StringVar newValue)
+        {
+            UseConstant = false;
+            Variable = newValue;
         }
 
         public StringReference(bool variable = false)
@@ -117,7 +124,10 @@ namespace MalbersAnimations.Scriptables
                     value.stringValue = EditorGUILayout.TextArea(value.stringValue, GUILayout.MinWidth(50));
                     MalbersEditor.DrawDebugIcon(debug);
                 }
-                EditorGUILayout.PropertyField(Description);
+
+                EditorGUILayout.LabelField("Description");
+
+                EditorGUILayout.PropertyField(Description, GUIContent.none);
             }
             serializedObject.ApplyModifiedProperties();
         }

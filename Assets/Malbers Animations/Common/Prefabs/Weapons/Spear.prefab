@@ -61,6 +61,7 @@ MonoBehaviour:
       serializedVersion: 2
       m_Bits: 4294967295
     Variable: {fileID: 0}
+  Tags: []
   AttackDirection: 0
   triggerInteraction: 1
   owner: {fileID: 0}
@@ -282,7 +283,7 @@ MonoBehaviour:
   m_AimSide: 0
   weaponType: {fileID: 11400000, guid: 29bdac49b8510e74db1c074ba91fbe3f, type: 2}
   holster: {fileID: 11400000, guid: 8be06e7fc27c57c4e82d4a5cafd76296, type: 2}
-  holsterAnim: {fileID: 11400000, guid: 60e5ddebd6e92ff4aa5c21ddf2babe1c, type: 2}
+  holsterAnim: {fileID: 11400000, guid: 31941dcdef3462d4c959c444d5b4ad1b, type: 2}
   m_holsterIndex: 1
   rightHand:
     UseConstant: 1
@@ -313,15 +314,23 @@ MonoBehaviour:
     UseConstant: 1
     ConstantValue: 0
     Variable: {fileID: 0}
+  strafeOnUnequip:
+    UseConstant: 1
+    ConstantValue: 0
+    Variable: {fileID: 0}
   AimIKRight: {fileID: 0}
   AimIKLeft: {fileID: 0}
   TwoHandIK:
     UseConstant: 1
     ConstantValue: 1
     Variable: {fileID: 0}
-  IKHandPoint:
+  IKHandLeft:
     UseConstant: 1
     ConstantValue: {fileID: 7729584323209353794}
+    Variable: {fileID: 0}
+  IKHandRight:
+    UseConstant: 1
+    ConstantValue: {fileID: 0}
     Variable: {fileID: 0}
   HolsterOffset:
     Position: {x: -0.04, y: -0.067, z: -0.282}
@@ -894,6 +903,10 @@ MonoBehaviour:
     UseConstant: 1
     ConstantValue: 0
     Variable: {fileID: 0}
+  ignoreStatic:
+    UseConstant: 1
+    ConstantValue: 0
+    Variable: {fileID: 0}
   trigger: {fileID: 0}
   Editor_Tabs1: 0
 --- !u!1 &7765958805078189543
@@ -946,3 +959,7 @@ MonoBehaviour:
   DebugColor: {r: 1, g: 0.8101982, b: 0, a: 0.27667493}
   DrawAxis: 0
   AxisSize: 0.65
+  _collider: {fileID: 0}
+  DrawLineTo: 0
+  ConnectTo: {fileID: 0}
+  Rect: {x: 1, y: 1, z: 1}

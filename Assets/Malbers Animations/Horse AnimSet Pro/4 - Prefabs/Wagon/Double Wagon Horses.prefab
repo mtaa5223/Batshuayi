@@ -221,6 +221,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -346,6 +349,10 @@ MonoBehaviour:
   Owner: {fileID: 4756692418310942}
   Meshes:
   - Name: Fabric
+    name:
+      UseConstant: 1
+      ConstantValue: 
+      Variable: {fileID: 0}
     Active: 1
     meshes:
     - {fileID: 4217504520795078}
@@ -379,7 +386,14 @@ MonoBehaviour:
       MainRenderer: {fileID: 0}
     Current: 0
     CurrentMeshItemIndex: 0
+    OnSetMeshChange:
+      m_PersistentCalls:
+        m_Calls: []
   - Name: Stear
+    name:
+      UseConstant: 1
+      ConstantValue: 
+      Variable: {fileID: 0}
     Active: 1
     meshes:
     - {fileID: 4894299571246588}
@@ -414,15 +428,28 @@ MonoBehaviour:
       MainRenderer: {fileID: 0}
     Current: 0
     CurrentMeshItemIndex: 0
+    OnSetMeshChange:
+      m_PersistentCalls:
+        m_Calls: []
   showMeshesList: 1
   debug: 0
   Pinned:
     Name: NameHere
+    name:
+      UseConstant: 1
+      ConstantValue: 
+      Variable: {fileID: 0}
     Active: 1
     meshes: []
     MeshItems: []
     Current: 0
     CurrentMeshItemIndex: 0
+    OnSetMeshChange:
+      m_PersistentCalls:
+        m_Calls: []
+  OnMeshChanged:
+    m_PersistentCalls:
+      m_Calls: []
   MeshItemUpdated: 1
   selectedMeshIndex: 0
   random: 0
@@ -637,13 +664,13 @@ ConfigurableJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1067345921132002}
+  serializedVersion: 4
   m_ConnectedBody: {fileID: 0}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0.33, y: 0.72999996, z: -0.20999908}
-  serializedVersion: 3
   m_SecondaryAxis: {x: 0, y: 1, z: 0}
   m_XMotion: 0
   m_YMotion: 0
@@ -746,6 +773,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   size: 0.56
   Opacity: 1
+  x: 1
+  y: 1
+  z: 1
 --- !u!1 &1080178544520602
 GameObject:
   m_ObjectHideFlags: 0
@@ -1071,6 +1101,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -1154,6 +1187,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -1270,6 +1306,10 @@ MonoBehaviour:
   DebugColor: {r: 0, g: 0.91724133, b: 1, a: 1}
   DrawAxis: 0
   AxisSize: 0.3
+  _collider: {fileID: 0}
+  DrawLineTo: 0
+  ConnectTo: {fileID: 0}
+  Rect: {x: 1, y: 1, z: 1}
 --- !u!1 &1184619580141658
 GameObject:
   m_ObjectHideFlags: 0
@@ -1531,6 +1571,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -1606,6 +1649,10 @@ MonoBehaviour:
   DebugColor: {r: 0, g: 1, b: 0, a: 1}
   DrawAxis: 0
   AxisSize: 0.3
+  _collider: {fileID: 0}
+  DrawLineTo: 0
+  ConnectTo: {fileID: 0}
+  Rect: {x: 1, y: 1, z: 1}
 --- !u!1 &1233110832283338
 GameObject:
   m_ObjectHideFlags: 0
@@ -1783,6 +1830,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -1890,6 +1940,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -1962,7 +2015,7 @@ SkinnedMeshRenderer:
   m_DirtyAABB: 0
 --- !u!95 &95724416369217338
 Animator:
-  serializedVersion: 5
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1976,6 +2029,7 @@ Animator:
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
@@ -2063,6 +2117,10 @@ MonoBehaviour:
   DebugColor: {r: 0, g: 0.54482746, b: 1, a: 1}
   DrawAxis: 0
   AxisSize: 0.3
+  _collider: {fileID: 0}
+  DrawLineTo: 0
+  ConnectTo: {fileID: 0}
+  Rect: {x: 1, y: 1, z: 1}
 --- !u!1 &1320825293963186
 GameObject:
   m_ObjectHideFlags: 0
@@ -2293,6 +2351,10 @@ MonoBehaviour:
   DebugColor: {r: 1, g: 1, b: 1, a: 0.07058824}
   DrawAxis: 0
   AxisSize: 0.3
+  _collider: {fileID: 0}
+  DrawLineTo: 0
+  ConnectTo: {fileID: 0}
+  Rect: {x: 1, y: 1, z: 1}
 --- !u!1 &1342758190299488
 GameObject:
   m_ObjectHideFlags: 0
@@ -2342,6 +2404,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -2433,6 +2498,10 @@ MonoBehaviour:
   DebugColor: {r: 1, g: 0, b: 0, a: 1}
   DrawAxis: 0
   AxisSize: 0.3
+  _collider: {fileID: 0}
+  DrawLineTo: 0
+  ConnectTo: {fileID: 0}
+  Rect: {x: 1, y: 1, z: 1}
 --- !u!1 &1357965283404370
 GameObject:
   m_ObjectHideFlags: 0
@@ -2555,6 +2624,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -2665,6 +2737,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 4802108462050782}
   - {fileID: 4894299571246588}
   - {fileID: 4547062321720080}
   m_Father: {fileID: 3383812932753706641}
@@ -2863,6 +2936,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -2937,6 +3013,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -3055,6 +3134,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -3318,7 +3400,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &95525230635063732
 Animator:
-  serializedVersion: 5
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -3332,6 +3414,7 @@ Animator:
   m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
+  m_AnimatePhysics: 1
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
@@ -3423,6 +3506,17 @@ MonoBehaviour:
     states: []
     StateQueue: []
     DisableStances: []
+    OverrideCapsule: 0
+    newCapsule:
+      name: 
+      enabled: 0
+      isTrigger: 0
+      center: {x: 0, y: 0, z: 0}
+      height: 0
+      direction: 0
+      radius: 0
+      material: {fileID: 0}
+      modify: 0
   modes:
   - active: 1
     TemporalActivation: 1
@@ -3454,6 +3548,10 @@ MonoBehaviour:
         ConstantValue: {fileID: 0}
         Variable: {fileID: 0}
       ClipDelay:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
+      CoolDown:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
@@ -3540,6 +3638,10 @@ MonoBehaviour:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
+      CoolDown:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
       audioSource: {fileID: 0}
       m_stopAudio: 1
       modifier: {fileID: 0}
@@ -3620,6 +3722,10 @@ MonoBehaviour:
         ConstantValue: {fileID: 0}
         Variable: {fileID: 0}
       ClipDelay:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
+      CoolDown:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
@@ -3744,6 +3850,10 @@ MonoBehaviour:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
+      CoolDown:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
       audioSource: {fileID: 0}
       m_stopAudio: 1
       modifier: {fileID: 0}
@@ -3824,6 +3934,10 @@ MonoBehaviour:
         ConstantValue: {fileID: 0}
         Variable: {fileID: 0}
       ClipDelay:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
+      CoolDown:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
@@ -3910,6 +4024,10 @@ MonoBehaviour:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
+      CoolDown:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
       audioSource: {fileID: 0}
       m_stopAudio: 1
       modifier: {fileID: 0}
@@ -3990,6 +4108,10 @@ MonoBehaviour:
         ConstantValue: {fileID: 0}
         Variable: {fileID: 0}
       ClipDelay:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
+      CoolDown:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
@@ -4076,6 +4198,10 @@ MonoBehaviour:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
+      CoolDown:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
       audioSource: {fileID: 0}
       m_stopAudio: 1
       modifier: {fileID: 0}
@@ -4156,6 +4282,10 @@ MonoBehaviour:
         ConstantValue: {fileID: 0}
         Variable: {fileID: 0}
       ClipDelay:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
+      CoolDown:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
@@ -4280,6 +4410,10 @@ MonoBehaviour:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
+      CoolDown:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
       audioSource: {fileID: 0}
       m_stopAudio: 1
       modifier: {fileID: 0}
@@ -4363,6 +4497,10 @@ MonoBehaviour:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
+      CoolDown:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
       audioSource: {fileID: 0}
       m_stopAudio: 1
       modifier: {fileID: 0}
@@ -4443,6 +4581,10 @@ MonoBehaviour:
         ConstantValue: {fileID: 0}
         Variable: {fileID: 0}
       ClipDelay:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
+      CoolDown:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
@@ -5338,6 +5480,10 @@ MonoBehaviour:
   Owner: {fileID: 4489371312074098}
   Meshes:
   - Name: Saddle
+    name:
+      UseConstant: 1
+      ConstantValue: 
+      Variable: {fileID: 0}
     Active: 1
     meshes:
     - {fileID: 3380662189150947681}
@@ -5372,7 +5518,14 @@ MonoBehaviour:
       MainRenderer: {fileID: 0}
     Current: 1
     CurrentMeshItemIndex: 0
+    OnSetMeshChange:
+      m_PersistentCalls:
+        m_Calls: []
   - Name: Armor
+    name:
+      UseConstant: 1
+      ConstantValue: 
+      Variable: {fileID: 0}
     Active: 1
     meshes:
     - {fileID: 3383755876203832201}
@@ -5405,7 +5558,14 @@ MonoBehaviour:
       MainRenderer: {fileID: 0}
     Current: 1
     CurrentMeshItemIndex: 0
+    OnSetMeshChange:
+      m_PersistentCalls:
+        m_Calls: []
   - Name: Mane
+    name:
+      UseConstant: 1
+      ConstantValue: 
+      Variable: {fileID: 0}
     Active: 1
     meshes:
     - {fileID: 3381004057113344323}
@@ -5439,7 +5599,14 @@ MonoBehaviour:
       MainRenderer: {fileID: 0}
     Current: 0
     CurrentMeshItemIndex: 0
+    OnSetMeshChange:
+      m_PersistentCalls:
+        m_Calls: []
   - Name: Carriage Saddle
+    name:
+      UseConstant: 1
+      ConstantValue: 
+      Variable: {fileID: 0}
     Active: 1
     meshes:
     - {fileID: 3383556064728921467}
@@ -5472,7 +5639,14 @@ MonoBehaviour:
       MainRenderer: {fileID: 0}
     Current: 0
     CurrentMeshItemIndex: 0
+    OnSetMeshChange:
+      m_PersistentCalls:
+        m_Calls: []
   - Name: Reins
+    name:
+      UseConstant: 1
+      ConstantValue: 
+      Variable: {fileID: 0}
     Active: 1
     meshes:
     - {fileID: 3383776629111462093}
@@ -5505,15 +5679,28 @@ MonoBehaviour:
       MainRenderer: {fileID: 0}
     Current: 0
     CurrentMeshItemIndex: 0
+    OnSetMeshChange:
+      m_PersistentCalls:
+        m_Calls: []
   showMeshesList: 1
   debug: 0
   Pinned:
     Name: NameHere
+    name:
+      UseConstant: 1
+      ConstantValue: 
+      Variable: {fileID: 0}
     Active: 1
     meshes: []
     MeshItems: []
     Current: 0
     CurrentMeshItemIndex: 0
+    OnSetMeshChange:
+      m_PersistentCalls:
+        m_Calls: []
+  OnMeshChanged:
+    m_PersistentCalls:
+      m_Calls: []
   MeshItemUpdated: 1
   selectedMeshIndex: 0
   random: 0
@@ -5734,6 +5921,10 @@ MonoBehaviour:
   DebugColor: {r: 0, g: 0.54482746, b: 1, a: 1}
   DrawAxis: 0
   AxisSize: 0.3
+  _collider: {fileID: 0}
+  DrawLineTo: 0
+  ConnectTo: {fileID: 0}
+  Rect: {x: 1, y: 1, z: 1}
 --- !u!1 &1542386095078352
 GameObject:
   m_ObjectHideFlags: 0
@@ -5785,6 +5976,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -9661,6 +9855,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -9767,6 +9964,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -9888,6 +10088,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -9991,7 +10194,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &95003862721181554
 Animator:
-  serializedVersion: 5
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -10005,6 +10208,7 @@ Animator:
   m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
+  m_AnimatePhysics: 1
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
@@ -10256,6 +10460,9 @@ MonoBehaviour:
   OnInputDisabled:
     m_PersistentCalls:
       m_Calls: []
+  OnUsingGamePad:
+    m_PersistentCalls:
+      m_Calls: []
   IgnoreOnPause:
     UseConstant: 1
     ConstantValue: 1
@@ -10378,6 +10585,10 @@ MonoBehaviour:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
+      CoolDown:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
       audioSource: {fileID: 0}
       m_stopAudio: 1
       modifier: {fileID: 0}
@@ -10461,6 +10672,10 @@ MonoBehaviour:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
+      CoolDown:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
       audioSource: {fileID: 0}
       m_stopAudio: 1
       modifier: {fileID: 0}
@@ -10541,6 +10756,10 @@ MonoBehaviour:
         ConstantValue: {fileID: 0}
         Variable: {fileID: 0}
       ClipDelay:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
+      CoolDown:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
@@ -10665,6 +10884,10 @@ MonoBehaviour:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
+      CoolDown:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
       audioSource: {fileID: 0}
       m_stopAudio: 1
       modifier: {fileID: 0}
@@ -10745,6 +10968,10 @@ MonoBehaviour:
         ConstantValue: {fileID: 0}
         Variable: {fileID: 0}
       ClipDelay:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
+      CoolDown:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
@@ -10831,6 +11058,10 @@ MonoBehaviour:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
+      CoolDown:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
       audioSource: {fileID: 0}
       m_stopAudio: 1
       modifier: {fileID: 0}
@@ -10911,6 +11142,10 @@ MonoBehaviour:
         ConstantValue: {fileID: 0}
         Variable: {fileID: 0}
       ClipDelay:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
+      CoolDown:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
@@ -10997,6 +11232,10 @@ MonoBehaviour:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
+      CoolDown:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
       audioSource: {fileID: 0}
       m_stopAudio: 1
       modifier: {fileID: 0}
@@ -11077,6 +11316,10 @@ MonoBehaviour:
         ConstantValue: {fileID: 0}
         Variable: {fileID: 0}
       ClipDelay:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
+      CoolDown:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
@@ -11201,6 +11444,10 @@ MonoBehaviour:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
+      CoolDown:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
       audioSource: {fileID: 0}
       m_stopAudio: 1
       modifier: {fileID: 0}
@@ -11284,6 +11531,10 @@ MonoBehaviour:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
+      CoolDown:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
       audioSource: {fileID: 0}
       m_stopAudio: 1
       modifier: {fileID: 0}
@@ -11364,6 +11615,10 @@ MonoBehaviour:
         ConstantValue: {fileID: 0}
         Variable: {fileID: 0}
       ClipDelay:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
+      CoolDown:
         UseConstant: 1
         ConstantValue: 0
         Variable: {fileID: 0}
@@ -12057,8 +12312,7 @@ MonoBehaviour:
         m_MethodName: Stat_Pin
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 11400000, guid: 8f96533110b305a4792c37a844108d26,
-            type: 2}
+          m_ObjectArgument: {fileID: 11400000, guid: 8f96533110b305a4792c37a844108d26, type: 2}
           m_ObjectArgumentAssemblyTypeName: MalbersAnimations.StatID, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -12223,6 +12477,7 @@ MonoBehaviour:
       ConstantValue: 0
       Variable: {fileID: 0}
     resetTo: 1
+    ResetOnEnable: 1
     isPercent: 1
     debug: 0
     OnStatFull:
@@ -12356,6 +12611,7 @@ MonoBehaviour:
       ConstantValue: 0
       Variable: {fileID: 0}
     resetTo: 1
+    ResetOnEnable: 1
     isPercent: 1
     debug: 0
     OnStatFull:
@@ -12369,8 +12625,7 @@ MonoBehaviour:
           m_MethodName: _DisableStat
           m_Mode: 2
           m_Arguments:
-            m_ObjectArgument: {fileID: 11400000, guid: d6b3e636d59a6c547a2cad40b69f4432,
-              type: 2}
+            m_ObjectArgument: {fileID: 11400000, guid: d6b3e636d59a6c547a2cad40b69f4432, type: 2}
             m_ObjectArgumentAssemblyTypeName: MalbersAnimations.StatID, Assembly-CSharp
             m_IntArgument: 0
             m_FloatArgument: 0
@@ -12382,8 +12637,7 @@ MonoBehaviour:
           m_MethodName: ActivateState
           m_Mode: 2
           m_Arguments:
-            m_ObjectArgument: {fileID: 11400000, guid: adfa24f62d6db4d40a1d837f4ec1a6e9,
-              type: 2}
+            m_ObjectArgument: {fileID: 11400000, guid: adfa24f62d6db4d40a1d837f4ec1a6e9, type: 2}
             m_ObjectArgumentAssemblyTypeName: MalbersAnimations.StateID, Assembly-CSharp
             m_IntArgument: 0
             m_FloatArgument: 0
@@ -12492,6 +12746,7 @@ MonoBehaviour:
       ConstantValue: 0
       Variable: {fileID: 0}
     resetTo: 1
+    ResetOnEnable: 1
     isPercent: 1
     debug: 0
     OnStatFull:
@@ -12558,6 +12813,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Events:
   - Event: {fileID: 11400000, guid: b4b7277127c05314d9370d7e22050a8b, type: 2}
+    active: 1
     useInt: 0
     useFloat: 0
     useVoid: 1
@@ -12648,11 +12904,17 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
     IntEventList: []
+    FloatEventList: []
     AdvancedInteger: 0
+    AdvancedFloat: 0
     AdvancedBool: 0
     InvertBool: 0
-    multiplier: 1
+    multiplier:
+      UseConstant: 1
+      ConstantValue: 1
+      Variable: {fileID: 0}
   - Event: {fileID: 11400000, guid: 13aebbaec2ec2004290a70fdf90eb6a6, type: 2}
+    active: 1
     useInt: 1
     useFloat: 0
     useVoid: 0
@@ -12681,8 +12943,7 @@ MonoBehaviour:
           m_MethodName: Mode_Pin
           m_Mode: 2
           m_Arguments:
-            m_ObjectArgument: {fileID: 11400000, guid: 1286867ad3c4cdd4baacac3373aff92c,
-              type: 2}
+            m_ObjectArgument: {fileID: 11400000, guid: 1286867ad3c4cdd4baacac3373aff92c, type: 2}
             m_ObjectArgumentAssemblyTypeName: MalbersAnimations.ModeID, Assembly-CSharp
             m_IntArgument: 0
             m_FloatArgument: 0
@@ -12744,11 +13005,17 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
     IntEventList: []
+    FloatEventList: []
     AdvancedInteger: 0
+    AdvancedFloat: 0
     AdvancedBool: 0
     InvertBool: 0
-    multiplier: 1
+    multiplier:
+      UseConstant: 1
+      ConstantValue: 1
+      Variable: {fileID: 0}
   - Event: {fileID: 11400000, guid: 6a983ea4cab3ed347a77e3a1ec51a4ef, type: 2}
+    active: 1
     useInt: 1
     useFloat: 0
     useVoid: 1
@@ -12789,8 +13056,7 @@ MonoBehaviour:
           m_MethodName: Mode_Pin
           m_Mode: 2
           m_Arguments:
-            m_ObjectArgument: {fileID: 11400000, guid: 4dc5ca673dc60d346a62529c8a9bd8ff,
-              type: 2}
+            m_ObjectArgument: {fileID: 11400000, guid: 4dc5ca673dc60d346a62529c8a9bd8ff, type: 2}
             m_ObjectArgumentAssemblyTypeName: MalbersAnimations.ModeID, Assembly-CSharp
             m_IntArgument: 0
             m_FloatArgument: 0
@@ -12817,8 +13083,7 @@ MonoBehaviour:
           m_MethodName: Mode_Pin
           m_Mode: 2
           m_Arguments:
-            m_ObjectArgument: {fileID: 11400000, guid: 4dc5ca673dc60d346a62529c8a9bd8ff,
-              type: 2}
+            m_ObjectArgument: {fileID: 11400000, guid: 4dc5ca673dc60d346a62529c8a9bd8ff, type: 2}
             m_ObjectArgumentAssemblyTypeName: MalbersAnimations.ModeID, Assembly-CSharp
             m_IntArgument: 0
             m_FloatArgument: 0
@@ -12865,11 +13130,17 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
     IntEventList: []
+    FloatEventList: []
     AdvancedInteger: 0
+    AdvancedFloat: 0
     AdvancedBool: 0
     InvertBool: 0
-    multiplier: 1
+    multiplier:
+      UseConstant: 1
+      ConstantValue: 1
+      Variable: {fileID: 0}
   - Event: {fileID: 11400000, guid: e0d2989fc8db01d41b4c1ae79bba109c, type: 2}
+    active: 1
     useInt: 0
     useFloat: 0
     useVoid: 0
@@ -12901,8 +13172,7 @@ MonoBehaviour:
           m_MethodName: State_Pin
           m_Mode: 2
           m_Arguments:
-            m_ObjectArgument: {fileID: 11400000, guid: 9ae07cd2f8f4c054687fecf634f8e5b3,
-              type: 2}
+            m_ObjectArgument: {fileID: 11400000, guid: 9ae07cd2f8f4c054687fecf634f8e5b3, type: 2}
             m_ObjectArgumentAssemblyTypeName: MalbersAnimations.StateID, Assembly-CSharp
             m_IntArgument: 0
             m_FloatArgument: 0
@@ -12949,11 +13219,17 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
     IntEventList: []
+    FloatEventList: []
     AdvancedInteger: 0
+    AdvancedFloat: 0
     AdvancedBool: 0
     InvertBool: 0
-    multiplier: 1
+    multiplier:
+      UseConstant: 1
+      ConstantValue: 1
+      Variable: {fileID: 0}
   - Event: {fileID: 11400000, guid: 8e5a46a73f5b5b54294d476418b3c09f, type: 2}
+    active: 1
     useInt: 0
     useFloat: 0
     useVoid: 0
@@ -13020,11 +13296,17 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
     IntEventList: []
+    FloatEventList: []
     AdvancedInteger: 0
+    AdvancedFloat: 0
     AdvancedBool: 0
     InvertBool: 0
-    multiplier: 1
+    multiplier:
+      UseConstant: 1
+      ConstantValue: 1
+      Variable: {fileID: 0}
   - Event: {fileID: 11400000, guid: 6db0a93f790768f4abb1ada45c5ea4ca, type: 2}
+    active: 1
     useInt: 0
     useFloat: 0
     useVoid: 1
@@ -13103,11 +13385,17 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
     IntEventList: []
+    FloatEventList: []
     AdvancedInteger: 0
+    AdvancedFloat: 0
     AdvancedBool: 0
     InvertBool: 0
-    multiplier: 1
+    multiplier:
+      UseConstant: 1
+      ConstantValue: 1
+      Variable: {fileID: 0}
   - Event: {fileID: 11400000, guid: 7103f9e29505e9e43bf1027b033f56b2, type: 2}
+    active: 1
     useInt: 0
     useFloat: 0
     useVoid: 0
@@ -13174,10 +13462,15 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
     IntEventList: []
+    FloatEventList: []
     AdvancedInteger: 0
+    AdvancedFloat: 0
     AdvancedBool: 0
     InvertBool: 0
-    multiplier: 1
+    multiplier:
+      UseConstant: 1
+      ConstantValue: 1
+      Variable: {fileID: 0}
   ShowEvents: 1
   SelectedEvent: 0
 --- !u!1 &1554242372523554
@@ -13238,6 +13531,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -13314,6 +13610,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -13418,6 +13717,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -13582,6 +13884,10 @@ MonoBehaviour:
   DebugColor: {r: 1, g: 1, b: 1, a: 0.07058824}
   DrawAxis: 0
   AxisSize: 0.3
+  _collider: {fileID: 0}
+  DrawLineTo: 0
+  ConnectTo: {fileID: 0}
+  Rect: {x: 1, y: 1, z: 1}
 --- !u!1 &1614790828647466
 GameObject:
   m_ObjectHideFlags: 0
@@ -13640,6 +13946,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -13715,6 +14024,10 @@ MonoBehaviour:
   DebugColor: {r: 1, g: 0.4116228, b: 0, a: 1}
   DrawAxis: 0
   AxisSize: 0.65
+  _collider: {fileID: 0}
+  DrawLineTo: 0
+  ConnectTo: {fileID: 0}
+  Rect: {x: 1, y: 1, z: 1}
 --- !u!1 &1635972534170276
 GameObject:
   m_ObjectHideFlags: 0
@@ -13857,6 +14170,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -13956,6 +14272,10 @@ MonoBehaviour:
   DebugColor: {r: 1, g: 0.4116228, b: 0, a: 1}
   DrawAxis: 0
   AxisSize: 0.65
+  _collider: {fileID: 0}
+  DrawLineTo: 0
+  ConnectTo: {fileID: 0}
+  Rect: {x: 1, y: 1, z: 1}
 --- !u!1 &1671682933626552
 GameObject:
   m_ObjectHideFlags: 0
@@ -14132,6 +14452,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -14305,6 +14628,92 @@ Transform:
   - {fileID: 4159761509466094}
   m_Father: {fileID: 4173442955326258}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1793040839181362
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4802108462050782}
+  - component: {fileID: 33632970520844548}
+  - component: {fileID: 23308616917450392}
+  m_Layer: 1
+  m_Name: Feet Rest
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4802108462050782
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1793040839181362}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0.01146698, y: -0.0737696, z: 0.5766983}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4079920895502490}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &33632970520844548
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1793040839181362}
+  m_Mesh: {fileID: 4300022, guid: 50c6afc5bfddf35468117faea9ce0cda, type: 3}
+--- !u!23 &23308616917450392
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1793040839181362}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 4294967295
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: b9f531ec852751745ab47c1faaa9ed11, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1811643664814600
 GameObject:
   m_ObjectHideFlags: 0
@@ -14392,6 +14801,10 @@ MonoBehaviour:
   DebugColor: {r: 1, g: 0, b: 0, a: 1}
   DrawAxis: 0
   AxisSize: 0.3
+  _collider: {fileID: 0}
+  DrawLineTo: 0
+  ConnectTo: {fileID: 0}
+  Rect: {x: 1, y: 1, z: 1}
 --- !u!1 &1825434052644540
 GameObject:
   m_ObjectHideFlags: 0
@@ -14464,13 +14877,13 @@ ConfigurableJoint:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1825434052644540}
+  serializedVersion: 4
   m_ConnectedBody: {fileID: 54999640388200968}
   m_ConnectedArticulationBody: {fileID: 0}
   m_Anchor: {x: 0, y: -0.06, z: 1.08}
   m_Axis: {x: 0, y: 1, z: 0}
   m_AutoConfigureConnectedAnchor: 1
   m_ConnectedAnchor: {x: 0, y: -0.21999997, z: -1.7499979}
-  serializedVersion: 3
   m_SecondaryAxis: {x: 0, y: 0, z: 1}
   m_XMotion: 0
   m_YMotion: 0
@@ -14749,6 +15162,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -15129,6 +15545,10 @@ MonoBehaviour:
   DebugColor: {r: 0, g: 1, b: 0, a: 1}
   DrawAxis: 0
   AxisSize: 0.3
+  _collider: {fileID: 0}
+  DrawLineTo: 0
+  ConnectTo: {fileID: 0}
+  Rect: {x: 1, y: 1, z: 1}
 --- !u!1 &1926977646933386
 GameObject:
   m_ObjectHideFlags: 0
@@ -15350,6 +15770,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -15521,6 +15944,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -15636,6 +16062,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -15711,6 +16140,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -16242,6 +16674,10 @@ MonoBehaviour:
   DebugColor: {r: 0, g: 0, b: 1, a: 1}
   DrawAxis: 0
   AxisSize: 0.65
+  _collider: {fileID: 0}
+  DrawLineTo: 0
+  ConnectTo: {fileID: 0}
+  Rect: {x: 1, y: 1, z: 1}
 --- !u!1 &1996528740808535803
 GameObject:
   m_ObjectHideFlags: 0
@@ -16301,6 +16737,7 @@ MonoBehaviour:
   additiveStopDistance: 0
   slowingDistance: 0
   UseScale: 1
+  InterruptModeOnTarget: 1
   ClearTargetOnDisable: 1
   targetHeight: 5
   StopOnTargetTooHigh: 1
@@ -16678,6 +17115,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -16768,6 +17208,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -17519,6 +17962,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -17774,6 +18220,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -18545,6 +18994,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -18919,6 +19371,10 @@ MonoBehaviour:
   DebugColor: {r: 1, g: 0.4116228, b: 0, a: 1}
   DrawAxis: 0
   AxisSize: 0.65
+  _collider: {fileID: 0}
+  DrawLineTo: 0
+  ConnectTo: {fileID: 0}
+  Rect: {x: 1, y: 1, z: 1}
 --- !u!1 &3386471298501694209
 GameObject:
   m_ObjectHideFlags: 0
@@ -18999,6 +19455,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -19089,6 +19548,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -19228,6 +19690,10 @@ MonoBehaviour:
   DebugColor: {r: 1, g: 0.4116228, b: 0, a: 1}
   DrawAxis: 0
   AxisSize: 0.65
+  _collider: {fileID: 0}
+  DrawLineTo: 0
+  ConnectTo: {fileID: 0}
+  Rect: {x: 1, y: 1, z: 1}
 --- !u!1 &3386508924626557757
 GameObject:
   m_ObjectHideFlags: 0
@@ -19277,6 +19743,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -19375,6 +19844,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -19524,6 +19996,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -19596,7 +20071,7 @@ SkinnedMeshRenderer:
   m_DirtyAABB: 0
 --- !u!95 &3434237506088342961
 Animator:
-  serializedVersion: 5
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -19610,6 +20085,7 @@ Animator:
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
@@ -19664,6 +20140,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -19920,6 +20399,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -20016,6 +20498,9 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -20469,6 +20954,10 @@ MonoBehaviour:
   Owner: {fileID: 8157481063990121232}
   Meshes:
   - Name: Saddle
+    name:
+      UseConstant: 1
+      ConstantValue: 
+      Variable: {fileID: 0}
     Active: 1
     meshes:
     - {fileID: 4019302087596708}
@@ -20503,7 +20992,14 @@ MonoBehaviour:
       MainRenderer: {fileID: 0}
     Current: 1
     CurrentMeshItemIndex: 0
+    OnSetMeshChange:
+      m_PersistentCalls:
+        m_Calls: []
   - Name: Armor
+    name:
+      UseConstant: 1
+      ConstantValue: 
+      Variable: {fileID: 0}
     Active: 1
     meshes:
     - {fileID: 4274143021496176}
@@ -20536,7 +21032,14 @@ MonoBehaviour:
       MainRenderer: {fileID: 0}
     Current: 1
     CurrentMeshItemIndex: 0
+    OnSetMeshChange:
+      m_PersistentCalls:
+        m_Calls: []
   - Name: Mane
+    name:
+      UseConstant: 1
+      ConstantValue: 
+      Variable: {fileID: 0}
     Active: 1
     meshes:
     - {fileID: 4809277669895610}
@@ -20570,7 +21073,14 @@ MonoBehaviour:
       MainRenderer: {fileID: 0}
     Current: 0
     CurrentMeshItemIndex: 0
+    OnSetMeshChange:
+      m_PersistentCalls:
+        m_Calls: []
   - Name: Carriage Saddle
+    name:
+      UseConstant: 1
+      ConstantValue: 
+      Variable: {fileID: 0}
     Active: 1
     meshes:
     - {fileID: 4051792766689666}
@@ -20603,7 +21113,14 @@ MonoBehaviour:
       MainRenderer: {fileID: 0}
     Current: 0
     CurrentMeshItemIndex: 0
+    OnSetMeshChange:
+      m_PersistentCalls:
+        m_Calls: []
   - Name: Reins
+    name:
+      UseConstant: 1
+      ConstantValue: 
+      Variable: {fileID: 0}
     Active: 1
     meshes:
     - {fileID: 4289948328119348}
@@ -20636,15 +21153,28 @@ MonoBehaviour:
       MainRenderer: {fileID: 0}
     Current: 0
     CurrentMeshItemIndex: 0
+    OnSetMeshChange:
+      m_PersistentCalls:
+        m_Calls: []
   showMeshesList: 1
   debug: 0
   Pinned:
     Name: NameHere
+    name:
+      UseConstant: 1
+      ConstantValue: 
+      Variable: {fileID: 0}
     Active: 1
     meshes: []
     MeshItems: []
     Current: 0
     CurrentMeshItemIndex: 0
+    OnSetMeshChange:
+      m_PersistentCalls:
+        m_Calls: []
+  OnMeshChanged:
+    m_PersistentCalls:
+      m_Calls: []
   MeshItemUpdated: 1
   selectedMeshIndex: 0
   random: 0
@@ -20849,3 +21379,7 @@ MonoBehaviour:
   DebugColor: {r: 0, g: 0.91724133, b: 1, a: 1}
   DrawAxis: 0
   AxisSize: 0.3
+  _collider: {fileID: 0}
+  DrawLineTo: 0
+  ConnectTo: {fileID: 0}
+  Rect: {x: 1, y: 1, z: 1}

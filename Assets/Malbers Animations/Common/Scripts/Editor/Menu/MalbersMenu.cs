@@ -18,7 +18,7 @@ namespace MalbersAnimations
         const string HRP17_Shader_Path = "Assets/Malbers Animations/Common/Shaders/Malbers_HDRP_17.unitypackage";
 
         const string D_Shader_Path = "Assets/Malbers Animations/Common/Shaders/Malbers_Standard.unitypackage";
-        const string D_Cinemachine3_Path = "Assets/Malbers Animations/Common/Cinemachine/Cinemachine3 v2.unitypackage";
+        const string D_Cinemachine3_Path = "Assets/Malbers Animations/Common/Cinemachine/Cinemachine3.unitypackage";
 
 
 
@@ -79,11 +79,13 @@ namespace MalbersAnimations
 
             var TestPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
             TestPlane.transform.localScale = new Vector3(20, 1, 20);
-            TestPlane.GetComponent<MeshRenderer>().sharedMaterial = AssetDatabase.LoadAssetAtPath("Assets/Malbers Animations/Common/Shaders/Ground_20.mat", typeof(Material)) as Material;
+            TestPlane.GetComponent<MeshRenderer>().sharedMaterial =
+               AssetDatabase.LoadAssetAtPath("Assets/Malbers Animations/Common/Materials & Textures/Environment/Ground 20.mat", typeof(Material)) as Material;
             TestPlane.isStatic = true;
 
             var BrainCam = AssetDatabase.LoadAssetAtPath("Assets/Malbers Animations/Common/Cinemachine/Cameras CM2.prefab", typeof(GameObject)) as GameObject;
-            var CMFreeLook = AssetDatabase.LoadAssetAtPath("Assets/Malbers Animations/Common/Cinemachine/Third Person Cinemachine/CM Third Person Main.prefab", typeof(GameObject)) as GameObject;
+            var CMFreeLook = AssetDatabase.LoadAssetAtPath("Assets/Malbers Animations/Common/Cinemachine/Third Person Cinemachine/CM Third Person Main.prefab",
+                typeof(GameObject)) as GameObject;
             // var CMFreeLook = AssetDatabase.LoadAssetAtPath("Assets/Malbers Animations/Common/Cinemachine/CM FreeLook Main.prefab", typeof(GameObject)) as GameObject;
             var WolfLite = AssetDatabase.LoadAssetAtPath("Assets/Malbers Animations/Animal Controller/Wolf Lite/Wolf Lite.prefab", typeof(GameObject)) as GameObject;
             var Steve = AssetDatabase.LoadAssetAtPath("Assets/Malbers Animations/Animal Controller/Human/Steve.prefab", typeof(GameObject)) as GameObject;
@@ -107,7 +109,7 @@ namespace MalbersAnimations
             var TestPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
             TestPlane.transform.localScale = new Vector3(20, 1, 20);
             TestPlane.GetComponent<MeshRenderer>().sharedMaterial =
-                AssetDatabase.LoadAssetAtPath("Assets/Malbers Animations/Common/Shaders/Ground_20.mat", typeof(Material)) as Material;
+                AssetDatabase.LoadAssetAtPath("Assets/Malbers Animations/Common/Materials & Textures/Environment/Ground 20.mat", typeof(Material)) as Material;
             TestPlane.isStatic = true;
 
             var cameras = AssetDatabase.LoadAssetAtPath("Assets/Malbers Animations/Common/Cinemachine/Cameras CM2.prefab", typeof(GameObject)) as GameObject;

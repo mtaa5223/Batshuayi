@@ -1,4 +1,4 @@
-﻿using UnityEngine; 
+﻿using UnityEngine;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -10,26 +10,27 @@ namespace MalbersAnimations.Controller
     [HelpURL("https://malbersanimations.gitbook.io/animal-controller/main-components/manimal-controller/modes#mode-behaviour")]
     [AddComponentMenu("Malbers/Mode Behavior")]
     public class ModeBehaviour : StateMachineBehaviour
-    { 
+    {
         public ModeID ModeID;
 
-        [Tooltip("Calls 'Animation Tag Enter' on the Modes")]  
+        [Tooltip("Calls 'Animation Tag Enter' on the Modes")]
         public bool EnterMode = true;
         [Tooltip("Calls 'Animation Tag Exit' on the Modes")]
         public bool ExitMode = true;
-        
+
         [Tooltip("Next Ability to do on the Mode.If is set to -1, The Exit On Ability Logic will be ignored.\n" +
             "Used this when you need an ability to finish on another Ability.\n" +
-            "E.g. If the wolf is in the Ability SIT, and you activate the HOWL; When HOWL finish you can play again SIT right after")] 
+            "E.g. If the wolf is in the Ability SIT, and you activate the HOWL; When HOWL finish you can play again SIT right after")]
         public int ExitAbility = -1;
-       
+
         private MAnimal animal;
         private Mode ModeOwner;
         private Ability ActiveAbility;
 
         public void InitializeBehaviour(MAnimal animal)
-        { 
+        {
             this.animal = animal;
+
             if (ModeID != null)
             {
                 ModeOwner = animal.Mode_Get(ModeID);
@@ -45,25 +46,27 @@ namespace MalbersAnimations.Controller
         {
             if (animal == null)
             {
-                Destroy(this); //This is for Invector .. when there's no Animal Involved remove this Behaviour
-                return;
+                animal = animator.GetComponent<MAnimal>();
+                ModeOwner = animal.Mode_Get(ModeID);
+                // Debug.LogWarning($"Animal is was null? ModeOwner null? {ModeOwner == null}");
             }
 
-            if (ModeID == null)  { Debug.LogError("Mode behaviour needs an ID"); return; }
+
+            if (ModeID == null) { Debug.LogError("Mode behaviour needs an ID"); return; }
             if (ModeOwner == null) { Debug.LogError($"There's no [{ModeID.name}] mode on your character"); return; }
 
             ActiveAbility = ModeOwner.ActiveAbility;
             if (animal.ModeStatus == Int_ID.Loop) return;            //Means is Looping so Skip!!!
 
-            if (EnterMode)   ModeOwner.AnimationTagEnter(stateInfo.fullPathHash);
+            if (EnterMode) ModeOwner.AnimationTagEnter(stateInfo.fullPathHash);
         }
 
         override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             //Means is Looping to itself So Skip the Exit Mode EXTREMELY IMPORTANT
             if (animator.GetCurrentAnimatorStateInfo(layerIndex).fullPathHash == stateInfo.fullPathHash) return;
-            
-            if (ExitMode) ModeOwner.AnimationTagExit(ActiveAbility,ExitAbility);
+
+            if (ExitMode) ModeOwner.AnimationTagExit(ActiveAbility, ExitAbility);
         }
 
         public override void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

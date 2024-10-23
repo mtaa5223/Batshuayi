@@ -4,7 +4,7 @@ using UnityEngine;
 namespace MalbersAnimations.Scriptables
 {
     ///<summary>  Float Scriptable Variable. Based on the Talk - Game Architecture with Scriptable Objects by Ryan Hipple  </summary>
-    [CreateAssetMenu(menuName = "Malbers Animations/Variables/Float",order = 1000)]
+    [CreateAssetMenu(menuName = "Malbers Animations/Variables/Float", order = 1000)]
     public class FloatVar : ScriptableVar
     {
         /// <summary>The current value</summary>
@@ -19,7 +19,7 @@ namespace MalbersAnimations.Scriptables
             get => value;
             set
             {
-              //  if (this.value != value)                                //If the value is diferent change it
+                //  if (this.value != value)                                //If the value is diferent change it
                 {
                     this.value = value;
                     OnValueChanged(value);         //If we are using OnChange event Invoked
@@ -72,11 +72,13 @@ namespace MalbersAnimations.Scriptables
             }
         }
 
-        public static implicit operator float(FloatReference reference) =>  reference.Value;
+        public static implicit operator float(FloatReference reference) => reference.Value;
 
-        public static implicit operator FloatReference(float reference) => new FloatReference(reference);
 
-        public static implicit operator FloatReference(FloatVar reference) => new FloatReference(reference);
+
+        public static implicit operator FloatReference(float reference) => new(reference);
+
+        public static implicit operator FloatReference(FloatVar reference) => new(reference.Value);
     }
 
 #if UNITY_EDITOR

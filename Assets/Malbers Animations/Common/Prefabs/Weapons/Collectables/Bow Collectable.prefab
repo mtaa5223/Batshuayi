@@ -242,7 +242,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!65 &7112515089088709850
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -295,9 +295,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Align: 0
-  AlignPos: 0
   AlignTime: 0.15
-  AlignDistance: 1
   PickDelay:
     UseConstant: 1
     ConstantValue: 0.15
@@ -323,6 +321,10 @@ MonoBehaviour:
     ConstantValue: 0
     Variable: {fileID: 0}
   m_Amount:
+    UseConstant: 1
+    ConstantValue: 1
+    Variable: {fileID: 0}
+  canBePicked:
     UseConstant: 1
     ConstantValue: 1
     Variable: {fileID: 0}
@@ -372,6 +374,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  OnPickedFailed:
+    m_PersistentCalls:
+      m_Calls: []
   OnPrePicked:
     m_PersistentCalls:
       m_Calls: []
@@ -394,7 +399,19 @@ MonoBehaviour:
   PreDroppedReaction:
     rid: -2
   rb: {fileID: 722624809569109699}
+  DestroyRbOnPick:
+    UseConstant: 1
+    ConstantValue: 0
+    Variable: {fileID: 0}
   m_colliders: []
+  kinematicOnPick:
+    UseConstant: 1
+    ConstantValue: 1
+    Variable: {fileID: 0}
+  disableColliders:
+    UseConstant: 1
+    ConstantValue: 1
+    Variable: {fileID: 0}
   EditorTabs: 2
   references:
     version: 2

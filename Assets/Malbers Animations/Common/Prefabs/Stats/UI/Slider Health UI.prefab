@@ -145,6 +145,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Events:
   - Event: {fileID: 11400000, guid: bee0895a0f76ff840bfba0a11f37d898, type: 2}
+    active: 1
     useInt: 0
     useFloat: 1
     useVoid: 0
@@ -260,11 +261,17 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
     IntEventList: []
+    FloatEventList: []
     AdvancedInteger: 0
+    AdvancedFloat: 0
     AdvancedBool: 0
     InvertBool: 0
-    multiplier: 1
+    multiplier:
+      UseConstant: 1
+      ConstantValue: 1
+      Variable: {fileID: 0}
   - Event: {fileID: 11400000, guid: 598cd94b343a5eb46a97d567ded5a5f0, type: 2}
+    active: 1
     useInt: 0
     useFloat: 1
     useVoid: 0
@@ -343,10 +350,15 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
     IntEventList: []
+    FloatEventList: []
     AdvancedInteger: 0
+    AdvancedFloat: 0
     AdvancedBool: 0
     InvertBool: 0
-    multiplier: 2
+    multiplier:
+      UseConstant: 1
+      ConstantValue: 2
+      Variable: {fileID: 0}
   ShowEvents: 1
   SelectedEvent: 0
 --- !u!114 &4228069162931873985
@@ -481,6 +493,7 @@ MonoBehaviour:
             m_StringArgument: HurtUI
             m_BoolArgument: 0
           m_CallState: 2
+    UpdateAfterCompare: 0
   OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -1039,6 +1052,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  events: 0
   OnStart:
     m_PersistentCalls:
       m_Calls: []

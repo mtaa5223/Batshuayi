@@ -7,7 +7,7 @@ using UnityEditor;
 
 namespace MalbersAnimations.Scriptables
 {
-    public abstract class ScriptableVar: ScriptableObject
+    public abstract class ScriptableVar : ScriptableObject
     {
 #if UNITY_EDITOR
         [TextArea(3, 20)]
@@ -54,17 +54,14 @@ namespace MalbersAnimations.Scriptables
 
                 ExtraValues();
 
-                
-                EditorGUILayout.PropertyField(Description);
-
-
+                EditorGUILayout.PropertyField(Description, GUIContent.none);
             }
             serializedObject.ApplyModifiedProperties();
         }
 
         public virtual void ExtraValues()
         {
-            
+
         }
     }
 #endif

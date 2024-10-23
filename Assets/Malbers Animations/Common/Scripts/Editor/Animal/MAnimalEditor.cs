@@ -12,7 +12,7 @@ namespace MalbersAnimations.Controller
     [CustomEditor(typeof(MAnimal))]
     public class MAnimalEditor : Editor
     {
-        public readonly string version = "Animal Controller [v1.4.5a]";
+        public readonly string version = "Animal Controller [v1.4.6]";
 
         public static GUIStyle StyleGray => MTools.Style(new Color(0.5f, 0.5f, 0.5f, 0.3f));
         public static GUIStyle StyleBlue => MTools.Style(new Color(0, 0.5f, 1f, 0.3f));
@@ -24,7 +24,9 @@ namespace MalbersAnimations.Controller
         private ReorderableList Reo_List_Modes;
         private ReorderableList Reo_List_Stances;
         private ReorderableList Reo_List_Speeds;
+
         private readonly Dictionary<string, ReorderableList> Reo_Abilities = new();
+
         private readonly Dictionary<string, Editor> State_Editor = new();
 
 
@@ -1269,8 +1271,6 @@ namespace MalbersAnimations.Controller
             var SnceIndex = Reo_List_Stances.index;
             if (SnceIndex != -1 && Stances_List.arraySize > 0 && SnceIndex < Stances_List.arraySize)
             {
-
-
                 //EditorGUILayout.Space(-16);
                 var SelectedStance = Stances_List.GetArrayElementAtIndex(SnceIndex);
 
@@ -1297,6 +1297,8 @@ namespace MalbersAnimations.Controller
                         var Include = SelectedStance.FindPropertyRelative("Include");
                         var DisableStances = SelectedStance.FindPropertyRelative("DisableStances");
                         var activeOnly = SelectedStance.FindPropertyRelative("activeOnly");
+                        var OverrideCapsule = SelectedStance.FindPropertyRelative("OverrideCapsule");
+                        var newCapsule = SelectedStance.FindPropertyRelative("newCapsule");
 
 
                         EditorGUILayout.PropertyField(Active);
@@ -1306,6 +1308,20 @@ namespace MalbersAnimations.Controller
                         EditorGUILayout.PropertyField(persistent);
                         EditorGUILayout.PropertyField(activeOnly);
 
+                        using (new EditorGUI.DisabledGroupScope(!MainCollider.objectReferenceValue))
+                        {
+                            using (new GUILayout.HorizontalScope())
+                            {
+                                EditorGUILayout.PropertyField(OverrideCapsule);
+                                if (OverrideCapsule.boolValue && GUILayout.Button(new GUIContent("C", "Copy Main Capsule values"), GUILayout.Width(25)))
+                                {
+                                    m.Stances[SnceIndex].newCapsule = new(m.MainCollider);
+                                }
+                            }
+
+                            if (OverrideCapsule.boolValue)
+                                EditorGUILayout.PropertyField(newCapsule);
+                        }
 
                         var stance = m.Stances[SnceIndex];
                         var StanceName = stance.ID != null ? stance.ID.name : "-EMPTY-";
@@ -1831,6 +1847,7 @@ namespace MalbersAnimations.Controller
             using (new GUILayout.VerticalScope(EditorStyles.helpBox))
             {
                 EditorGUILayout.ObjectField("Platform", m.platform, typeof(Transform), false);
+                EditorGUILayout.ObjectField("Ground Changer", m.GroundChanger, typeof(GroundSpeedChanger), false);
                 EditorGUILayout.FloatField("Terrain Slope", m.TerrainSlope);
                 EditorGUILayout.FloatField("Main Pivot Slope", m.MainPivotSlope);
                 EditorGUILayout.FloatField("Slope Normalized", m.SlopeNormalized);
@@ -1864,6 +1881,7 @@ namespace MalbersAnimations.Controller
                 EditorGUILayout.Space();
 
 
+                EditorGUIUtility.labelWidth = 120;
                 EditorGUILayout.Vector3Field("Gravity Velocity", m.GravityStoredVelocity);
                 EditorGUILayout.Vector3Field("Gravity Offset", m.GravityOffset);
                 EditorGUILayout.FloatField("Gravity ExPower", m.GravityExtraPower, GUILayout.MinWidth(50));
@@ -1953,6 +1971,7 @@ namespace MalbersAnimations.Controller
             using (new GUILayout.VerticalScope(EditorStyles.helpBox))
             {
                 EditorGUILayout.ToggleLeft("Strafe", m.Strafe);
+                EditorGUILayout.FloatField("Strafe Delta", m.StrafeDeltaValue);
             }
 
             EditorGUIUtility.labelWidth = 70;
@@ -2086,6 +2105,17 @@ namespace MalbersAnimations.Controller
                         EditorGUIUtility.labelWidth = 0;
                         EditorGUI.indentLevel--;
 
+
+                        if (Application.isPlaying)
+                        {
+                            using (new EditorGUI.DisabledGroupScope(true))
+                            {
+                                var Temporal = CurrentMode.FindPropertyRelative("TemporalActivation");
+                                EditorGUILayout.PropertyField(Temporal);
+                            }
+                        }
+
+
                         GUILayout.Space(5);
 
                         if (CurrentMode.isExpanded)
@@ -2187,6 +2217,7 @@ namespace MalbersAnimations.Controller
         private void DrawAbilities(int ModeIndex, SerializedProperty SelectedMode, SerializedProperty Abilities)
         {
             ReorderableList Reo_AbilityList;
+
             string listKey = SelectedMode.propertyPath;
 
             if (Reo_Abilities.ContainsKey(listKey))
@@ -2393,10 +2424,6 @@ namespace MalbersAnimations.Controller
                                 {
                                     var help = "";
 
-
-
-
-
                                     EditorGUILayout.PropertyField(Status);
 
                                     switch ((AbilityStatus)Status.intValue)
@@ -2502,9 +2529,17 @@ namespace MalbersAnimations.Controller
                     EditorGUILayout.IntField("Current Index", m.CurrentSpeedIndex);
                     EditorGUILayout.Toggle("Locked Speed", m.CurrentSpeedSet.LockSpeed);
                     EditorGUILayout.Toggle("Using Custom Speed", m.CustomSpeed);
+
+                    EditorGUILayout.LabelField($"Current Speed Modifier: [{m.CurrentSpeedModifier.Name}]");
                     var cpM = serializedObject.FindProperty("currentSpeedModifier");
+                    var cSprintSpeed = serializedObject.FindProperty("SprintSpeed");
                     cpM.isExpanded = true;
-                    EditorGUILayout.PropertyField(cpM, true);
+                    cSprintSpeed.isExpanded = true;
+
+                    if (m.Sprint && !m.CustomSpeed)
+                        EditorGUILayout.PropertyField(cSprintSpeed, true);
+                    else
+                        EditorGUILayout.PropertyField(cpM, true);
 
                     // EditorGUILayout.LabelField($"SprintSpeed: {m.SprintSpeed.name}", EditorStyles.boldLabel);
                 }
@@ -2571,14 +2606,8 @@ namespace MalbersAnimations.Controller
         private void OnRemoveCallback_Speeds(ReorderableList list)
         {
             S_Speed_List.DeleteArrayElementAtIndex(list.index);
-            list.index -= 1;
+            list.index = -1;
             SelectedSpeed = -1;
-
-            if (list.index == -1 && S_Speed_List.arraySize > 0)  //In Case you remove the first one
-            {
-                list.index = 0;
-            }
-
             EditorUtility.SetDirty(m);
         }
 
@@ -2654,9 +2683,7 @@ namespace MalbersAnimations.Controller
             rect.y += 2;
             if (S_Mode_List.arraySize <= index) return;
 
-
-
-            EditorGUI.BeginChangeCheck();
+            using (var cc = new EditorGUI.ChangeCheckScope())
             {
                 var ModeProperty = S_Mode_List.GetArrayElementAtIndex(index);
                 var active = ModeProperty.FindPropertyRelative("active");
@@ -2678,6 +2705,9 @@ namespace MalbersAnimations.Controller
                 active.boolValue = EditorGUI.Toggle(activeRect1, GUIContent.none, active.boolValue);
 
                 EditorGUI.PropertyField(IDRect, ID, GUIContent.none);
+                //  ID.objectReferenceValue = EditorGUI.ObjectField(IDRect, GUIContent.none, ID.objectReferenceValue, typeof(ModeID), false);
+
+
                 GUI.backgroundColor = dC;
 
 
@@ -2693,11 +2723,12 @@ namespace MalbersAnimations.Controller
 
                 EditorGUI.LabelField(priorityRect, "│" + (S_Mode_List.arraySize - index - 1));
 
-            }
-            if (EditorGUI.EndChangeCheck())
-            {
-                Undo.RecordObject(target, "Inspector");
-                EditorUtility.SetDirty(target);
+                if (cc.changed)
+                {
+                    Debug.Log("MODE CHANGED");
+
+                    Undo.RecordObject(target, "Move Handles");
+                }
             }
         }
         private void OnAdd_Modes(ReorderableList list)

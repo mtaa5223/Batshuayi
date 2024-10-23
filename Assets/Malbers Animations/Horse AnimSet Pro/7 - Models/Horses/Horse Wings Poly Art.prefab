@@ -384,23 +384,19 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 100066, guid: 42e1e4de4a0d626459965026086a8433,
-        type: 3}
+    - targetCorrespondingSourceObject: {fileID: 100066, guid: 42e1e4de4a0d626459965026086a8433, type: 3}
       insertIndex: -1
       addedObject: {fileID: 220606836619423190}
-    - targetCorrespondingSourceObject: {fileID: 100066, guid: 42e1e4de4a0d626459965026086a8433,
-        type: 3}
+    - targetCorrespondingSourceObject: {fileID: 100066, guid: 42e1e4de4a0d626459965026086a8433, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5356354278018388739}
-    - targetCorrespondingSourceObject: {fileID: 100066, guid: 42e1e4de4a0d626459965026086a8433,
-        type: 3}
+    - targetCorrespondingSourceObject: {fileID: 100066, guid: 42e1e4de4a0d626459965026086a8433, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6176305748801360126}
   m_SourcePrefab: {fileID: 100100000, guid: 42e1e4de4a0d626459965026086a8433, type: 3}
 --- !u!1 &9156739269897282907 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 100066, guid: 42e1e4de4a0d626459965026086a8433,
-    type: 3}
+  m_CorrespondingSourceObject: {fileID: 100066, guid: 42e1e4de4a0d626459965026086a8433, type: 3}
   m_PrefabInstance: {fileID: 9156739269897315257}
   m_PrefabAsset: {fileID: 0}
 --- !u!82 &220606836619423190
@@ -414,6 +410,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -545,7 +542,6 @@ MonoBehaviour:
   debug: 0
 --- !u!95 &9156739269904668377 stripped
 Animator:
-  m_CorrespondingSourceObject: {fileID: 9500000, guid: 42e1e4de4a0d626459965026086a8433,
-    type: 3}
+  m_CorrespondingSourceObject: {fileID: 9500000, guid: 42e1e4de4a0d626459965026086a8433, type: 3}
   m_PrefabInstance: {fileID: 9156739269897315257}
   m_PrefabAsset: {fileID: 0}

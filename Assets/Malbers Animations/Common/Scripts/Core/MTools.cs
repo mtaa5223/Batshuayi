@@ -56,6 +56,22 @@ namespace MalbersAnimations
         }
     }
 
+    public struct TransformValues
+    {
+        public Vector3 position;
+        public Vector3 localPosition;
+        public Quaternion rotation;
+        public Quaternion localRotation;
+
+
+        public TransformValues(Transform t)
+        {
+            position = t.position;
+            localPosition = t.localPosition;
+            rotation = t.rotation;
+            localRotation = t.localRotation;
+        }
+    }
 
     /// <summary>Redundant functions to be used all over the assets</summary>
     public static class MTools
@@ -483,6 +499,32 @@ namespace MalbersAnimations
         #endregion
 
         #region Vector Math
+
+        public static void RotateInBoneSpace(Quaternion target, Transform boneToRotate, Vector3 rotationAmount)
+        {
+            var headRot = boneToRotate.rotation;
+            var headToMesh = Quaternion.Inverse(target) * headRot;
+            var headOffsetRot = target * Quaternion.Euler(rotationAmount);
+
+            var finalRot = headOffsetRot * headToMesh;
+
+            boneToRotate.rotation = finalRot;
+        }
+
+        public static void RotateInBoneSpace(Quaternion target, Transform boneToRotate, Quaternion rotationAmount)
+        {
+            var headRot = boneToRotate.rotation;
+            var headToMesh = Quaternion.Inverse(target) * headRot;
+            var headOffsetRot = target * rotationAmount;
+
+            var finalRot = headOffsetRot * headToMesh;
+
+            boneToRotate.rotation = finalRot;
+        }
+
+
+
+
         /// <summary> Gives the force needed to throw something at a target using Physyics / </summary>
         public static float PowerFromAngle(Vector3 OriginPos, Vector3 TargetPos, float angle)
         {
@@ -1336,7 +1378,7 @@ namespace MalbersAnimations
         {
             var type = MSerializedTools.GetPropertyType(property);
 
-            if (type.IsAbstract)
+            if (type != null && type.IsAbstract)
             {
                 var StatesType = MTools.GetAllTypes(type);
 
@@ -1351,7 +1393,7 @@ namespace MalbersAnimations
             }
             else
             {
-                CreateAsset_SavePrompt(property, type, selectedAssetPath);
+                CreateAsset_SavePrompt(property, type, "Asset/");
             }
         }
 
@@ -1368,29 +1410,25 @@ namespace MalbersAnimations
 
             if (type.IsAbstract)
             {
-                var StatesType = MTools.GetAllTypes(type);
+                var StatesType = GetAllTypes(type);
 
                 var addMenu = new GenericMenu();
 
                 for (int i = 0; i < StatesType.Count; i++)
                 {
                     Type st = StatesType[i];
-                    addMenu.AddItem(new GUIContent(st.Name), false, () => CreateAssetInternal(property, st));
+                    addMenu.AddItem(new GUIContent(st.Name), false, () => MSerializedTools.CreateAssetInternal(property, st));
                 }
 
                 addMenu.ShowAsContext();
             }
             else
             {
-                CreateAssetInternal(property, type);
+                MSerializedTools.CreateAssetInternal(property, type);
             }
         }
 
-        private static void CreateAssetInternal(SerializedProperty property, Type type)
-        {
-            property.objectReferenceValue = ScriptableObject.CreateInstance(type);
-            property.serializedObject.ApplyModifiedProperties();
-        }
+
 
 
         // Creates a new ScriptableObject via the default Save File panel

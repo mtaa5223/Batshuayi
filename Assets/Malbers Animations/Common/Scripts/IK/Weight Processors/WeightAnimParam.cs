@@ -17,8 +17,7 @@ namespace MalbersAnimations.IK
 
         [HideInInspector] public int AnimParamHash;
 
-
-        [Tooltip("  ")]
+        [Tooltip("Inverth the value of the Animation Curve (One Minus) 1-Value")]
         public bool invert = false;
 
         [Tooltip("Evaluate the Animation Parameter on an Animation Curve")]

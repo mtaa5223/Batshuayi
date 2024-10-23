@@ -4,6 +4,8 @@ using MalbersAnimations.Scriptables;
 using MalbersAnimations.Controller;
 using MalbersAnimations.Events;
 using System;
+using UnityEngine.Serialization;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -142,8 +144,15 @@ namespace MalbersAnimations.Weapons
         [Tooltip("IK Modification to the Character Body to Aim Properly")]
         public BoolReference TwoHandIK;                              // Makes the IK for the 2Hands
 
-        [Tooltip("Position and Rotation Reference for the IK Hand Goal")]
-        public TransformReference IKHandPoint;                       // Rotation Offset Left Hand
+        [Tooltip("Position and Rotation Reference for the secondary Hand IK Goal (Left) ")]
+        [FormerlySerializedAs("IKHandPoint")]
+        public TransformReference IKHandLeft = new();                       // Rotation Offset Left Hand
+
+        [Tooltip("Position and Rotation Reference for the secondary Hand IK  (Right)  ")]
+        public TransformReference IKHandRight = new();                       // Rotation Offset Left Hand
+
+        public Transform IKHandPoint => rightHand ? IKHandLeft.Value : IKHandRight.Value;
+
 
         #endregion
 
@@ -516,7 +525,7 @@ namespace MalbersAnimations.Weapons
                 ChargeCurrentTime += time;
                 IsCharging = true;
 
-                CurrentCharge = MaxCharge * ChargedNormalized;
+                CurrentCharge = MaxCharge * ChargeCurve.Evaluate(Charging);
 
                 if (Charging == 1 && !MaxCharged)
                 {
@@ -553,6 +562,7 @@ namespace MalbersAnimations.Weapons
             {
                 ChargeCurrentTime = 0;
                 IsCharging = false;
+                CurrentCharge = 0;
                 OnCharged.Invoke(0);
                 MaxCharged = false;
                 Debugging($"Weapon [Charge Reseted]", this);
@@ -683,7 +693,7 @@ namespace MalbersAnimations.Weapons
             m_AimSide, OnCharged, OnMaxCharged,
             OnUnequiped, OnEquiped,  /*OnPlaced, minDamage, maxDamage,*/ holster, holsterAnim, IKProfile,
 
-            AimIKRight, AimIKLeft, Rate, TwoHandIK, IKHandPoint, //HandIKLerp,
+            AimIKRight, AimIKLeft, Rate, TwoHandIK, IKHandLeft, IKHandRight, //HandIKLerp,
 
             mode, stance, strafeOnAim, strafeOnEquip, strafeOnUnequip,
             RidingArmPose, GroundArmPose, //WeaponDirection,
@@ -775,7 +785,11 @@ namespace MalbersAnimations.Weapons
 
 
             TwoHandIK = serializedObject.FindProperty("TwoHandIK");
-            IKHandPoint = serializedObject.FindProperty("IKHandPoint");
+
+            IKHandLeft = serializedObject.FindProperty("IKHandLeft");
+            IKHandRight = serializedObject.FindProperty("IKHandRight");
+
+
             //   HandIKLerp = serializedObject.FindProperty("HandIKLerp");
             //rotationOffsetIKHand = serializedObject.FindProperty("rotationOffsetIKHand");
             //positionOffsetIKHand = serializedObject.FindProperty("positionOffsetIKHand");
@@ -1009,7 +1023,7 @@ namespace MalbersAnimations.Weapons
                 {
                     if (DescSTyle == null) DescSTyle = MalbersEditor.DescriptionStyle;
 
-                    EditorGUILayout.LabelField("The Weapon is " + (M.IsRightHanded ? "[Right] Handed" : "[Left] Handed"), DescSTyle);
+                    EditorGUILayout.LabelField($"The Weapon is {(M.IsRightHanded ? "[Right]" : "[Left]")} handed", DescSTyle);
                     EditorGUILayout.PropertyField(rightHand);
 
                     EditorGUI.indentLevel++;
@@ -1033,14 +1047,32 @@ namespace MalbersAnimations.Weapons
         {
             using (new GUILayout.VerticalScope(EditorStyles.helpBox))
             {
+                if (DescSTyle == null) DescSTyle = MalbersEditor.DescriptionStyle;
 
-                EditorGUILayout.PropertyField(M.IsRightHanded ? AimIKRight : AimIKLeft);
+                EditorGUILayout.LabelField($"The Weapon is {(M.IsRightHanded ? "[Right]" : "[Left]")} handed", DescSTyle);
+                EditorGUILayout.PropertyField(rightHand);
+
+
+
+                using (new EditorGUI.DisabledGroupScope(M.IsRightHanded))
+                    EditorGUILayout.PropertyField(AimIKLeft);
+                using (new EditorGUI.DisabledGroupScope(!M.IsRightHanded))
+                    EditorGUILayout.PropertyField(AimIKRight);
+
+                //EditorGUILayout.PropertyField(M.IsRightHanded ? AimIKRight : AimIKLeft);
+
+
+
                 EditorGUILayout.PropertyField(TwoHandIK);
                 if (M.TwoHandIK.Value)
                 {
-                    EditorGUILayout.LabelField($"The {(M.IsRightHanded ? "Left Hand" : "Right Hand")}  is the auxiliar Hand", MalbersEditor.DescriptionStyle);
-                    EditorGUILayout.PropertyField(IKHandPoint);
-                    //  EditorGUILayout.PropertyField(HandIKLerp);
+                    EditorGUILayout.LabelField($"The {(M.IsRightHanded ? "[Left]" : "[Right]")} hand is the auxiliar hand", MalbersEditor.DescriptionStyle);
+
+                    using (new EditorGUI.DisabledGroupScope(!M.IsRightHanded))
+                        EditorGUILayout.PropertyField(IKHandLeft);
+                    using (new EditorGUI.DisabledGroupScope(M.IsRightHanded))
+                        EditorGUILayout.PropertyField(IKHandRight);
+
                 }
             }
         }

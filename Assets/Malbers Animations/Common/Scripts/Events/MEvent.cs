@@ -88,7 +88,7 @@ namespace MalbersAnimations.Events
 
         public virtual void Invoke(string value)
         {
-            DebugEvent(value, "string");
+            DebugEvent($"'{value}'", "string");
 
             for (int i = eventListeners.Count - 1; i >= 0; i--)
                 eventListeners[i].OnEventInvoked(value);
@@ -134,12 +134,17 @@ namespace MalbersAnimations.Events
                 eventListeners[i].OnEventInvoked(value);
         }
 
+        public virtual void Invoke(GameObjectVar value) => Invoke(value.Value);
+
         public virtual void Invoke(Transform value)
         {
             DebugEvent(value != null ? value.name : null, "Transform");
             for (int i = eventListeners.Count - 1; i >= 0; i--)
                 eventListeners[i].OnEventInvoked(value);
         }
+
+        public virtual void Invoke(TransformVar value) => Invoke(value.Value);
+
 
         public virtual void Invoke(Vector3 value)
         {
@@ -148,7 +153,7 @@ namespace MalbersAnimations.Events
                 eventListeners[i].OnEventInvoked(value);
         }
 
-        public virtual void Invoke(Vector3Reference value) => Invoke(value.Value);
+        public virtual void Invoke(Vector3Var value) => Invoke(value.Value);
 
         public virtual void Invoke(Vector2 value)
         {
@@ -170,6 +175,9 @@ namespace MalbersAnimations.Events
             for (int i = eventListeners.Count - 1; i >= 0; i--)
                 eventListeners[i].OnEventInvoked(value);
         }
+
+        public virtual void Invoke(SpriteVar value) => Invoke(value.Value);
+
 
         public virtual void RegisterListener(MEventItemListener listener)
         {

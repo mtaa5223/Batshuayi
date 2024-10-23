@@ -109,7 +109,6 @@ namespace MalbersAnimations.HAP
         /// <summary>Straighen the Spine bone while mounted depends on the Mount</summary>
         public bool StraightSpine { get => straightSpine; set => straightSpine.Value = value; }
 
-
         /// <summary>Straighen the Spine bone while mounted depends on the Mount</summary>
         public Transform StraightSpineOffsetTransform;
         private bool defaultStraightSpine;
@@ -241,7 +240,14 @@ namespace MalbersAnimations.HAP
         /// <summary>Enable the Input for the Mount</summary>
         public virtual void EnableInput(bool value)
         {
-            MountInput?.Enable(value);
+            if (MountInput != null)
+            {
+                MountInput.PlayerInput(Rider.RiderInput);
+                MountInput.Enable(value);
+
+                MountInput.MoveAxis = Rider.RiderInput.MoveAxis;
+            }
+
 
             //Check if the new Input System is enabled
             //#if ENABLE_INPUT_SYSTEM

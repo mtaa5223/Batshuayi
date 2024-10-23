@@ -20,10 +20,10 @@ namespace MalbersAnimations.Reactions
                     animal.UseGravity = Value;
                     break;
                 case Gravity_Reaction.Reset:
-                    animal.ResetGravityDirection();
+                    animal.Gravity_ResetDirection();
                     break;
                 case Gravity_Reaction.GroundChangesGravity:
-                    animal.GroundChangesGravity(Value);
+                    animal.Gravity_DirectionFromGround(Value);
                     break;
                 case Gravity_Reaction.SnapAlignment:
                     animal.AlignToGravity();

@@ -2,9 +2,13 @@
 using MalbersAnimations.Scriptables;
 using MalbersAnimations.Utilities;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
+
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace MalbersAnimations.Controller
 {
@@ -63,10 +67,13 @@ namespace MalbersAnimations.Controller
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            if (Anim == null) Anim = GetComponentInParent<Animator>();   //Cache the Animator
-            if (RB == null) RB = GetComponentInParent<Rigidbody>();      //Cache the Rigid Body  
-            if (Aimer == null) Aimer = gameObject.FindComponent<Aim>();  //Cache the Aim Component 
+            if (Anim == null) Anim = this.FindComponent<Animator>();   //Cache the Animator
+            if (RB == null) RB = this.FindComponent<Rigidbody>();      //Cache the Rigid Body  
+            if (Aimer == null) Aimer = this.FindComponent<Aim>();  //Cache the Aim Component 
             if (t == null) t = transform;
+
+
+            SetDefaultMainColliderValues();
         }
 
         void Reset()
@@ -75,8 +82,8 @@ namespace MalbersAnimations.Controller
             gameObject.tag = "Animal";                      //Set the Animal to Tag Animal
             AnimatorSpeed = 1;
 
-            Anim = GetComponentInParent<Animator>();            //Cache the Animator
-            RB = GetComponentInParent<Rigidbody>();             //Catche the Rigid Body  
+            Anim = this.FindComponent<Animator>();            //Cache the Animator
+            RB = this.FindComponent<Rigidbody>();             //Catche the Rigid Body  
 
             if (RB == null)
             {
@@ -445,6 +452,18 @@ namespace MalbersAnimations.Controller
             Gizmos.color = Color.red;
             Gizmos.DrawSphere(Center, 0.02f * sc);
             Gizmos.DrawWireSphere(Center, 0.02f * sc);
+
+            //Draw Capsule Collider 
+
+            if (!Application.isPlaying && Editor_Tabs1 == 3 && MainCollider)
+            {
+                var currentStance = Stances[SelectedStance];
+                if (currentStance.OverrideCapsule)
+                {
+                    var col = currentStance.newCapsule;
+                    MDebug.DrawCapsule(transform.TransformPoint(col.center), transform.rotation, col.height, col.radius, Color.yellow, col.direction, 16);
+                }
+            }
         }
 
         void OnDrawGizmos()
@@ -465,12 +484,14 @@ namespace MalbersAnimations.Controller
                     {
                         if (pivot.PivotColor.a == 0)
                         {
-                            pivot.PivotColor = Color.blue;
+                            pivot.PivotColor = Color.white;
                         }
 
                         Gizmos.color = pivot.PivotColor;
+
                         Gizmos.DrawWireSphere(pivot.World(t), sc * RayCastRadius);
-                        Gizmos.DrawRay(pivot.World(t), pivot.WorldDir(t) * pivot.multiplier * sc);
+                        Gizmos.DrawSphere(pivot.World(t), sc * RayCastRadius);
+                        MDebug.GizmoRay(pivot.World(t), pivot.multiplier * sc * pivot.WorldDir(t), 3);
                     }
                 }
             }

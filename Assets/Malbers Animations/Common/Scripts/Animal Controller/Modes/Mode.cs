@@ -187,8 +187,7 @@ namespace MalbersAnimations.Controller
                 else
                     Animal.ModeQueueInput.Remove(this);
 
-
-                //Debug.Log($"**************Mode [{ID.name}] Input: [{Input}] Value [{m_InputValue}]");
+                //Debug.Log($Mode [{ID.name}] Input: [{Input}] Value [{m_InputValue}]");
             }
         }
         private bool m_InputValue;
@@ -435,11 +434,6 @@ namespace MalbersAnimations.Controller
         }
 
 
-        void ForceExitMode()
-        {
-
-        }
-
         public bool ForceActivate(int abilityIndex, AbilityStatus status, float time = 0)
         {
             if (abilityIndex != 0) AbilityIndex = abilityIndex;
@@ -664,7 +658,7 @@ namespace MalbersAnimations.Controller
                 }
                 if (AMode == AbilityStatus.Charged)
                 {
-                    //InputValue = true;               //Make sure the Input Value is se to true on Charged ?? Is needed but 
+                    //InputValue = true;               //Make sure the Input Value is se to true on Charged ?? 
                 }
                 else if (AMode == AbilityStatus.ActiveByTime)
                 {
@@ -818,7 +812,17 @@ namespace MalbersAnimations.Controller
         }
 
         /// <summary> Returns an ability by its Index </summary>
-        public virtual Ability GetAbility(int NewIndex) => Abilities.Find(item => item.Index == NewIndex);
+        public virtual Ability GetAbility(int NewIndex)
+        {
+            var newAbility = Abilities.Find(item => item.Index == NewIndex);
+
+            if (DefaultIndex != 0 && newAbility != null && !newAbility.Active) //If the Ability found is deactivated
+            {
+                newAbility = Abilities.Find(item => item.Index == DefaultIndex.Value);
+            }
+
+            return newAbility;
+        }
 
         /// <summary> Returns an ability by its Name </summary>
         public virtual Ability GetAbility(string abilityName) => Abilities.Find(item => item.Name == abilityName);
@@ -960,24 +964,46 @@ namespace MalbersAnimations.Controller
         public virtual void Enable() => Active = true;
 
         /// <summary> Enable the Mode temporarily by an external source, use Disable Temporal when using this</summary>
-        public virtual void Enable_Temporal() => TemporalActivation++;
+        public virtual void Enable_Temporal()
+        {
+            TemporalActivation++;
+
+            Debugging($"Enable Temporal Activation++: {TemporalActivation}");
+        }
 
         /// <summary> Enable the Mode temporarily by an external source, use Disable Temporal when using this</summary>
-        public virtual void Enable_Temporal(bool value) => TemporalActivation = value ? TemporalActivation + 1 : TemporalActivation - 1;
+        public virtual void Enable_Temporal(bool value)
+        {
+            TemporalActivation = value ? TemporalActivation + 1 : TemporalActivation - 1;
+
+            Debugging($"Enable Temporal Activation {value}: {TemporalActivation}");
+
+        }
 
 
         /// <summary> Disable the Mode temporarily by an external source, use EnableTemporal to reset it back up </summary>
-        public virtual void Disable_Temporal() => TemporalActivation--;
+        public virtual void Disable_Temporal()
+        {
+            TemporalActivation--;
+
+            Debugging($"Disable Temporal Activation--: {TemporalActivation}");
+
+        }
 
 
         /// <summary> Reset Temporal Activation</summary>
-        public virtual void Reset_Temporal() => TemporalActivation = 1;
+        public virtual void Reset_Temporal()
+        {
+            TemporalActivation = 1;
 
+            Debugging($"Reset Temporal Activation [1]");
+
+        }
 
         internal void Debugging(string deb)
         {
 #if UNITY_EDITOR && MALBERS_DEBUG
-            if (Animal.debugModes && ID) Debug.Log($"[{Animal.name}] → Mode <color=white> <b>[ {ID.name}]</b> </color> - {deb}", Animal);
+            if (Animal.debugModes && ID) Debug.Log($"<B>[{Animal.name}]</B> → Mode <color=white> <b>[ {ID.name}]</b> </color> - {deb}", Animal);
 #endif
         }
 

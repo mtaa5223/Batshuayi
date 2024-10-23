@@ -111,6 +111,7 @@ namespace MalbersAnimations
             var DegenWaitTime = element.FindPropertyRelative("DegenWaitTime");
             var multiplier = element.FindPropertyRelative("multiplier");
             var Round = element.FindPropertyRelative("Round");
+            var ResetOnEnable = element.FindPropertyRelative("ResetOnEnable");
 
             using (new GUILayout.VerticalScope(EditorStyles.helpBox))
             {
@@ -155,6 +156,7 @@ namespace MalbersAnimations
             using (new GUILayout.VerticalScope(EditorStyles.helpBox))
             {
                 EditorGUILayout.PropertyField(resetTo, new GUIContent("Reset To", "When called the Funtion RESET()  it will reset to the Min Value or the Max Value"));
+                EditorGUILayout.PropertyField(ResetOnEnable);
                 EditorGUILayout.PropertyField(ImmuneTime, new GUIContent("Immune Time", "If greater than zero, the Stat cannot be modify until the inmune time have passed"));
                 EditorGUILayout.PropertyField(immune);
             }

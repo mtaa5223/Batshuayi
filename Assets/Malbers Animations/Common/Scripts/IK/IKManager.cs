@@ -2,7 +2,8 @@
 using UnityEngine;
 using System;
 using System.Reflection;
-
+using System.Collections;
+using MalbersAnimations.Utilities;
 
 #if UNITY_EDITOR
 using UnityEditorInternal;
@@ -24,8 +25,8 @@ namespace MalbersAnimations.IK
         public List<IKSet> sets = new();
         private HashSet<int> animatorHashParams;
 
-        [Tooltip("When an animator uses AnimatePhysics, IK calculations causes jittering in the bones. Calling Animator.Update(0) solves the issue")]
-        public bool UseUpdate0 = false;
+        //[Tooltip("When an animator uses AnimatePhysics, IK calculations causes jittering in the bones. Calling Animator.Update(0) solves the issue")]
+        //public bool UseUpdate0 = false;
 
         public Transform Owner => transform;
 
@@ -65,7 +66,14 @@ namespace MalbersAnimations.IK
             characterAction.OnStance += (OnStanceChange);
             characterAction.ModeStart += (OnModeStart);
             characterAction.ModeEnd += (OnModeEnd);
+
+            animatePhysics = animator.updateMode == AnimatorUpdateMode.Fixed;
+
+            if (animatePhysics)
+                StartCoroutine(SolveFixedUpdateIK());
         }
+
+        private bool animatePhysics;
 
         private void OnDisable()
         {
@@ -102,30 +110,35 @@ namespace MalbersAnimations.IK
         }
 
 
+        private IEnumerator SolveFixedUpdateIK()
+        {
+            var wait = new WaitForFixedUpdate();
+
+            while (true)
+            {
+                yield return wait;
+
+                foreach (var set in sets)
+                    set.CacheValues(animator);
+            }
+        }
+
 
         private void LateUpdate()
         {
-            if (UseUpdate0) animator.Update(0);
-
             foreach (var set in sets)
-                set.LateUpdate(animator, Weight);
+            {
+                if (!animatePhysics)
+                    set.CacheValues(animator);
 
-            //JustAnimatorIK = false;
-
-            // Debug.Log("LateUpdate");
+                set.LateUpdate(animator, Weight, Time.deltaTime);
+            }
         }
-
-        //private bool JustAnimatorIK; //Weird bug that makees the ONAnimatorIK to be called twice
 
         private void OnAnimatorIK()
         {
-            //if (JustAnimatorIK) return;
-
             foreach (var set in sets)
-                set.OnAnimatorIK(animator, Weight);
-
-            // JustAnimatorIK = true;
-            //  Debug.Log("OnAnimatorIK");
+                set.OnAnimatorIK(animator, Weight, animator.updateMode == AnimatorUpdateMode.Normal ? Time.deltaTime : Time.fixedDeltaTime);
         }
 
 
@@ -134,6 +147,8 @@ namespace MalbersAnimations.IK
         /// <param name="value">enable: true disable: false</param>
         public void Set_Enable(string set, bool value)
         {
+            if (!enabled) return;
+
             var NewSet = FindSet(set);
             NewSet?.Enable(value);
         }
@@ -145,10 +160,9 @@ namespace MalbersAnimations.IK
         public void Set_Disable(string set) => Set_Enable(set, false);
 
         /// <summary>Finds a set by its name and Activates it</summary>
-        public void Set_Weight1(string set) => Set_Enable(set, false);
+        public void Set_Weight_1(string set) => Set_Enable(set, false);
         /// <summary>Finds a set by its name and deactivates it</summary>
-        public void Set_Weight0(string set) => Set_Enable(set, false);
-
+        public void Set_Weight_0(string set) => Set_Enable(set, false);
 
         public void Set_Weight(string set, bool value)
         {
@@ -194,27 +208,16 @@ namespace MalbersAnimations.IK
 
         private void Reset()
         {
-            animator = GetComponent<Animator>();
+            animator = this.FindComponent<Animator>();
         }
 
-        //private void OnDrawGizmosSelected()
-        //{
-        //    if (sets != null && sets.Count > 0)
-        //    {
-        //        foreach (var set in sets)
-        //        {
-        //            if (set != null && set.active && set.IKProcesors != null)
-        //            {
-        //                foreach (var link in set.IKProcesors)
-        //                {
-        //                    if (link != null && link.Active)
-        //                        link.OnDrawGizmos(set, animator, Weight);
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-
+        private void OnValidate()
+        {
+            foreach (var set in sets)
+            {
+                if (set.aimer == null) set.aimer = this.FindComponent<Aim>();
+            }
+        }
         private void OnDrawGizmosSelected()
         {
 
@@ -265,7 +268,7 @@ namespace MalbersAnimations.IK
         IKManager m;
         private int result;
 
-        SerializedProperty GlobalWeight, IKSets, animator, UseUpdate0, EditorTabs, SelectedSet
+        SerializedProperty GlobalWeight, IKSets, animator, EditorTabs, SelectedSet
             //  , animatorparam
             ;
 
@@ -276,7 +279,6 @@ namespace MalbersAnimations.IK
             m = (IKManager)target;
 
             animator = serializedObject.FindProperty("animator");
-            UseUpdate0 = serializedObject.FindProperty("UseUpdate0");
             IKSets = serializedObject.FindProperty("sets");
             EditorTabs = serializedObject.FindProperty("EditorTabs");
             GlobalWeight = serializedObject.FindProperty("Weight");
@@ -304,21 +306,23 @@ namespace MalbersAnimations.IK
         {
             if (animator != null && animator.objectReferenceValue != null && floatAnimParam == null)
             {
-
-                floatAnimParam = new() { "None" };
-                result = 0;
-
-                var anim = m.animator;
-
-                if (anim == null) return;
-
-                for (int i = 0; i < anim.parameterCount; i++)
+                if (m.gameObject.activeInHierarchy)
                 {
-                    var parameter = anim.GetParameter(i);
+                    floatAnimParam = new() { "None" };
+                    result = 0;
 
-                    if (parameter.type == UnityEngine.AnimatorControllerParameterType.Float)
+                    var anim = m.animator;
+
+                    if (anim == null) return;
+
+                    for (int i = 0; i < anim.parameterCount; i++)
                     {
-                        floatAnimParam.Add(parameter.name);
+                        var parameter = anim.GetParameter(i);
+
+                        if (parameter.type == UnityEngine.AnimatorControllerParameterType.Float)
+                        {
+                            floatAnimParam.Add(parameter.name);
+                        }
                     }
                 }
             }
@@ -404,7 +408,6 @@ namespace MalbersAnimations.IK
             using (new GUILayout.VerticalScope(EditorStyles.helpBox))
             {
                 EditorGUILayout.PropertyField(animator);
-                EditorGUILayout.PropertyField(UseUpdate0);
                 EditorGUILayout.PropertyField(GlobalWeight);
             }
 
@@ -485,6 +488,7 @@ namespace MalbersAnimations.IK
                         }
                         else if (EditorTabs.intValue == 1)
                         {
+                            var ClearTargetsOnDisable = selectedSet.FindPropertyRelative("ClearTargetsOnDisable");
 
                             var IKProcesors = selectedSet.FindPropertyRelative("IKProcesors");
                             var Target = selectedSet.FindPropertyRelative("Targets");
@@ -501,6 +505,7 @@ namespace MalbersAnimations.IK
                             }
 
                             EditorGUILayout.PropertyField(LerpWeight);
+                            EditorGUILayout.PropertyField(ClearTargetsOnDisable);
 
                             EditorGUI.indentLevel++;
                             EditorGUILayout.PropertyField(Target);
@@ -644,38 +649,37 @@ namespace MalbersAnimations.IK
                 {
                     EditorGUILayout.Space(-16);
                     EditorGUILayout.LabelField($"[{ikProcessor.managedReferenceValue.GetType().Name}]", EditorStyles.boldLabel);
+
                     using (new GUILayout.VerticalScope(EditorStyles.helpBox))
                     {
-
                         EditorGUILayout.PropertyField(ikProcessor, true);
-
-                    }
-
-                    // EditorGUILayout.Space(-16);
-                    FindAllFloatParameters();
-                    if (animator.objectReferenceValue != null)
-                    {
-                        var AnimParameter = ikProcessor.FindPropertyRelative("AnimParameter");
-                        var AnimParameterHash = ikProcessor.FindPropertyRelative("AnimParameterHash");
-
-                        using (new GUILayout.HorizontalScope((EditorStyles.helpBox)))
+                        // EditorGUILayout.Space(-16);
+                        if (animator.objectReferenceValue != null)
                         {
-                            EditorGUILayout.PropertyField(AnimParameter, new GUIContent("Anim Parameter [IK Processor]", "Local Anim Parameter to apply to a specific IK Processor"));
+                            FindAllFloatParameters();
 
-                            using (var cc = new EditorGUI.ChangeCheckScope())
+                            var AnimParameter = ikProcessor.FindPropertyRelative("AnimParameter");
+                            var AnimParameterHash = ikProcessor.FindPropertyRelative("AnimParameterHash");
+
+                            using (new GUILayout.HorizontalScope())
                             {
-                                result = string.IsNullOrEmpty(AnimParameter.stringValue) ? 0 : floatAnimParam.IndexOf(AnimParameter.stringValue);
+                                EditorGUILayout.PropertyField(AnimParameter, new GUIContent("Anim Parameter [IK Processor]", "Local Anim Parameter to apply to a specific IK Processor. E.g Use the Anim Curve for the Left Hand and another anim curve for the Right Hand"));
 
-                                result = EditorGUILayout.Popup(result, floatAnimParam.ToArray(), popupStyle, GUILayout.Width(12));
-
-                                if (cc.changed)
+                                if (m.gameObject.activeInHierarchy)
                                 {
-                                    Undo.RecordObject(target, "Set Anim Parameter");
+                                    using (var cc = new EditorGUI.ChangeCheckScope())
+                                    {
+                                        result = EditorGUILayout.Popup(result, floatAnimParam.ToArray(), popupStyle, GUILayout.Width(12));
 
-                                    AnimParameter.stringValue = result == 0 ? string.Empty : floatAnimParam[result]; //Update the Name using the Animator Float Parameters
-                                    AnimParameterHash.intValue = result == 0 ? 0 : Animator.StringToHash(AnimParameter.stringValue); //Update the Hash
-                                    serializedObject.ApplyModifiedProperties();
-                                    serializedObject.Update();
+                                        if (cc.changed)
+                                        {
+                                            Undo.RecordObject(target, "Set Anim Parameter");
+                                            AnimParameter.stringValue = result == 0 ? string.Empty : floatAnimParam[result]; //Update the Name using the Animator Float Parameters
+                                            AnimParameterHash.intValue = result == 0 ? 0 : Animator.StringToHash(AnimParameter.stringValue); //Update the Hash
+                                            serializedObject.ApplyModifiedProperties();
+                                            serializedObject.Update();
+                                        }
+                                    }
                                 }
                             }
                         }

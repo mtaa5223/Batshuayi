@@ -93,7 +93,7 @@ MonoBehaviour:
   MovementStrafe: 1
   IdleStrafe: 1
   m_debug: 1
-  Editor_Tabs1: 0
+  Editor_Tabs1: 4
   SpeedSets:
   - name: Swim
     StartVerticalIndex:
@@ -239,7 +239,7 @@ MonoBehaviour:
   bounce: 2
   bounceLerp: 2
   KeepInertia: 1
-  m_Radius: 0.1
+  m_Radius: 0.2
   FrontRayLength: 1
   HeightMult: 0.9
   OnTouchedWaterEnter:

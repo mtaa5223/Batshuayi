@@ -93,6 +93,9 @@ namespace MalbersAnimations.Controller
 
         private MSpeed FallSpeed = MSpeed.Default;
 
+        ///// <summary>  UpIntertia at the moment of the fall Activation </summary>
+        //public Vector3 UpIntertia { get; private set; }
+
         public Vector3 FallPoint { get; private set; }
 
         /// <summary> UP Impulse was going UP </summary>
@@ -114,14 +117,17 @@ namespace MalbersAnimations.Controller
             var fall_Pivot = animal.Main_Pivot_Point + (Offset * ScaleFactor * animal.Forward) +
                 (MoveMultiplier * ScaleFactor * SprintMultiplier * animal.Forward); //Calculate ahead the falling ray
 
-            fall_Pivot += animal.DeltaPos; //Check for the Next Frame
+            //fall_Pivot += animal.DeltaPos; //Check for the Next Frame (Does not work now with
 
+
+            //Check Front 
             if (CheckFrontObstacle && MoveMultiplier > 0)
             {
                 if (GizmoDebug)
-                    MDebug.DrawLine(animal.Main_Pivot_Point, fall_Pivot, Color.magenta);
-
-                if (Physics.Linecast(animal.Main_Pivot_Point, fall_Pivot, GroundLayer, IgnoreTrigger)) return false;
+                {
+                    MDebug.DrawLine(fall_Pivot, fall_Pivot, Color.magenta);
+                }
+                if (Physics.Linecast(fall_Pivot, fall_Pivot, GroundLayer, IgnoreTrigger)) return false;
             }
 
 
@@ -187,12 +193,11 @@ namespace MalbersAnimations.Controller
 
                     if (Height >= DistanceToGround) //If the distance to ground is very small means that we are very close to the ground
                     {
-
                         if (animal.ExternalForce != Vector3.zero) return true; //Hack for external forces
 
-                        Debugging($"[Try Failed] Distance to the ground is very small means that we are very close to the ground. CHECK IF GROUNDED");
-                        animal.CheckIfGrounded();//means whe are very close to the ground!! so check if we are grounded
+                        var isgrounded = animal.CheckIfGrounded();//means whe are very close to the ground!! so check if we are grounded
 
+                        Debugging($"[Try Failed] Distance to the ground is very small. Checking if we are grounded [{isgrounded}]");
                         if (animal.Grounded)
                         {
                             animal.Grounded = true; //Force Grounded
@@ -218,6 +223,7 @@ namespace MalbersAnimations.Controller
             else
             {
                 Debugging($"[Try] There's no Ground beneath the Animal");
+                // Debug.Break();
                 return true;
             }
 
@@ -239,15 +245,15 @@ namespace MalbersAnimations.Controller
 
             // Debug.Log($"StartingSpeedDirection: {StartingSpeedDirection}");
 
-            if (animal.LastState.ID == StateEnum.Jump)
+            if (animal.LastState.ID == StateEnum.Jump || animal.LastState.ID.ID <= 2)
             {
                 StartingSpeedDirection = animal.HorizontalVelocity; //Clean from JUMP
                 KeepForwardFall = animal.LastState.KeepForwardMovement;
             }
 
-
             ResetStateValues();
             Fall_Float = animal.State_Float;
+            // animal.UpInertia_Store();
         }
 
         // public override bool KeepForwardMovement => true;
@@ -287,6 +293,7 @@ namespace MalbersAnimations.Controller
                 rotation = AirRotation.Value,
                 lerpPosition = AirSmooth.Value,
                 lerpStrafe = AirSmooth.Value,
+                lerpAnimator = 8
             };
 
 
@@ -337,7 +344,8 @@ namespace MalbersAnimations.Controller
 
                     CurrentSpeedPos = Mathf.Lerp(CurrentSpeedPos, AirMovement, (AirSmooth != 0 ? (deltaTime * AirSmooth) : 1));
                 }
-                // if (!CanExit) TryExitState(deltaTime);
+                ////Keep the Up Momentum
+                animal.UpInertia_Apply();
             }
         }
 
@@ -352,7 +360,7 @@ namespace MalbersAnimations.Controller
             //  var Gravity = this.Gravity;
             // var Gravity = animal.DeepSlope ? this.Gravity :  -animal.Up;
 
-            FallPoint += animal.DeltaPos; //Check for the Next Frame
+            FallPoint += animal.AdditivePosition; //Check for the with the additive position.. IMPORTANT
             //FallPoint = animal.Main_Pivot_Point;
 
 
@@ -369,7 +377,7 @@ namespace MalbersAnimations.Controller
             if (GizmoDebug)
             {
                 MDebug.DrawWireSphere(FallPoint, Color.magenta, Radius);
-                MDebug.DrawWireSphere(FallPoint + Gravity * Height, (Color.red + Color.blue) / 2, Radius);
+                MDebug.DrawWireSphere(FallPoint + Gravity * Height, Color.white, Radius);
                 Debug.DrawRay(FallPoint, Gravity * 100f, Color.magenta);
             }
 
@@ -385,8 +393,8 @@ namespace MalbersAnimations.Controller
 
                 if (GizmoDebug)
                 {
-                    MDebug.DrawWireSphere(FallRayCast.point, (Color.blue + Color.red) / 2, Radius);
-                    MDebug.DrawWireSphere(FallPoint, (Color.red), Radius);
+                    // MDebug.DrawWireSphere(FallRayCast.point, (Color.blue + Color.red) / 2, Radius);
+                    MDebug.DrawWireSphere(FallPoint, (Color.magenta), Radius);
                 }
 
                 switch (BlendFall)
@@ -551,6 +559,8 @@ namespace MalbersAnimations.Controller
             MaxHeight = float.NegativeInfinity; //Resets MaxHeight
             FallCurrentDistance = 0;
             Fall_Float = 0; //IMPORTANT
+
+            // UpIntertia = Vector3.zero;
         }
 
 

@@ -101,8 +101,8 @@ namespace MalbersAnimations
 
             float OldValue = Value;
             value = newValue;
-
             var UnitID = Mathf.Clamp((int)(Value), 0, MaxValue - 1);
+            lasUnit = Mathf.Clamp((int)(OldValue), 0, MaxValue - 1); ;
 
             float nextFillTime = 0;
 
@@ -132,6 +132,7 @@ namespace MalbersAnimations
             else
             {
                 var RemoveFrom = Mathf.Clamp((int)OldValue, 0, MaxValue - 1);
+
                 //Empty Full hearts 
                 for (int i = RemoveFrom; i > (int)Value; i--)
                 {
@@ -157,11 +158,17 @@ namespace MalbersAnimations
 
                      Units[ClampUnit].SetFillValue(Value - UnitID, EmptyTime);
 
+                     if (lasUnit < ClampUnit)
+                         Units[lasUnit].SetFillValue(1, 0); //Full Fill the last Slot (Sprint was not filling completely e.g.0.985
+
                      LastUnitScaler(UnitID, ClampUnit);
                  }
                  );
             // UpdateUnits();
+
         }
+
+        private int lasUnit;
 
         private void LastUnitScaler(int UnitID, int ClampUnit)
         {

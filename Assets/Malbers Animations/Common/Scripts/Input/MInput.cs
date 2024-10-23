@@ -45,8 +45,8 @@ namespace MalbersAnimations
 
         public Action<Vector3> OnMoveAxis { get; set; } = delegate { };
 
-        // public Action<float> UpDown { get; set; } = delegate { };
-
+        public Vector3 MoveAxis { get; set; }
+        // public void SetMoveAxis(Vector3 move) => MoveAxis = move;
 
         #endregion
 
@@ -217,7 +217,14 @@ namespace MalbersAnimations
                 _ = item.GetValue;  //This will set the Current Input value to the inputs and Invoke the Values
 
 
+            CheckDevice();
+        }
 
+        public void PlayerInput(IInputSource player) {/* Do nothing this is for the new input link*/}
+
+
+        protected virtual void CheckDevice()
+        {
             if (IsJoystickInput())
             {
                 if (!usingGamePad)
@@ -236,13 +243,12 @@ namespace MalbersAnimations
             }
 
             currentMousePosition = Input.mousePosition;
-
         }
 
-        private bool usingGamePad;
-        private Vector3 currentMousePosition;
+        protected bool usingGamePad;
+        protected Vector3 currentMousePosition;
 
-        private bool IsJoystickInput()
+        protected virtual bool IsJoystickInput()
         {
             // joystick buttons
             if (Input.GetKey(KeyCode.Joystick1Button0) ||
@@ -273,13 +279,13 @@ namespace MalbersAnimations
             return false;
         }
 
-        private bool IsMouseAndKeyboard()
+        protected virtual bool IsMouseAndKeyboard()
         {
             // mouse & keyboard buttons
             if (Input.anyKey || Input.GetMouseButton(0))
                 return true;
             // mouse movement
-            if ((Input.mousePosition - currentMousePosition).sqrMagnitude > 0.1f)
+            if ((Input.mousePosition - currentMousePosition).sqrMagnitude > 0.01f)
                 return true;
 
             return false;
@@ -619,7 +625,11 @@ namespace MalbersAnimations
 
             MTools.SetDirty(this);
         }
+
 #endif
+
+
+
         #endregion
     }
 

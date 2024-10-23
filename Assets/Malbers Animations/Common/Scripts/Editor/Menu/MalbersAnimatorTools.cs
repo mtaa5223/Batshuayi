@@ -53,7 +53,7 @@ namespace MalbersAnimations
 
         bool HAS_AS => m_AnimatorStates.Length > 0;
         bool HAS_ASM => m_StateMachines.Length > 0;
-      //  bool HAS_T => m_Transitions.Length > 0;
+        //  bool HAS_T => m_Transitions.Length > 0;
 
         public Vector2 Scroll;
 
@@ -71,6 +71,7 @@ namespace MalbersAnimations
         private GUIContent GC_ASM;
         private GUIContent updateB;
         private GUIContent gc_modes;
+        private GUIContent gc_modesAll;
 
         /// <summary> Cached style to use to draw the popup button. </summary>
         private GUIStyle popupStyle;
@@ -124,6 +125,8 @@ namespace MalbersAnimations
             GC_ASM = new GUIContent("Add", img_StateAM, "Add the new Animator State");
 
             gc_modes = new GUIContent("Add", img_Mode);
+
+            gc_modesAll = new GUIContent("Add All", img_Mode, "Add all the Transitions with one click");
 
             gs = new GUIContent[] {
                 new GUIContent(" States", img_State),
@@ -527,7 +530,74 @@ namespace MalbersAnimations
                 //Show Action IDS
                 using (new GUILayout.HorizontalScope(EditorStyles.helpBox))
                 {
-                    EditorGUILayout.LabelField($"   Actions", EditorStyles.boldLabel);
+                    if (Animal && HAS_AS && Mode != null)
+                    {
+                        var guiColor = GUI.color;
+
+                        GUI.color = (Color.green + Color.white) / 2;
+
+                        if (GUILayout.Button(gc_modesAll, GUILayout.Height(22), GUILayout.Width(80)))
+                        {
+                            DoModeStateTransition();
+
+                            //MODE BEHAVIOUR
+                            foreach (var AS in m_AnimatorStates)
+                            {
+                                bool hasModeB = AS.behaviours.ToList().Exists(x => x is ModeBehaviour);
+
+                                if (!hasModeB)
+                                {
+                                    var ModeB = AS.AddStateMachineBehaviour<ModeBehaviour>();
+                                    ModeB.ModeID = Mode;
+                                }
+                            }
+
+                            //ADD EXIT AND INTERRUPTED TRANSITIONS
+                            foreach (var AS in m_AnimatorStates)
+                                ExitTransition(AS);
+
+                            ////INTERRUPTED TRANSITIONS  Mode Status  = -2 
+                            //foreach (var AS in m_AnimatorStates)
+                            //    ExitInterruptedMode(AS);
+
+                            //LOOP TRANSITION
+                            foreach (var AS in m_AnimatorStates)
+                                LoopTransition(AS);
+
+
+                            AddModesAnimalComponent();
+
+
+
+                            //Interrupted Not Equal
+
+                            for (int i = 0; i < m_AnimatorStates.Length; i++)
+                            {
+                                var AS = m_AnimatorStates[i];
+
+                                var InterruptCondition = new AnimatorCondition
+                                {
+                                    parameter = "Mode",
+                                    mode = AnimatorConditionMode.NotEqual,
+                                    threshold = (Mode.ID * 1000 + ModeAbilitiesIndex[i])
+                                };
+
+                                ExitTransition(AS, "Interrupted [N]", false, 0.8f, 0.2f, 0,
+                                    TransitionInterruptionSource.None, new AnimatorCondition[] { InterruptCondition });
+                            }
+
+
+                            EditorUtility.SetDirty(controller);
+                            EditorUtility.SetDirty(Animal);
+                        }
+
+
+                        GUI.color = guiColor;
+                        EditorGUILayout.LabelField($" Add All transitions", GUILayout.MinWidth(150));
+                    }
+                    if (Mode)
+                        EditorGUILayout.LabelField($" {Mode.name}", EditorStyles.boldLabel, GUILayout.MinWidth(50));
+
                     if (GUILayout.Button("Check Mode [Action] Abilities",/* GUILayout.Height(22),*/ GUILayout.Width(180)))
                     {
                         var Modal = ShowIDWindow.ShowWindow();
@@ -614,9 +684,7 @@ namespace MalbersAnimations
                         if (GUILayout.Button(GC_T, GUILayout.Height(22), GUILayout.Width(80)))
                         {
                             foreach (var AS in m_AnimatorStates)
-                            {
                                 LoopTransition(AS);
-                            }
 
                             Debug.Log("<color=green><b>[Loop] Mode Transtions Created</b></color>");
 
@@ -996,8 +1064,6 @@ namespace MalbersAnimations
                     {
                         string[] Params = new string[controller.parameters.Length];
 
-                         
-
                         for (int i = 0; i < Params.Length; i++)
                         {
                             Params[i] = controller.parameters[i].name;
@@ -1281,13 +1347,13 @@ namespace MalbersAnimations
 
 
 
-        private void AnyState()
-        {
-            foreach (var SM in m_StateMachines)
-            {
-                // SM.name
-            }
-        }
+        //private void AnyState()
+        //{
+        //    foreach (var SM in m_StateMachines)
+        //    {
+        //        // SM.name
+        //    }
+        //}
 
         public AnimatorStateMachine FindParentSM(AnimatorState child)
         {

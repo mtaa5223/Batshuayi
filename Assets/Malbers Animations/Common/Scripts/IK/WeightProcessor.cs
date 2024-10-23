@@ -13,6 +13,7 @@ namespace MalbersAnimations.IK
         /// <param name="set"> IK Set sending the weight</param>
         /// <returns>returns the processed weight</returns>
         public abstract float Process(IKSet set, float weight);
+        public virtual void Initialize(IKSet set, Animator anim) { }
 
         public virtual void OnDrawGizmos(IKSet set, Animator anim) { }
         public virtual void OnHandlesGizmos(IKSet set, Animator anim) { }

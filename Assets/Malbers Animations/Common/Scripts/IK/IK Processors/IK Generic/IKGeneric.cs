@@ -2,7 +2,6 @@ using MalbersAnimations.Scriptables;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using static MalbersAnimations.IK.IKGeneric;
 
 
 #if UNITY_EDITOR
@@ -16,11 +15,14 @@ namespace MalbersAnimations.IK
     public class IKGeneric : IKProcessor
     {
         public override bool RequireTargets => true;
-        public enum UpVectorType { VectorUp, Local, Global }
+
 
         public List<GenericIKOffset> Bones = new();
 
-        private Quaternion[] ChildRotations;
+
+        public int[] KeepRotationTarget;
+
+
 
         public override void LateUpdate(IKSet IKSet, Animator anim, int index, float weight)
         {
@@ -28,19 +30,12 @@ namespace MalbersAnimations.IK
 
             foreach (var bn in Bones)
             {
-                var FinalWeight = weight * bn.Weight * GetProcessorAnimWeight(anim);
+                var FinalWeight = weight * bn.Weight;
 
                 if (FinalWeight <= 0) continue; //Do nothing if the weight is zero
 
                 var Bone = IKSet.Targets[bn.BoneIndex];
-
-                //Store the  bone's Child Rotation 
-                if (bn.KeepChildRot)
-                {
-                    ChildRotations = new Quaternion[Bone.Value.childCount];
-                    for (int i = 0; i < ChildRotations.Length; i++)
-                        ChildRotations[i] = Bone.Value.GetChild(i).rotation;
-                }
+                var cache = IKSet.CacheTargets[bn.BoneIndex];
 
 
                 switch (bn.IK)
@@ -61,16 +56,17 @@ namespace MalbersAnimations.IK
 
                         TargetRotation = Quaternion.LookRotation(direction, bn.UpVector) * Quaternion.Euler(bn.Offset);
                         break;
-
                     case IKGenerigType.LookAtUpDown:
                         var DirLook = IKSet.aimer.AimDirection;
                         Vector3 HorizontalRotationAxis = Vector3.Cross(bn.UpVector, DirLook).normalized;
                         Bone.Value.RotateAround(Bone.position, HorizontalRotationAxis, IKSet.aimer.VerticalAngle * -FinalWeight);
                         Bone.Value.rotation *= Quaternion.Euler(bn.Offset * FinalWeight);
-                        RestoreChildRotation(bn, Bone);
+                        RestoreChildRotation(bn, IKSet);
                         return;
                     case IKGenerigType.AdditiveOffset:
-                        TargetRotation = Bone.rotation * Quaternion.Euler(bn.Offset);
+
+                        TargetRotation = cache.rotation * Quaternion.Euler(bn.Offset);
+
                         break;
                     case IKGenerigType.RotationOverride:
                         TargetRotation = anim.transform.rotation * Quaternion.Euler(bn.Offset);
@@ -79,20 +75,25 @@ namespace MalbersAnimations.IK
                         break;
                 }
 
-                Bone.Value.rotation = Quaternion.Lerp(Bone.rotation, TargetRotation, FinalWeight);
 
-                RestoreChildRotation(bn, Bone);
+                //Debug.Log("DO IK");
+
+                Bone.Value.rotation = Quaternion.Lerp(cache.rotation, TargetRotation, FinalWeight);
+
+                RestoreChildRotation(bn, IKSet);
             }
         }
 
-        private void RestoreChildRotation(GenericIKOffset bn, Transform Bone)
+        private void RestoreChildRotation(GenericIKOffset bn, IKSet iKSet)
         {
             //Store the bone's Child Rotation
             if (bn.KeepChildRot)
             {
-                for (int i = 0; i < ChildRotations.Length; i++)
+                for (int i = 0; i < bn.childs.Length; i++)
                 {
-                    Bone.GetChild(i).rotation = ChildRotations[i];
+                    var TargetIndex = bn.childs[i];
+
+                    iKSet.Targets[TargetIndex].Value.rotation = iKSet.CacheTargets[TargetIndex].rotation;
                 }
             }
         }
@@ -143,7 +144,7 @@ namespace MalbersAnimations.IK
 
                     if (Bone == null || !bn.Gizmos) continue;
 
-                    var FinalWeight = weight * bn.Weight * GetProcessorAnimWeight(anim);
+                    var FinalWeight = weight * bn.Weight;
 
                     Handles.color = new Color(0, 1, 0, 0.1f);
                     Handles.DrawSolidArc(Bone.position, bn.UpVector,
@@ -181,37 +182,44 @@ namespace MalbersAnimations.IK
     }
 
     [Serializable]
-    public class GenericIKOffset
+    public struct GenericIKOffset
     {
         [Range(0, 1)]
-        public float Weight = 1;
+        public float Weight;
         [Tooltip("Bone Reference from the Targets Array the IK Offset")]
         public int BoneIndex;
-        public IKGenerigType IK = IKGenerigType.LookAt;
+        public IKGenerigType IK;
         public Vector3 Offset;
 
-        [Tooltip("Use the Aimer Direction to calculate the LookAt Direction")]
-        [Hide("IK", (int)IKGenerigType.LookAt)]
-        public bool UseAimDirection = true;
+        //[Tooltip("Use the Aimer Direction to calculate the LookAt Direction")]
+        //[Hide("IK", (int)IKGenerigType.LookAt)]
+        //public bool UseAimDirection;
 
 
-        [Hide("IK", (int)IKGenerigType.LookAt)]
+        [Hide(nameof(IK), (int)IKGenerigType.LookAt)]
         [Tooltip("Limits the Look At from the Min to Max Value")]
-        public RangedFloat LookAtLimit = new(90, 120);
+        public RangedFloat LookAtLimit;
 
-        [Hide("IK", (int)IKGenerigType.LookAt)]
-        public UpVectorType upVector = UpVectorType.VectorUp;
-        [Hide("upVector", (int)UpVectorType.Local)]
-        public Vector3 LocalUp = new(0, 1, 0);
-        [Hide("upVector", (int)UpVectorType.Global)]
+        [Hide(nameof(IK), (int)IKGenerigType.LookAt)]
+        public UpVectorType upVector;
+        [Hide(nameof(upVector), (int)UpVectorType.Local)]
+        public Vector3 LocalUp;
+        [Hide(nameof(upVector), (int)UpVectorType.Global)]
         public Vector3Var WorldUp;
 
 
         [Tooltip("Restore the Child bone's rotations after the IK is applied to the bone")]
-        public bool KeepChildRot = true;
+        public bool KeepChildRot;
+
+
+        [Hide(nameof(KeepChildRot), (int)UpVectorType.Global)]
+        public int[] childs;
 
         [Tooltip("Show Gizmos")]
-        public bool Gizmos = false;
+        public bool Gizmos;
+
+
+        //  public TransformValues[] CacheChilds { get; set; }
 
         public Vector3 UpVector
         {
@@ -229,6 +237,7 @@ namespace MalbersAnimations.IK
 
     public enum IKGenerigType
     {
+        [InspectorName("Local At (Aim)")]
         LookAt,
         LookAtUpDown,
         [InspectorName("Local Rotation Additive")]

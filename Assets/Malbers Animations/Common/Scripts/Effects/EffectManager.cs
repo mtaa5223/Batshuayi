@@ -21,6 +21,9 @@ namespace MalbersAnimations.Utilities
 
         public int SelectedEffect = -1;
         public bool debug;
+
+        private Effect Pin_Effect;
+
         private void Awake()
         {
             foreach (var e in Effects)
@@ -44,6 +47,23 @@ namespace MalbersAnimations.Utilities
                 foreach (var effect in effects) Play(effect);
         }
 
+
+        public virtual void Effect_Pin(string name)
+        {
+            Pin_Effect = Effects.Find(effect => effect.Name == name && effect.active == true);
+        }
+
+
+        public virtual void Effect_Pin(int ID)
+        {
+            Pin_Effect = Effects.Find(effect => effect.ID == ID && effect.active == true);
+        }
+
+
+        public virtual void Effect_Pin_Root(Transform root)
+        {
+            Pin_Effect.root = root;
+        }
 
         /// <summary>Plays an Effect using its ID value</summary>
         public virtual void PlayEffect(string name)
@@ -92,26 +112,29 @@ namespace MalbersAnimations.Utilities
 
         public virtual void StopEffect(Effect e, GameObject instance)
         {
-            //Stop the Reaction
-            e.OnStopReaction?.React(Owner);
-            e.OnStop.Invoke();
-
-            e.IsPlaying = false;
-
-            if (e.effect != null)
+            //Stop the Effect only if is playing
+            if (e.IsPlaying)
             {
-                if (!e.effect.IsPrefab())
+                e.OnStopReaction?.React(Owner);
+                e.OnStop.Invoke();
+
+                e.IsPlaying = false;
+
+                if (e.effect != null)
                 {
-                    if (e.disableOnStop) 
-                        instance?.SetActive(false);
+                    if (!e.effect.IsPrefab())
+                    {
+                        if (e.disableOnStop)
+                            instance?.SetActive(false);
+                    }
+                    else
+                        Destroy(instance);
+
                 }
-                else
-                    Destroy(instance);
 
+                if (debug)
+                    Debug.Log($"<B>{Owner.name}</B> Effect Stop: <B>[{e.Name}]</B>", (instance != null ? instance : this));
             }
-
-            if (debug)
-                Debug.Log($"<B>{Owner.name}</B> Effect Stop: <B>[{e.Name}]</B>", this);
         }
 
 
@@ -202,11 +225,11 @@ namespace MalbersAnimations.Utilities
 
                     if (e.life > 0)
                     {
-                        this.Delay_Action(e.life, () => StopEffect(e,e.Instance));
+                        this.Delay_Action(e.life, () => StopEffect(e, e.Instance));
                     }
 
                     if (debug)
-                        Debug.Log($"<B>{Owner.name}</B> Effect Play: <B>[{e.Name}]</B>", this);
+                        Debug.Log($"<B>{Owner.name}</B> Effect Play: <B>[{e.Name}]</B>", (e.Instance != null ? e.Instance : this));
 
                     e.OnPlay.Invoke();                 //Invoke the Play Event
                     e.OnPlayReaction?.React(Owner);    //Play the Reaction
@@ -484,8 +507,8 @@ namespace MalbersAnimations.Utilities
                             if (is_Prefab)
                                 EditorGUILayout.PropertyField(Element.FindPropertyRelative("scale"), new GUIContent("Scale", "Scale the Prefab object"));
 
-                           
-                                EditorGUILayout.PropertyField(Element.FindPropertyRelative("life"), new GUIContent("Life", "Duration of the Effect. The Effect will be destroyed after the Life time has passed"));
+
+                            EditorGUILayout.PropertyField(Element.FindPropertyRelative("life"), new GUIContent("Life", "Duration of the Effect. The Effect will be destroyed after the Life time has passed"));
 
                             EditorGUILayout.PropertyField(Element.FindPropertyRelative("delay"), new GUIContent("Delay", "Time before playing the Effect"));
 

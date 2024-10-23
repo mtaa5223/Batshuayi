@@ -93,6 +93,8 @@ MonoBehaviour:
   WaitForAllTasks: 0
   waitForTask: -1
   checkOn: 0
+  TransformHook: {fileID: 0}
+  GameObjectVar: {fileID: 0}
   compare: 3
   value:
     name: 

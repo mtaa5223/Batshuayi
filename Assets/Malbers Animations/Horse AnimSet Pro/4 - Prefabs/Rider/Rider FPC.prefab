@@ -29,13 +29,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1095476222015968}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4213753977973542}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &54470127597767688
 Rigidbody:
@@ -44,10 +45,21 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1095476222015968}
-  serializedVersion: 2
+  serializedVersion: 4
   m_Mass: 10
   m_Drag: 0
   m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -61,8 +73,17 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1095476222015968}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
+  serializedVersion: 2
   m_Radius: 0.5
   m_Height: 1.6
   m_Direction: 1
@@ -85,12 +106,15 @@ MonoBehaviour:
       UseConstant: 0
       ConstantValue: 1
       Variable: {fileID: 11400000, guid: e44ea26080b5a4348908b0711d43b082, type: 2}
+    ignoreOnPause:
+      UseConstant: 1
+      ConstantValue: 0
+      Variable: {fileID: 0}
     type: 1
     input: InputValue
-    key: 102
+    key: 101
+    debug: 0
     GetPressed: 1
-    InputValue: 0
-    ToggleValue: 0
     ResetOnDisable: 1
     OnInputDown:
       m_PersistentCalls:
@@ -113,6 +137,9 @@ MonoBehaviour:
     OnLongPress:
       m_PersistentCalls:
         m_Calls: []
+    OnLongPressReleased:
+      m_PersistentCalls:
+        m_Calls: []
     OnDoubleTap:
       m_PersistentCalls:
         m_Calls: []
@@ -131,7 +158,7 @@ MonoBehaviour:
     OnInputPressed:
       m_PersistentCalls:
         m_Calls: []
-    OnPressedNormalized:
+    OnInputFloat:
       m_PersistentCalls:
         m_Calls: []
   - name: Mount
@@ -139,12 +166,15 @@ MonoBehaviour:
       UseConstant: 0
       ConstantValue: 1
       Variable: {fileID: 11400000, guid: 9c5a83571f2ebf346b6e6fe49efddaa6, type: 2}
+    ignoreOnPause:
+      UseConstant: 1
+      ConstantValue: 0
+      Variable: {fileID: 0}
     type: 1
     input: InputValue
-    key: 102
+    key: 101
+    debug: 0
     GetPressed: 1
-    InputValue: 0
-    ToggleValue: 0
     ResetOnDisable: 1
     OnInputDown:
       m_PersistentCalls:
@@ -167,6 +197,9 @@ MonoBehaviour:
     OnLongPress:
       m_PersistentCalls:
         m_Calls: []
+    OnLongPressReleased:
+      m_PersistentCalls:
+        m_Calls: []
     OnDoubleTap:
       m_PersistentCalls:
         m_Calls: []
@@ -185,7 +218,7 @@ MonoBehaviour:
     OnInputPressed:
       m_PersistentCalls:
         m_Calls: []
-    OnPressedNormalized:
+    OnInputFloat:
       m_PersistentCalls:
         m_Calls: []
   AllInputs: []
@@ -197,18 +230,24 @@ MonoBehaviour:
       ConstantValue: New Map
       Variable: {fileID: 0}
     inputs: []
+    selectedIndex: 0
   ActiveMap:
     name:
       UseConstant: 1
       ConstantValue: New Map
       Variable: {fileID: 0}
     inputs: []
+    selectedIndex: 0
+  ResetAllInputsOnDisable: 1
   showInputEvents: 0
   ResetOnFocusLost: 0
   OnInputEnabled:
     m_PersistentCalls:
       m_Calls: []
   OnInputDisabled:
+    m_PersistentCalls:
+      m_Calls: []
+  OnUsingGamePad:
     m_PersistentCalls:
       m_Calls: []
   IgnoreOnPause:
@@ -242,12 +281,15 @@ MonoBehaviour:
         UseConstant: 1
         ConstantValue: 1
         Variable: {fileID: 0}
+      ignoreOnPause:
+        UseConstant: 1
+        ConstantValue: 0
+        Variable: {fileID: 0}
       type: 1
       input: Shift
       key: 304
+      debug: 0
       GetPressed: 1
-      InputValue: 0
-      ToggleValue: 0
       ResetOnDisable: 1
       OnInputDown:
         m_PersistentCalls:
@@ -256,6 +298,9 @@ MonoBehaviour:
         m_PersistentCalls:
           m_Calls: []
       OnLongPress:
+        m_PersistentCalls:
+          m_Calls: []
+      OnLongPressReleased:
         m_PersistentCalls:
           m_Calls: []
       OnDoubleTap:
@@ -276,7 +321,7 @@ MonoBehaviour:
       OnInputPressed:
         m_PersistentCalls:
           m_Calls: []
-      OnPressedNormalized:
+      OnInputFloat:
         m_PersistentCalls:
           m_Calls: []
     JumpForce: 30
@@ -347,6 +392,7 @@ MonoBehaviour:
     UseConstant: 1
     ConstantValue: {fileID: 0}
     Variable: {fileID: 0}
+  IKMounted: 1
   StartMounted:
     UseConstant: 1
     ConstantValue: 0
@@ -368,6 +414,7 @@ MonoBehaviour:
     UseConstant: 0
     ConstantValue: 0
     Variable: {fileID: 11400000, guid: 3aef9340e54e43a4fa761e527cb230ac, type: 2}
+  useIKFeet: 1
   DismountType: 2
   LayerPath: Layers/Mount v2
   MountLayer: Mounted
@@ -409,7 +456,17 @@ MonoBehaviour:
   StopAnimalA: {fileID: 8300000, guid: b7656b7a8996c42429c82e659e36433e, type: 3}
   RiderAudio: {fileID: 82960691122185604}
   MainCollider: {fileID: 136536493414637604}
-  MountCollider: {fileID: 11400000, guid: 2c259b2d172a70b41a9c00fa4ef2e05a, type: 2}
+  MountCollider:
+    name: 
+    enabled: 1
+    isTrigger: 0
+    center: {x: 0, y: 0.25, z: 0}
+    height: 1.1
+    direction: 1
+    radius: 0.36
+    material: {fileID: 0}
+    modify: 29
+  colliders: []
   OnFindMount:
     m_PersistentCalls:
       m_Calls: []
@@ -630,12 +687,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1832136450815452}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4939107495449224}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &20426858539024942
 Camera:
@@ -651,9 +709,17 @@ Camera:
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -71,27 +73,23 @@ namespace MalbersAnimations
     public class IDDrawer : PropertyDrawer
     {
         /// <summary> Cached style to use to draw the popup button. </summary>
-        private GUIStyle popupStyle;
+        protected GUIStyle popupStyle;
 
-        List<IDs> Instances;
-        List<string> popupOptions;
-
-        // private readonly Color Require= new Color(1, 0.4f, 0.4f, 1);
+        protected List<IDs> Instances;
+        protected GenericMenu menu;
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            if (popupStyle == null)
+            popupStyle ??= new(GUI.skin.GetStyle("PaneOptions"))
             {
-                popupStyle = new GUIStyle(GUI.skin.GetStyle("PaneOptions"));
-                popupStyle.imagePosition = ImagePosition.ImageOnly;
-            }
+                imagePosition = ImagePosition.ImageOnly
+            };
 
             label = EditorGUI.BeginProperty(position, label, property);
 
             if (property.objectReferenceValue)
             {
                 label.tooltip += $"\n ID Value: [{(property.objectReferenceValue as IDs).ID}]";
-                //  if (label.text.Contains("Element")) label.text = property.objectReferenceValue.name;
             }
 
             if (label.text.Contains("Element"))
@@ -102,35 +100,69 @@ namespace MalbersAnimations
             else
                 position = EditorGUI.PrefixLabel(position, label);
 
-            EditorGUI.BeginChangeCheck();
-
-
-
-            float height = EditorGUIUtility.singleLineHeight;
-
-
-            // Calculate rect for configuration button
-            Rect buttonRect = new Rect(position);
-            buttonRect.yMin += popupStyle.margin.top;
-            buttonRect.width = popupStyle.fixedWidth + popupStyle.margin.right;
-            buttonRect.x -= 20;
-            buttonRect.height = height;
-
-            //position.xMin = buttonRect.xMax;
-
             // Store old indent level and set it to 0, the PrefixLabel takes care of it
             int indent = EditorGUI.indentLevel;
             EditorGUI.indentLevel = 0;
 
+            //            EditorGUI.BeginChangeCheck();
+            using (var cc = new EditorGUI.ChangeCheckScope())
+            {
+                float height = EditorGUIUtility.singleLineHeight;
 
+                // Calculate rect for configuration button
+                Rect buttonRect = new(position);
+                buttonRect.yMin += popupStyle.margin.top;
+                buttonRect.width = popupStyle.fixedWidth + popupStyle.margin.right;
+                buttonRect.x -= 20;
+                buttonRect.height = height;
+
+                //position.xMin = buttonRect.xMax;
+
+                if (EditorGUI.DropdownButton(buttonRect, GUIContent.none, FocusType.Passive, popupStyle))
+                {
+                    FindAllInstances(property);  //Find the instances only when the dropdown is pressed
+                    menu.DropDown(buttonRect);
+                }
+
+                position.height = EditorGUIUtility.singleLineHeight;
+
+                DrawProperty(position, property);
+
+                EditorGUI.PropertyField(position, property, GUIContent.none, false);
+
+
+                if (cc.changed)
+                {
+                    property.serializedObject.ApplyModifiedProperties();
+                    Undo.RecordObject(property.objectReferenceValue, "Move Handles");
+                }
+            }
+            EditorGUI.indentLevel = indent;
+            EditorGUI.EndProperty();
+        }
+
+
+        protected virtual void DrawProperty(Rect newPos, SerializedProperty property)
+        {
+            EditorGUI.PropertyField(newPos, property, GUIContent.none, false);
+        }
+        protected void SetPropertyValue(SerializedProperty property, IDs value)
+        {
+            property.objectReferenceValue = value;
+            property.serializedObject.ApplyModifiedProperties();
+        }
+
+        protected void FindAllInstances(SerializedProperty property)
+        {
             if (Instances == null || Instances.Count == 0)
             {
                 var NameOfType = GetPropertyType(property);
                 string[] guids = AssetDatabase.FindAssets("t:" + NameOfType);  //FindAssets uses tags check documentation for more info
 
-                Instances = new List<IDs>();
-                popupOptions = new List<string>();
-                popupOptions.Add("None");
+                Instances = new();
+                menu = new GenericMenu();
+
+                menu.AddItem(new GUIContent("None"), false, () => SetPropertyValue(property, null));
 
                 for (int i = 0; i < guids.Length; i++)         //probably could get optimized 
                 {
@@ -160,66 +192,24 @@ namespace MalbersAnimations
                         displayname = idString + displayname;
                     }
 
-                    popupOptions.Add(displayname);
+                    menu.AddItem(new GUIContent(displayname), false, () => SetPropertyValue(property, inst));
                 }
             }
-            var PropertyValue = property.objectReferenceValue;
-
-            //  Debug.Log(PropertyValue);
-            int result = 0;
-
-            if (PropertyValue != null && Instances.Count > 0)
-            {
-                result = Instances.FindIndex(i => i.name == PropertyValue.name) + 1; //Plus 1 because 0 is None
-            }
-
-
-            result = EditorGUI.Popup(buttonRect, result, popupOptions.ToArray(), popupStyle);
-
-            if (result == 0)
-            {
-                property.objectReferenceValue = null;
-            }
-            else
-            {
-                var NewSelection = Instances[result - 1];
-                property.objectReferenceValue = NewSelection;
-
-            }
-
-            position.height = EditorGUIUtility.singleLineHeight;
-
-
-            //if (property.objectReferenceValue != null)
-            //{
-            //    var id = (property.objectReferenceValue as IDs).ID;
-
-            //    position.width-=50;
-            //    var IntRect = new Rect(position);
-            //    IntRect.x = position.width+80;
-            //    IntRect.width = 50;
-
-            //    using (new EditorGUI.DisabledGroupScope(true))
-            //        EditorGUI.IntField(IntRect, GUIContent.none, id);
-            //}
-
-            EditorGUI.PropertyField(position, property, GUIContent.none, false);
-
-
-            if (EditorGUI.EndChangeCheck())
-                property.serializedObject.ApplyModifiedProperties();
-
-            EditorGUI.indentLevel = indent;
-            EditorGUI.EndProperty();
         }
 
-        public static string GetPropertyType(SerializedProperty property)
+        protected static string GetPropertyType(SerializedProperty property)
         {
             var type = property.type;
             var match = System.Text.RegularExpressions.Regex.Match(type, @"PPtr<\$(.*?)>");
             if (match.Success)
                 type = match.Groups[1].Value;
             return type;
+        }
+
+
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            return EditorGUIUtility.singleLineHeight + 2;
         }
     }
 #endif

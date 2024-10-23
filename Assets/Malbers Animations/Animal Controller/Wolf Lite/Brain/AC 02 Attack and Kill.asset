@@ -105,7 +105,7 @@ MonoBehaviour:
     ConstantValue: 1.5
     Variable: {fileID: 0}
   ModeAngle: 360
-  lookAtAlign: 1
+  lookAtAlign: 0
   IgnoreFirstCoolDown: 1
   StopModeOnExit: 1
   alignTime: 0.3
@@ -135,6 +135,8 @@ MonoBehaviour:
     UseConstant: 1
     ConstantValue: 3
     Variable: {fileID: 0}
+  Sprint: 0
+  ResetSprintOnExit: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0

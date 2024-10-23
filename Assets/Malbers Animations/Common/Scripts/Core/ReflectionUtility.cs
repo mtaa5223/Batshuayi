@@ -19,6 +19,8 @@ namespace MalbersAnimations
             {
                 fi = parent.GetField(paths[i], flags);
 
+                if (fi == null) { continue; }
+
                 // there are only two container field type that can be serialized:
                 // Array and List<T>
                 if (fi.FieldType.IsArray)

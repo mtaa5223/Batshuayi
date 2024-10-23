@@ -4,6 +4,8 @@ using MalbersAnimations.Events;
 using MalbersAnimations.Reactions;
 
 
+
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -41,8 +43,12 @@ namespace MalbersAnimations.Controller
 
         [Tooltip(" Amount Pickable Item can store.. that it can be use for anything")]
         public IntReference m_Amount = new(1); //Not done yet
-        [Tooltip("The Pick Up Drop Logic will be called via animator events/messages")]
 
+        [Tooltip("The pickable can be picked. Set it to false to temporalry disabled the Pick method at runtime")]
+        public BoolReference canBePicked = new(true); //Not done yet
+
+
+        [Tooltip("The pickable will be pick automatically when it enters the focus area from the picker")]
         public BoolReference m_AutoPick = new(false); //Not done yet
         public IntReference m_ID = new();         //Not done yet
 
@@ -57,6 +63,7 @@ namespace MalbersAnimations.Controller
         public GameObjectEvent OnFocusedBy = new();
         public GameObjectEvent OnUnfocusedBy = new();
         public GameObjectEvent OnPicked = new();
+        public GameObjectEvent OnPickedFailed = new();
         public GameObjectEvent OnPrePicked = new();
         public GameObjectEvent OnDropped = new();
         public GameObjectEvent OnPreDropped = new();
@@ -101,6 +108,9 @@ namespace MalbersAnimations.Controller
 
         /// <summary>The Item will be autopicked if the Picker is focusing it</summary>
         public bool AutoPick { get => m_AutoPick.Value; set => m_AutoPick.Value = value; }
+
+        /// <summary>The pickable can be picked. Set it to false to temporaliry disabled the Pick method at runtime</summary>
+        public bool CanBePicked { get => canBePicked.Value; set => canBePicked.Value = value; }
         public bool Collectable { get => m_Collectable.Value; set => m_Collectable.Value = value; }
         public Rigidbody RigidBody => rb;
 
@@ -124,18 +134,17 @@ namespace MalbersAnimations.Controller
             }
         }
 
-        public void SetFocused(GameObject FocusBy)
+        public void SetFocused(GameObject FocusBy, bool isFocused)
         {
-            if (FocusBy)
+            Focused = isFocused;
+
+            if (isFocused)
             {
-                Focused = true;
                 OnFocusedBy.Invoke(FocusBy);
                 FocusedByReaction?.React(FocusBy);
             }
             else
             {
-                Focused = false;
-
                 //Maybe this can be removed after
                 OnFocusedBy.Invoke(null);
                 FocusedByReaction?.React((Component)null);
@@ -145,8 +154,6 @@ namespace MalbersAnimations.Controller
                 UnFocusedByReaction?.React(FocusBy);
             }
         }
-
-
 
         /// <summary>Game Time the Pickable was Picked</summary>
         public float CurrentPickTime { get => currentPickTime; set => currentPickTime = value; }
@@ -178,22 +185,26 @@ namespace MalbersAnimations.Controller
 
         public virtual void Pick()
         {
-            OnPickDisablePhysics();                       //Disable all physics when the item is picked
+            OnPickDisablePhysics();                 //Disable all physics when the item is picked
             IsPicked = !Collectable;                //Check if the Item is collectable 
-            Focused = false;                        //Unfocus the Item
-
-            OnFocusedBy.Invoke(null);
-            FocusedByReaction?.React((Component)null);
-
 
             //Weapons can be picked witout having a picker
             var realPicker = Picker ? Picker.Root.gameObject : null;
+
+            SetFocused(realPicker, false);
 
             OnPicked.Invoke(realPicker);             //Call the Event
             PickedReaction?.React(realPicker);
 
             CurrentPickTime = Time.time;            //Store the time it was picked
             if (Collectable) enabled = false;
+
+            if (DestroyOnPick) DestroyPickUp();
+        }
+
+        protected virtual void DestroyPickUp()
+        {
+            Destroy(gameObject);
         }
 
         public virtual void Drop()
@@ -243,6 +254,9 @@ namespace MalbersAnimations.Controller
                     RigidBody.collisionDetectionMode = CollisionDetectionMode.Discrete;
 
                 RigidBody.constraints = RigidbodyConstraints.FreezeAll; //Freeze the rotation of the item
+
+                // RigidBody.detectCollisions = false;
+
             }
 
             if (disableColliders.Value)
@@ -260,6 +274,8 @@ namespace MalbersAnimations.Controller
                 if (!RigidBody.isKinematic)
                     RigidBody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 
+                // RigidBody.detectCollisions = true;
+
                 RigidBody.constraints = defaultConstraints; //Restore the constraints of the item
             }
 
@@ -276,6 +292,8 @@ namespace MalbersAnimations.Controller
         {
             this.enabled = enable;
         }
+
+
 
         [HideInInspector] public int EditorTabs = 0;
 
@@ -345,11 +363,11 @@ namespace MalbersAnimations.Controller
     {
         private SerializedProperty //   PickAnimations, PickUpMode, PickUpAbility, DropMode, DropAbility,DropAnimations, 
             Align, AlignTime, AlignDistance, AlignPos, EditorTabs,
-            m_AutoPick, DropDelay, PickDelay, rb, kinematicOnPick, disableColliders, DestroyRbOnPick,
+            m_AutoPick, DropDelay, PickDelay, rb, kinematicOnPick, disableColliders, DestroyRbOnPick, canBePicked,
             //kinematicOnDrop,
             CoolDown,// SceneRoot,
             OnFocused, OnFocusedBy, OnUnfocusedBy,
-            OnPrePicked, OnPicked, OnDropped, OnPreDropped, holder,
+            OnPrePicked, OnPicked, OnDropped, OnPreDropped, holder, OnPickedFailed,
 
             PrePickedReaction, PreDroppedReaction, DroppedReaction, PickedReaction, UnFocusedByReaction, FocusedByReaction,
 
@@ -385,6 +403,8 @@ namespace MalbersAnimations.Controller
             AlignTime = serializedObject.FindProperty("AlignTime");
             AlignDistance = serializedObject.FindProperty("AlignDistance");
 
+            canBePicked = serializedObject.FindProperty("canBePicked");
+            OnPickedFailed = serializedObject.FindProperty("OnPickedFailed");
             OnFocused = serializedObject.FindProperty("OnFocused");
             OnFocusedBy = serializedObject.FindProperty("OnFocusedBy");
             OnUnfocusedBy = serializedObject.FindProperty("OnUnfocusedBy");
@@ -456,6 +476,8 @@ namespace MalbersAnimations.Controller
                 EditorGUILayout.PropertyField(OnPreDropped, new GUIContent("On Pre-Dropped By"));
             EditorGUILayout.PropertyField(OnDropped, new GUIContent("On Dropped By"));
 
+            EditorGUILayout.PropertyField(OnPickedFailed);
+
         }
 
         private void DrawReactions()
@@ -477,6 +499,7 @@ namespace MalbersAnimations.Controller
 
             if (m_AutoPick.isExpanded)
             {
+                EditorGUILayout.PropertyField(canBePicked);
                 EditorGUILayout.PropertyField(holder);
                 EditorGUILayout.PropertyField(IntID, new GUIContent("ID", "Int value the Pickable Item can store. This ID is used by the Picker component to Identify each Pickable Object"));
                 EditorGUILayout.PropertyField(Amount);

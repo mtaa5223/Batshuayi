@@ -190,12 +190,19 @@ namespace MalbersAnimations.Controller
 
         void OnDrawGizmos()
         {
+            if (!UnityEditorInternal.InternalEditorUtility.GetIsInspectorExpanded(this)) //Show Gizmos only when the Inspector is Open
+            { return; }
+
+
             if (Application.isPlaying)
                 DrawTriggers(transform, Trigger, DebugColor, false);
         }
 
         void OnDrawGizmosSelected()
         {
+            if (!UnityEditorInternal.InternalEditorUtility.GetIsInspectorExpanded(this)) //Show Gizmos only when the Inspector is Open
+            { return; }
+
             if (!Application.isPlaying)
                 DrawTriggers(transform, Trigger, DebugColor, true);
         }

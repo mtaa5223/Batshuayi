@@ -17,7 +17,7 @@ MonoBehaviour:
   Input: Glide
   ExitInput:
     UseConstant: 1
-    ConstantValue: 
+    ConstantValue: Dodge
     Variable: {fileID: 0}
   m_StateProfile:
     UseConstant: 1
@@ -50,7 +50,7 @@ MonoBehaviour:
   UseSendMessage: 0
   IncludeChildren: 0
   AllowExitFromAnim: 0
-  CanTransitionToItself: 1
+  CanTransitionToItself: 0
   IncludeSleepState: 0
   SleepFromState:
   - {fileID: 11400000, guid: 8078fbdb01991b44b9c1351f444b5efe, type: 2}

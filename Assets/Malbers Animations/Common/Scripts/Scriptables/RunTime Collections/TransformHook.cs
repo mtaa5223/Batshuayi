@@ -15,6 +15,8 @@ namespace MalbersAnimations.Scriptables
 
         private void OnEnable()
         {
+            if (Reference == null) Reference = transform;
+
             UpdateHook();
         }
 
@@ -31,6 +33,14 @@ namespace MalbersAnimations.Scriptables
         public virtual void UpdateHook()
         {
             Hook.Value = Reference;
+        }
+
+        public virtual void SetByName(string name)
+        {
+            var findCore = this.FindInterface<IObjectCore>();
+
+            if (findCore != null)
+                Hook.Value = findCore.transform.FindGrandChild(name);
         }
 
         public virtual void DisableHook() => Hook.Value = null;

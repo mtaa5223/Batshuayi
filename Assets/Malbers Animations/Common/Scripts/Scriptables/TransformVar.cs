@@ -34,6 +34,8 @@ namespace MalbersAnimations.Scriptables
         public virtual void SetValue(Transform var) => Value = var;
         public virtual void SetValue(GameObject var) => Value = var.transform;
         public virtual void SetValue(Component var) => Value = var.transform;
+        public virtual void ApplyPositionTo(Transform var) => var.position = Value.position;
+        public virtual void SetVector3Value(Vector3Var var) => var.Value = Value.position;
     }
 
     [Serializable]

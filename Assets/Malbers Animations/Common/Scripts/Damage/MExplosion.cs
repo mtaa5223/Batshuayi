@@ -22,49 +22,62 @@ namespace MalbersAnimations
         [Tooltip("Life of the explosion, after this time has elapsed the Explosion gameobject will be destroyed ")]
         public float life = 10f;
 
+        public int ColliderSize = 50;
+
         public AnimationCurve DamageCurve = new(MTools.DefaultCurveLinearInverse);
+
 
         [HideInInspector] public int Editor_Tabs1;
 
-        void Start() { if (ExplodeOnStart) Explode(); }
 
+        private Collider[] colliders;
 
+        void Start()
+        {
+            colliders = new Collider[ColliderSize];
+
+            if (ExplodeOnStart)
+                Explode();
+        }
 
         public virtual void Explode()
         {
-            Collider[] colliders = Physics.OverlapSphere(transform.position, radius, Layer, triggerInteraction);             //Ignore Colliders
+            Physics.OverlapSphereNonAlloc(transform.position, radius, colliders, Layer, triggerInteraction);             //Ignore Colliders
 
             List<GameObject> Real_Roots = new();
 
-
-            foreach (var other in colliders)
+            for (int i = 0; i < colliders.Length; i++)
             {
-                if (dontHitOwner && Owner && other.transform.IsChildOf(Owner.transform)) continue;   //Don't hit yourself
+                var col = colliders[i];
 
-                var rb = other.attachedRigidbody;
+                if (col == null) return; //no other collider were found    
 
-                GameObject realRoot = other.transform.FindObjectCore().gameObject;       //Get the gameObject on the entering collider
+                if (dontHitOwner && Owner && col.transform.IsChildOf(Owner.transform)) continue;   //Don't hit yourself
+
+                var rb = col.attachedRigidbody;
+
+                GameObject realRoot = col.transform.FindObjectCore().gameObject;       //Get the gameObject on the entering collider
 
                 //Means the Root is not on the real root since its not on the search layer
-                if (realRoot.layer != other.gameObject.layer)
-                    realRoot = MTools.FindRealParentByLayer(other.transform);
+                if (realRoot.layer != col.gameObject.layer)
+                    realRoot = MTools.FindRealParentByLayer(col.transform);
 
                 if (!Real_Roots.Contains(realRoot))
                 {
                     //Debug.Log("realRoot = " + realRoot);
 
                     //Distance of the collider and the Explosion
-                    var Distance = Vector3.Distance(transform.position, other.bounds.center);
+                    var Distance = Vector3.Distance(transform.position, col.bounds.center);
 
                     var ExplotionRange = DamageCurve.Evaluate(Distance / radius); //Calculate the explostion range 
 
                     if (rb != null && rb.useGravity)
                     {
-                        other.attachedRigidbody.AddExplosionForce(Force * ExplotionRange, transform.position, radius, upwardsModifier, forceMode);
+                        col.attachedRigidbody.AddExplosionForce(Force * ExplotionRange, transform.position, radius, upwardsModifier, forceMode);
                     }
 
 
-                    Debugging("Apply Explosion", other);
+                    Debugging("Apply Explosion", col);
 
                     Real_Roots.Add(realRoot); //Affect Only One 
 
@@ -76,13 +89,15 @@ namespace MalbersAnimations
                             Value = statModifier.Value * ExplotionRange    //Do Damage depending the distance from the explosion
                         };
 
-                        TryDamage(other.gameObject, modif);
-                        TryInteract(other.gameObject);
+                        TryDamage(col.gameObject, modif);
+                        TryInteract(col.gameObject);
 
                         ////Use the Damageable comonent instead!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         //modif.ModifyStat(other.GetComponentInParent<Stats>());
                     }
                 }
+
+                col = null; //Clear the Collider
             }
             // Debug.Log("-----------------------");
             Destroy(gameObject, life);

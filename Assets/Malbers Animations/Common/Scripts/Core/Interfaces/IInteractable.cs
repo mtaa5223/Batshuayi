@@ -73,6 +73,8 @@ namespace MalbersAnimations
     /// <summary>Used for Play Animations on a Character, in case of the Animal Controller are the Modes</summary>
     public interface ICharacterAction
     {
+        public GameObject gameObject { get; }
+
         /// <summary>Play an Animation Action on a Character and returns True if it can play it</summary>
         bool PlayAction(int Set, int Index);
 

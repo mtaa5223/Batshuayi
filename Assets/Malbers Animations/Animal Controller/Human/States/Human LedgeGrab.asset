@@ -106,7 +106,7 @@ MonoBehaviour:
     Variable: {fileID: 0}
   automatic:
     UseConstant: 1
-    ConstantValue: 1
+    ConstantValue: 0
     Variable: {fileID: 0}
   automaticByState:
   - {fileID: 11400000, guid: 975403cc10f8cec46a3caa6ed4e3d6c5, type: 2}

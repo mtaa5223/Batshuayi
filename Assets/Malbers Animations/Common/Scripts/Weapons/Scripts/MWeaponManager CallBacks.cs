@@ -87,7 +87,10 @@ namespace MalbersAnimations
         /// <summary> Equip a weapon that is located in a Holster (INPUT CONNECTION)  </summary>
         protected virtual void Holster_Equip(HolsterID HolsterID, bool value) { if (value) Holster_Equip(HolsterID.ID); }
 
-        public virtual void HolsterClearAll()
+        public void HolsterClearAll() => Holster_Clear_All();
+
+        public virtual void Holster_Clear_All()
+
         {
             if (UseHolsters && Active && !Paused)
             {
@@ -128,9 +131,16 @@ namespace MalbersAnimations
             if (UseHolsters && Active && !Paused// && !ExitByAnim
                 )
             {
-                Debugging("Holster Equip", "green");
+                //if (WeaponAction == Weapon_Action.Draw || WeaponAction == Weapon_Action.Store) return;//Do nothing when drawing or storing a weapon ???
 
-                if (Weapon && !Weapon.CanUnequip) return;
+                if (Weapon)
+                {
+                    if (!Weapon.CanUnequip) return; //Do not change holsters if the weapon cannot unequip
+                    if (!StoreSelfHolster && Weapon.HolsterID == HolsterID) return; //Meaning the weapon is already equipped
+                }
+
+
+                Debugging($"Holster Equip [{HolsterID}]", "green");
 
                 //Do nothing if the Action is NOT Idle or None( DO NOT INCLUDE AIMING because Assasing Creed Style)
                 // if (!IsWeaponAction(Weapon_Action.None, Weapon_Action.Idle)) return;

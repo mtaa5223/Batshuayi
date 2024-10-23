@@ -142,7 +142,7 @@ PrefabInstance:
     - target: {fileID: 114000011653941726, guid: cd655bcb33b07a94c9e01c2e9b6b5573,
         type: 3}
       propertyPath: Editor_Tabs1
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114000011653941726, guid: cd655bcb33b07a94c9e01c2e9b6b5573,
         type: 3}
@@ -289,9 +289,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Align: 0
-  AlignPos: 0
   AlignTime: 0.15
-  AlignDistance: 1
   PickDelay:
     UseConstant: 1
     ConstantValue: 0.15
@@ -414,8 +412,20 @@ MonoBehaviour:
   PreDroppedReaction:
     rid: -2
   rb: {fileID: 7077722914803418111}
+  DestroyRbOnPick:
+    UseConstant: 1
+    ConstantValue: 0
+    Variable: {fileID: 0}
   m_colliders:
   - {fileID: 915646386226745309}
+  kinematicOnPick:
+    UseConstant: 1
+    ConstantValue: 1
+    Variable: {fileID: 0}
+  disableColliders:
+    UseConstant: 1
+    ConstantValue: 1
+    Variable: {fileID: 0}
   EditorTabs: 0
   references:
     version: 2

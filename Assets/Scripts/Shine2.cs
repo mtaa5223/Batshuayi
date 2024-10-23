@@ -21,6 +21,7 @@ public class Shine2 : MonoBehaviour
     public void signal()
     {
         QuestManager.instance.StartQuest();
+        Portal.SetActive(true);
     }
 }
 

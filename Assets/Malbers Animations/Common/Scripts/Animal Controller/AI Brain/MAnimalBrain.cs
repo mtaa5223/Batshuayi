@@ -352,9 +352,7 @@ namespace MalbersAnimations.Controller.AI
 
         public bool IsTaskDone(int TaskIndex) => TasksDone[TaskIndex];
 
-        /// <summary>
-        /// Set if a Task is finished or not
-        /// </summary>
+        /// <summary>  Set if a Task is finished or not </summary>
         /// <param name="TaskIndex">Index of the task</param>
         /// <param name="value">True[Default] if the Task is finished, False is not</param>
         public void TaskDone(int TaskIndex, bool value = true) //If the first task is done then go and do the next one

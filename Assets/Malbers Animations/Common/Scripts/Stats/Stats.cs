@@ -465,6 +465,10 @@ namespace MalbersAnimations
 
         /// <summary>If the ResetStat funtion is called it will reset to Max or Low Value</summary>
         public ResetTo resetTo = ResetTo.MaxValue;
+
+        [Tooltip("Reset the Stat when the Stat is Enabled")]
+        public bool ResetOnEnable = true;
+
         /// <summary> Save the Last State of the Regeneration bool</summary>
         private bool regenerate_LastValue;
         /// <summary> Save the Last State of the Regeneration bool</summary>
@@ -525,6 +529,8 @@ namespace MalbersAnimations
                 active = value;
 
                 OnActive.Invoke(value);
+
+                if (active && ResetOnEnable) ResetValue(); //Reset the Stat if is Enabled
 
                 Debbuging($"Active: {value}");
 

@@ -166,7 +166,7 @@ MonoBehaviour:
   BlendFall: 0
   LowerBlendDistance:
     UseConstant: 1
-    ConstantValue: 0.5
+    ConstantValue: 0.4
     Variable: {fileID: 0}
   AffectStat: {fileID: 11400000, guid: d6b3e636d59a6c547a2cad40b69f4432, type: 2}
   FallMinDistance:

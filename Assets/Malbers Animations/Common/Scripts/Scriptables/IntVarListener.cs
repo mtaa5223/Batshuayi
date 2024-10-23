@@ -61,7 +61,7 @@ namespace MalbersAnimations
             Raise = serializedObject.FindProperty("Raise");
         }
 
-        protected override void DrawEvents() => UnityEditor.EditorGUILayout.PropertyField(Raise);
+        protected override void DrawElemets() => UnityEditor.EditorGUILayout.PropertyField(Raise);
     }
 #endif
 }

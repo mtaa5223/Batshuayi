@@ -26,6 +26,8 @@ namespace MalbersAnimations.Controller
         [Header("Enter Conditions")]
         [Tooltip("If the Slope of the Slide ground is greater that this value, the Slide State be Activated. Zero value will ignore Enter by Slope")]
         public FloatReference EnterAngleSlope = new(0);
+        [Tooltip("Enter the Slide state if the Character is facing the slope.. Default value 90")]
+        public FloatReference FacingAngleSlope = new(90);
 
         [Header("Exit Conditions")]
         [Tooltip("If the Speed is lower than this value the Slide state will end.")]
@@ -93,11 +95,17 @@ namespace MalbersAnimations.Controller
 
         private bool TrySlideGround()
         {
+            if (m_debug && animal.debugGizmos && animal.Grounded)
+            {
+                MDebug.Draw_Arrow(Position, Vector3.ProjectOnPlane(animal.SlopeDirection, Up), Color.white);
+                // MDebug.Draw_Arrow(Position, animal.Forward, Color.white);
+            }
+
             if (animal.InGroundChanger
-                && animal.GroundChanger.SlideData.Slide                                     //Meaning the terrain is set to slide
-                && animal.SlopeDirectionAngle > animal.GroundChanger.SlideData.MinAngle     //The character is looking at the Direction of the slope
-                && animal.SlopeDirectionAngle < ExitAngleSlope     //The Slope is too deep to enter the slide
-                )
+            && animal.GroundChanger.SlideData.Slide                                     //Meaning the terrain is set to slide
+            && animal.SlopeDirectionAngle > animal.GroundChanger.SlideData.MinAngle     //The character is looking at the Direction of the slope
+            && animal.SlopeDirectionAngle < ExitAngleSlope     //The Slope is too deep to enter the slide
+            )
             {
                 //CHECK THE DIRECTION OF THE SLIDE
                 if (Vector3.Angle(animal.Forward, animal.SlopeDirection) < animal.GroundChanger.SlideData.ActivationAngle / 2)
@@ -105,12 +113,12 @@ namespace MalbersAnimations.Controller
                     return true;
                 }
             }
-            else //When is not using GroundChanger use the Enter AngleSlope
+            //When is not using GroundChanger use the Enter AngleSlope
+            else if (EnterAngleSlope > 0 && animal.Grounded && animal.SlopeDirectionAngle > EnterAngleSlope.Value
+                && (Vector3.Angle(animal.Forward, Vector3.ProjectOnPlane(animal.SlopeDirection, Up)) < (FacingAngleSlope.Value / 2))
+                )
             {
-                if (animal.Grounded && EnterAngleSlope > 0 && animal.SlopeDirectionAngle > EnterAngleSlope)
-                {
-                    return true;
-                }
+                return true;
             }
 
             return false;

@@ -168,6 +168,8 @@ MonoBehaviour:
     UseConstant: 1
     ConstantValue: 1
     Variable: {fileID: 0}
+  Sprint: 0
+  ResetSprintOnExit: 0
 --- !u!114 &8305788677959419912
 MonoBehaviour:
   m_ObjectHideFlags: 0

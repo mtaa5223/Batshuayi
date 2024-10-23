@@ -26,10 +26,8 @@ namespace MalbersAnimations
             CreateTag("WallRun");
             CreateTag("Stair");
             CreateInputAxe();
-
             // CheckInputSystem();
         }
-
         // private static void CheckInputSystem()
         // {
         //     if (HasPackage("com.unity.inputsystem"))

@@ -24,13 +24,11 @@ namespace MalbersAnimations.IK
         [Hide("upVector", (int)UpVectorType.Local)]
         public Vector3 LocalUp = new(0, 1, 0);
         [Hide("upVector", (int)UpVectorType.Global)]
-        [CreateScriptableAsset] public Vector3Var WorldUp;
-
+        public Vector3Var WorldUp;
 
         public float GizmoRadius = 1f;
 
         // private Vector3 DirVector;
-
         public Vector3 UpVector
         {
             get
@@ -47,6 +45,9 @@ namespace MalbersAnimations.IK
 
         public override float Process(IKSet set, float weight)
         {
+            if (set.aimer == null) return 0; //Do nothing if there is no AIM
+
+
             var anim = set.Animator;
             var direction = set.aimer.AimDirection;//Get the Aim Direction
 
@@ -54,7 +55,8 @@ namespace MalbersAnimations.IK
             var angle = Vector3.Angle(anim.transform.forward, direction);
 
             if (LookAtLimit.maxValue != 0 && LookAtLimit.minValue != 0) //Check the Limit in case there is a limit
-                weight *= angle.CalculateRangeWeight(LookAtLimit.minValue, LookAtLimit.maxValue);
+                //weight *= angle.CalculateRangeWeight(LookAtLimit.minValue, LookAtLimit.maxValue);
+                weight = Mathf.Min(weight, angle.CalculateRangeWeight(LookAtLimit.minValue, LookAtLimit.maxValue));
 
             return weight;
         }

@@ -447,21 +447,34 @@ namespace MalbersAnimations
     public class MLocalVarsEditor : Editor
     {
         SerializedProperty variables;
+        MLocalVars M;
 
         private void OnEnable()
         {
             variables = serializedObject.FindProperty("variables");
+
+            M = target as MLocalVars;
         }
+
 
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
 
-            EditorGUILayout.PropertyField(variables);
+            using (var cc = new EditorGUI.ChangeCheckScope())
+            {
+                EditorGUILayout.PropertyField(variables);
 
+                if (cc.changed && Application.isPlaying)
+                {
+                    serializedObject.ApplyModifiedProperties(); //update the value then pass it to the dictionary  (EDITOR ONLY)
+                    foreach (var item in M.variables)
+                    {
+                        M.vars[item.name] = item.GetValue();
+                    }
+                }
+            }
             serializedObject.ApplyModifiedProperties();
-
-
         }
     }
 #endif

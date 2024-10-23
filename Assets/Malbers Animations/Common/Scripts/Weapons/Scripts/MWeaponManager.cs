@@ -631,8 +631,9 @@ namespace MalbersAnimations
                             using (new GUILayout.VerticalScope(EditorStyles.helpBox))
                             {
                                 EditorGUILayout.Toggle("Is In Combat mode", M.CombatMode);
-                                EditorGUILayout.Toggle("Weapon Draw: ", M.DrawWeapon);
-                                EditorGUILayout.Toggle("Weapon Store: ", M.StoreWeapon);
+                                EditorGUILayout.Toggle("Weapon Draw", M.DrawWeapon);
+                                EditorGUILayout.Toggle("Weapon Store", M.StoreWeapon);
+                                EditorGUILayout.Toggle("Is Riding", M.IsRiding);
                                 if (M.HasAnimal) EditorGUILayout.Toggle("Preparing Mode", M.animal.IsPreparingMode);
 
                             }
@@ -640,8 +641,9 @@ namespace MalbersAnimations
                             using (new GUILayout.VerticalScope(EditorStyles.helpBox))
                             {
                                 EditorGUILayout.Toggle("Is Aiming", M.Aim);
-                                EditorGUILayout.Toggle("ExitByMode: ", M.ExitByMode);
+                                EditorGUILayout.Toggle("ExitByMode", M.ExitByMode);
                                 EditorGUILayout.Toggle("Was Strafing", M.WasStrafing);
+                                EditorGUILayout.Toggle("Mount Dismount", M.MountingDismounting);
                                 if (M.Aimer != null) EditorGUILayout.Toggle("Aiming Side", M.AimingSide);
                             }
                             EditorGUIUtility.labelWidth = 0;
@@ -660,8 +662,8 @@ namespace MalbersAnimations
 
                             using (new GUILayout.VerticalScope(EditorStyles.helpBox))
                             {
-                                EditorGUILayout.EnumPopup("Weap Action: ", M.WeaponAction);
-                                EditorGUILayout.IntField("Anim Action: ", M.WeaponAnimAction);
+                                EditorGUILayout.EnumPopup("Weap Action", M.WeaponAction);
+                                EditorGUILayout.IntField("Anim Action", M.WeaponAnimAction);
                             }
                             EditorGUIUtility.labelWidth = 0;
                         }
@@ -669,16 +671,49 @@ namespace MalbersAnimations
 
                         using (new GUILayout.VerticalScope(EditorStyles.helpBox))
                         {
-                            EditorGUILayout.ObjectField("Active Weapon:  ", M.Weapon, typeof(MWeapon), false);
+                            EditorGUILayout.ObjectField("Active Weapon", M.Weapon, typeof(MWeapon), false);
+
+                            if (M.Weapon != null)
+                            {
+                                EditorGUILayout.ObjectField("Ground Combo", M.Weapon.GroundCombo, typeof(ModeID), false);
+                                EditorGUILayout.ObjectField("Riding Combo", M.Weapon.RidingCombo, typeof(ModeID), false);
+                            }
+
+                            if (M.comboManager != null)
+                            {
+                                EditorGUILayout.LabelField($"Active Combo [{(M.comboManager.ActiveCombo != null ? M.comboManager.ActiveCombo.Name : "<None>")}]");
+                            }
                         }
+
+                        using (new GUILayout.VerticalScope(EditorStyles.helpBox))
+                        {
+                            EditorGUILayout.LabelField($"[Holsters]", EditorStyles.boldLabel);
+                            foreach (var holsters in M.holsters)
+                            {
+                                using (new GUILayout.HorizontalScope())
+                                {
+                                    EditorGUILayout.ObjectField(GUIContent.none, holsters.ID, typeof(HolsterID), false);
+                                    EditorGUILayout.ObjectField(GUIContent.none, holsters.Weapon, typeof(MWeapon), false);
+                                }
+                            }
+                        }
+
 
                         if (M.Weapon)
                         {
                             using (new GUILayout.VerticalScope(EditorStyles.helpBox))
                             {
-                                EditorGUILayout.ObjectField("Active Holster:  ", M.ActiveHolster?.ID, typeof(HolsterID), false);
-                                EditorGUILayout.ObjectField("Weapon.Type:  ", M.Weapon?.WeaponType, typeof(WeaponID), false);
+                                if (M.ActiveHolster != null)
+                                {
+                                    EditorGUILayout.ObjectField("Active Holster", M.ActiveHolster.ID, typeof(HolsterID), false);
+                                    EditorGUILayout.ObjectField("Active Holster Wepapon", M.ActiveHolster.Weapon, typeof(MWeapon), false);
+                                }
+
+                                EditorGUILayout.ObjectField("Weapon.Type", M.Weapon?.WeaponType, typeof(WeaponID), false);
                             }
+
+
+
 
                             using (new GUILayout.HorizontalScope())
                             {
@@ -686,56 +721,49 @@ namespace MalbersAnimations
 
                                 using (new GUILayout.VerticalScope(EditorStyles.helpBox))
                                 {
-                                    EditorGUILayout.Toggle("Weapon.Active: ", M.Weapon.Enabled);
-                                    EditorGUILayout.Toggle("Weapon.Input: ", M.Weapon.Input);
-                                    EditorGUILayout.Toggle("Weapon.IsAiming: ", M.Weapon.IsAiming);
-                                    EditorGUILayout.Toggle("Weapon.RightHand: ", M.Weapon.IsRightHanded);
+                                    EditorGUILayout.Toggle("Weapon.Active", M.Weapon.Enabled);
+                                    EditorGUILayout.Toggle("Weapon.Input", M.Weapon.Input);
+                                    EditorGUILayout.Toggle("Weapon.IsAiming", M.Weapon.IsAiming);
+                                    EditorGUILayout.Toggle("Weapon.RightHand", M.Weapon.IsRightHanded);
                                     //  EditorGUILayout.Toggle("Weapon.Ready: ", M.Weapon.IsReady);
 
 
-                                    EditorGUILayout.Toggle("Weapon.HasAmmo: ", M.Weapon.HasAmmo);
-                                    EditorGUILayout.FloatField("Weapon.Power: ", M.Weapon.Power);
+                                    EditorGUILayout.Toggle("Weapon.HasAmmo", M.Weapon.HasAmmo);
+                                    EditorGUILayout.FloatField("Weapon.Power", M.Weapon.Power);
 
 
                                     if (M.Weapon is MShootable mshoo)
                                     {
-                                        EditorGUILayout.FloatField("Ammo In Chamber: ", mshoo.AmmoInChamber);
+                                        EditorGUILayout.FloatField("Ammo In Chamber", mshoo.AmmoInChamber);
                                         EditorGUILayout.FloatField("Chamber Size", mshoo.ChamberSize);
-
-                                        EditorGUILayout.Toggle("Is Riding: ", M.IsRiding);
-
                                     }
 
                                 }
                                 using (new GUILayout.VerticalScope(EditorStyles.helpBox))
                                 {
 
-                                    EditorGUILayout.Toggle("Weapon.CanAttack: ", M.Weapon.CanAttack);
-                                    EditorGUILayout.Toggle("Weapon.IsAttacking: ", M.Weapon.IsAttacking);
-                                    EditorGUILayout.Toggle("Weapon.CanCharge: ", M.Weapon.CanCharge);
+                                    EditorGUILayout.Toggle("Weapon.CanAttack", M.Weapon.CanAttack);
+                                    EditorGUILayout.Toggle("Weapon.IsAttacking", M.Weapon.IsAttacking);
+                                    EditorGUILayout.Toggle("Weapon.CanCharge", M.Weapon.CanCharge);
 
                                     if (M.Weapon.CanCharge)
                                     {
-                                        EditorGUILayout.Toggle("Weapon.IsCharging: ", M.Weapon.IsCharging);
-                                        EditorGUILayout.Toggle("Weapon.MaxCharged: ", M.Weapon.MaxCharged);
-                                        EditorGUILayout.FloatField("Weapon.ChargeNorm: ", M.Weapon.ChargedNormalized);
+                                        EditorGUILayout.Toggle("Weapon.IsCharging", M.Weapon.IsCharging);
+                                        EditorGUILayout.Toggle("Weapon.MaxCharged", M.Weapon.MaxCharged);
+                                        EditorGUILayout.FloatField("Weapon.ChargeNorm", M.Weapon.ChargedNormalized);
                                     }
 
 
                                     if (M.Weapon is MShootable mshoo)
                                     {
-                                        EditorGUILayout.Toggle("Weapon.IsReloading: ", mshoo.IsReloading);
+                                        EditorGUILayout.Toggle("Weapon.IsReloading", mshoo.IsReloading);
                                         EditorGUILayout.Toggle("Projectile Equipped", mshoo.ProjectileEquipped);
-                                        EditorGUILayout.FloatField("Total Ammo: ", mshoo.TotalAmmo);
+                                        EditorGUILayout.FloatField("Total Ammo", mshoo.TotalAmmo);
                                     }
                                 }
-
                                 EditorGUIUtility.labelWidth = 0;
                             }
                         }
-
-
-
                         Repaint();
                     }
                 }

@@ -660,7 +660,6 @@ namespace MalbersAnimations.Controller
         {
             if (CheckQueuedState()) { return; }
 
-
             //CHECK IF CURRENT STATE is PENDING AND IS it HAS LOWER PRIORITY
             if (ActiveState.IsPending)
             {
@@ -673,7 +672,8 @@ namespace MalbersAnimations.Controller
 
             animal.Check_Queue_States(ID); //Check if a queue State was released
 
-            DisableModes_Temp(false, animal.LastState.DisableModes); //Release the modes 
+            if (animal.LastState != this)
+                DisableModes_Temp(false, animal.LastState.DisableModes); //Release the modes 
 
             //Wake UP the State that is no longer on QUEUE and it was activated! (PRIORITY FOR THE QUEDED STATES)!
             if (animal.QueueReleased)
@@ -692,7 +692,8 @@ namespace MalbersAnimations.Controller
             SetSpeed(); //Set the Speed on the New State
             MovementAxisMult = Vector3.one;
 
-            DisableModes_Temp(true, DisableModes);
+            if (animal.LastState != this)
+                DisableModes_Temp(true, DisableModes);
 
             //IsActiveState = true;                       //Set this state as the Active State
             CanExit = false;
@@ -727,7 +728,7 @@ namespace MalbersAnimations.Controller
             }
         }
 
-        private void DisableModes_Temp(bool disable, List<ModeID> modelist)
+        public void DisableModes_Temp(bool disable, List<ModeID> modelist)
         {
             //Disable Temporarily the modes the States
             if (modelist != null && modelist.Count > 0)

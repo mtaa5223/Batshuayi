@@ -23,12 +23,14 @@ namespace MalbersAnimations.Utilities
         private void OnEnable()
         {
             if (animator == null) { animator = this.FindComponent<Animator>(); }
-            Align();
+
+            if (animator != null)
+                Align();
         }
 
         private void Align()
         {
-            if (animator != null)
+            if (animator.avatar != null)
             {
                 var boneParent = animator.GetBoneTransform(parent);
 
@@ -43,18 +45,23 @@ namespace MalbersAnimations.Utilities
                     transform.localRotation *= Quaternion.Euler(RotOffset);
                 }
             }
+            else
+            {
+                Debug.LogWarning($"Avatar is missing in the animator. [{name}]", this);
+                enabled = false;
+            }
         }
 
-       [ContextMenu("Try Align")]
+        [ContextMenu("Try Align")]
         private void TryAlign()
         {
-            if (animator != null)
+            if (animator != null && animator.avatar != null)
             {
                 var boneParent = animator.GetBoneTransform(parent);
 
                 if (boneParent != null && transform.parent != boneParent)
                 {
-                 //   transform.parent = boneParent;
+                    //   transform.parent = boneParent;
 
                     if (LocalPos.Value) transform.position = boneParent.position;
                     if (LocalRot.Value) transform.localRotation = boneParent.rotation;

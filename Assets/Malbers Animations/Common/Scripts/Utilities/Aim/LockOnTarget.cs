@@ -17,7 +17,10 @@ namespace MalbersAnimations.Utilities
         [Tooltip("Set of the focused 'potential' Targets")]
         [RequiredField] public RuntimeGameObjects Targets;
 
+        [Tooltip("Time needed to change to the next or previous target")]
+        public FloatReference NextTargetTime = new(0f);
 
+        private float CurrentNextTime;
 
         private int CurrentTargetIndex = -1;
         public bool debug;
@@ -57,6 +60,9 @@ namespace MalbersAnimations.Utilities
         private void Awake()
         {
             Targets.Clear();
+
+            if (aim != null) aim.FindComponent<Aim>();
+
 
             //DefaultAimTarget = null;
             //if (aim != null) DefaultAimTarget = aim.AimTarget;
@@ -153,26 +159,57 @@ namespace MalbersAnimations.Utilities
             }
         }
 
+
+        public void Target_Scroll(Vector2 value)
+        {
+            if (value.y > 0 || value.x > 0)
+                Target_Next();
+            else if (value.y < 0 || value.x < 0)
+                Target_Previous();
+        }
+
+
+        public void Target_Scroll(float value)
+        {
+            if (value > 0) Target_Next();
+            else if (value < 0) Target_Previous();
+        }
+
         public void Target_Next()
         {
+            if (CurrentNextTime > 0 && !MTools.ElapsedTime(CurrentNextTime, NextTargetTime)) return;
+
+
             if (Targets != null && LockedTarget != null && CurrentTargetIndex != -1) //Check everything is working
             {
                 CurrentTargetIndex++;
                 CurrentTargetIndex %= Targets.Count; //Cycle to the first in case we are on the last item on the list
                 LockedTarget = Targets.Item_Get(CurrentTargetIndex).transform;     //Store the Next Target
+
+                //  Debug.Log(" Target_Next()");
+
                 Debugging($"Locked Next Target: {LockedTarget.name}");
+
+
+                CurrentNextTime = Time.time;
             }
         }
 
         public void Target_Previous()
         {
+            if (CurrentNextTime > 0 && !MTools.ElapsedTime(CurrentNextTime, NextTargetTime)) return;
+
             if (Targets != null && LockedTarget != null && CurrentTargetIndex != -1) //Check everything is working
             {
                 CurrentTargetIndex--;
                 if (CurrentTargetIndex == -1) CurrentTargetIndex = Targets.Count - 1;
                 LockedTarget = Targets.Item_Get(CurrentTargetIndex).transform;     //Store the Next Target
 
+                //Debug.Log(" Target_Previous()");
+
                 Debugging($"Locked Previous Target: {LockedTarget.name}");
+
+                CurrentNextTime = Time.time;
             }
         }
 

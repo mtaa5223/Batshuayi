@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using MalbersAnimations.Scriptables;
+
 
 
 
@@ -62,6 +64,7 @@ namespace MalbersAnimations.Events
     {
         public MEvent Event;
 
+        public bool active = true;
         public Transform Owner { get; set; }
 
 
@@ -89,34 +92,39 @@ namespace MalbersAnimations.Events
         public Vector2Event ResponseVector2 = new();
 
         public List<AdvancedIntegerEvent> IntEventList = new();
+        public List<AdvancedFloatEvent> FloatEventList = new();
+
+
         public bool AdvancedInteger = false;
+        public bool AdvancedFloat = false;
         public bool AdvancedBool = false;
         [Tooltip("Inverts the value of the Bool Event")]
         public bool InvertBool = false;
 
-        public float multiplier = 1;
+        [Tooltip("Multiply the Upcoming Result from the Float Event with this value")]
+        public FloatReference multiplier = new(1f);
 
         public virtual void OnEventInvoked()
         {
-            if (useVoid)
+            if (active && useVoid)
                 Response.Invoke();
         }
 
         public virtual void OnEventInvoked(string value)
         {
-            if (useString)
+            if (active && useString)
                 ResponseString.Invoke(value);
         }
 
         public virtual void OnEventInvoked(float value)
         {
-            if (useFloat)
+            if (active && useFloat)
                 ResponseFloat.Invoke(value * multiplier);
         }
 
         public virtual void OnEventInvoked(int value)
         {
-            if (useInt)
+            if (active && useInt)
             {
                 ResponseInt.Invoke(value);
 
@@ -130,7 +138,7 @@ namespace MalbersAnimations.Events
 
         public virtual void OnEventInvoked(bool value)
         {
-            if (useBool)
+            if (active && useBool)
             {
                 ResponseBool.Invoke(InvertBool ? !value : value);
 
@@ -145,17 +153,17 @@ namespace MalbersAnimations.Events
         }
         public virtual void OnEventInvoked(Vector3 value)
         {
-            if (useVector3) ResponseVector3.Invoke(value);
+            if (active && useVector3) ResponseVector3.Invoke(value);
         }
 
         public virtual void OnEventInvoked(Vector2 value)
         {
-            if (useVector2) ResponseVector2.Invoke(value);
+            if (active && useVector2) ResponseVector2.Invoke(value);
         }
 
         public virtual void OnEventInvoked(GameObject value)
         {
-            if (useGO)
+            if (active && useGO)
             {
                 if (value) ResponseGO.Invoke(value);
                 else ResponseNull.Invoke();
@@ -164,7 +172,7 @@ namespace MalbersAnimations.Events
 
         public virtual void OnEventInvoked(Transform value)
         {
-            if (useTransform)
+            if (active && useTransform)
             {
                 ResponseTransform.Invoke(value);
                 if (!value) ResponseNull.Invoke();
@@ -173,7 +181,7 @@ namespace MalbersAnimations.Events
 
         public virtual void OnEventInvoked(Component value)
         {
-            if (useComponent)
+            if (active && useComponent)
             {
                 if (value) ResponseComponent.Invoke(value);
                 else ResponseNull.Invoke();
@@ -182,7 +190,7 @@ namespace MalbersAnimations.Events
 
         public virtual void OnEventInvoked(Sprite value)
         {
-            if (useSprite)
+            if (active && useSprite)
             {
                 if (value) ResponseSprite.Invoke(value);
                 else ResponseNull.Invoke();
@@ -273,9 +281,22 @@ namespace MalbersAnimations.Events
             var dC = GUI.backgroundColor;
             GUI.backgroundColor = isActive ? MTools.MBlue : dC;
 
-            SerializedProperty Element = eventsListeners.GetArrayElementAtIndex(index).FindPropertyRelative("Event");
+            SerializedProperty Element = eventsListeners.GetArrayElementAtIndex(index);
+
+            var eventt = Element.FindPropertyRelative("Event");
+            var active = Element.FindPropertyRelative("active");
+
+
+            var eventRect = new Rect(rect);
+            var activeRect = new Rect(rect);
+            activeRect.width = 20;
+            eventRect.x += 20;
+            eventRect.width -= 20;
+
+
             eventsListeners.GetArrayElementAtIndex(index);
-            EditorGUI.PropertyField(rect, Element, GUIContent.none);
+            EditorGUI.PropertyField(activeRect, active, GUIContent.none);
+            EditorGUI.PropertyField(eventRect, eventt, GUIContent.none);
 
             GUI.backgroundColor = dC;
         }
@@ -356,6 +377,8 @@ namespace MalbersAnimations.Events
                         SerializedProperty Element = eventsListeners.GetArrayElementAtIndex(list.index);
                         using (new GUILayout.HorizontalScope())
                         {
+
+
                             if (!showEvents.boolValue)
                             {
                                 if (EventPopupList.Length != list.count) EventPopup();
@@ -366,12 +389,14 @@ namespace MalbersAnimations.Events
                             EditorGUIUtility.labelWidth = 20;
 
 
-
                             EditorGUILayout.PropertyField(Element, new GUIContent($"[{list.index}]"), false, GUILayout.Width(20));
 
                             useBool = Element.FindPropertyRelative("useBool");
 
                             var IDD = Element.FindPropertyRelative("Event");
+
+                            //var active = Element.FindPropertyRelative("active");
+                            //EditorGUILayout.PropertyField(active, GUIContent.none, GUILayout.Width(15));
 
                             EditorGUIUtility.labelWidth = 20;
                             using (new EditorGUI.DisabledGroupScope(true))
@@ -409,6 +434,7 @@ namespace MalbersAnimations.Events
 
 
                             useFloat = Element.FindPropertyRelative("useFloat");
+
                             useBool = Element.FindPropertyRelative("useBool");
                             useInt = Element.FindPropertyRelative("useInt");
                             useString = Element.FindPropertyRelative("useString");
@@ -449,27 +475,16 @@ namespace MalbersAnimations.Events
 
 
                             Draw_Void(Element);
-
                             Draw_Bool(Element);
-
                             Draw_Float(Element);
-
                             Draw_Integer(Element);
-
                             DrawString(Element);
-
                             Draw_GameObject(Element);
-
                             DrawTransform(Element);
-
                             DrawComponent(Element);
-
                             DrawSprite(Element);
-
                             DrawVector2(Element);
-
                             DrawVector3(Element);
-
                         }
                     }
                 }

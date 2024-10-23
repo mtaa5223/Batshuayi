@@ -56,13 +56,19 @@ namespace MalbersAnimations
             }
         }
 
+        public static void CreateAssetInternal(SerializedProperty property, Type type)
+        {
+            property.objectReferenceValue = ScriptableObject.CreateInstance(type);
+            property.serializedObject.ApplyModifiedProperties();
+        }
+
 
         /// <summary>  Returns the Type of a serialized property </summary>
         public static System.Type GetPropertyType(SerializedProperty property)
         {
             System.Type parentType = property.serializedObject.targetObject.GetType();
             var fi = parentType.GetFieldViaPath(property.propertyPath);
-            return fi.FieldType;
+            return fi != null ? fi.FieldType : null;
         }
 
         public static System.Type GetType(string typeName)

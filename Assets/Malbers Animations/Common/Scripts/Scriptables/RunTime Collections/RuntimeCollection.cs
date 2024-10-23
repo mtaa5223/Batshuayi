@@ -10,12 +10,12 @@ namespace MalbersAnimations.Scriptables
 {
     public abstract class RuntimeCollection<T> : ScriptableObject where T : Object
     {
-        public List<T> items = new List<T>();
+        public List<T> items = new();
 
         // [TextArea(4,5)]
         public string Description;
 
-        public UnityEvent OnSetEmpty = new UnityEvent();
+        public UnityEvent OnSetEmpty = new();
 
         /// <summary>Ammount of object on the list</summary>
         public int Count => items.Count;
@@ -81,7 +81,6 @@ namespace MalbersAnimations.Scriptables
                     OnAddEvent(newItem);
 
                     Debugging($"Add [{newItem.name}]");
-
                 }
             }
         }

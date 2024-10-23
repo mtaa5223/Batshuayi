@@ -34,19 +34,12 @@ namespace MalbersAnimations
 
             GetHashIDs();
 
-            if (anim.avatar.isHuman)
-            {
-                RightHand = Anim.GetBoneTransform(HumanBodyBones.RightHand);           //Get the Rider Right Hand transform
-                LeftHand = Anim.GetBoneTransform(HumanBodyBones.LeftHand);             //Get the Rider Left  Hand transform
+            if (RightHandEquipPoint == null) Debug.LogWarning($"[{name}] - Right Hand Transform is Missing", gameObject);
+            if (LeftHandEquipPoint == null) Debug.LogWarning($"[{name}] - Left Hand Transform is Missing", gameObject);
 
-                //Head = Anim.GetBoneTransform(HumanBodyBones.Head);                     //Get the Rider Head transform
-                //Chest = Anim.GetBoneTransform(HumanBodyBones.Chest);                   //Get the Rider Head transform
-
-
-                //RightShoulder = Anim.GetBoneTransform(HumanBodyBones.RightUpperArm);   //Get the Rider Right Shoulder transform
-                //LeftShoulder = Anim.GetBoneTransform(HumanBodyBones.LeftUpperArm);     //Get the Rider Left  Shoulder transform }
-            }
             if (UseHolsters) ActiveHolster = holsters[0]; //Set the Default Holster to be the first one.
+
+            PrepareAnimalController();
         }
 
 
@@ -72,10 +65,15 @@ namespace MalbersAnimations
                 animal.OnStrafe.AddListener(CheckStrafing);
             }
 
-            if (Rider != null) Rider.RiderStatus += GetRiderStatus;        //Get the notifications from the Rider
+
+            if (Rider != null)
+            {
+                Rider.RiderStatus += GetRiderStatus;        //Get the notifications from the Rider
+                IsRiding = Rider.IsRiding;
+                MountingDismounting = Rider.IsMounting || Rider.IsDismounting;
+            }
             if (MInput != null) ConnectInput(MInput, true);                //Connect the inputs from the Input Source
 
-            IsRiding = MountingDismounting = false;
 
             ResetWeaponManager();
 
@@ -91,7 +89,6 @@ namespace MalbersAnimations
             WeaponEquippedOnDisable = Weapon;
 
             if (CombatMode) UnEquip_Fast();
-
 
             if (HasAnimal)
             {
@@ -114,6 +111,8 @@ namespace MalbersAnimations
 
             StopAllCoroutines();
             IStoreAfter = null;
+
+            Debugging("Weapon Manager Disabled");
         }
 
 
@@ -138,8 +137,6 @@ namespace MalbersAnimations
 
         public virtual void ResetWeaponManager()
         {
-            PrepareAnimalController();
-
             if (UseHolsters) PrepareHolsters(); //Prepare the holster if we are using holsers
 
             SmoothEquip = true;
@@ -169,14 +166,17 @@ namespace MalbersAnimations
 
                 if (Weapon)
                 {
-                    Holster_SetActive(Weapon.HolsterID); //Set the Active Holster the Weapon One
+                    this.Delay_Action(() =>
+                    {
+                        Holster_SetActive(Weapon.HolsterID); //Set the Active Holster the Weapon One
 
-                    if (ActiveHolster != null)
-                        Holster_AddWeapon(ActiveHolster, Weapon);
+                        if (ActiveHolster != null)
+                            Holster_AddWeapon(ActiveHolster, Weapon);
 
-                    Equip_Fast();
-                    Weapon.IsCollectable?.Pick();
-                    AutoStoreWeapon();
+                        Equip_Fast();
+                        Weapon.IsCollectable?.Pick();
+                        AutoStoreWeapon();
+                    });
                 }
             }
             else
@@ -248,6 +248,8 @@ namespace MalbersAnimations
             {
                 IsRiding = newRiding;
 
+                Debugging($"Is Riding: {IsRiding}");
+
                 if (CombatMode)
                 {
                     comboManager?.SetActiveCombo(IsRiding ? Weapon.RidingCombo : Weapon.GroundCombo);
@@ -274,7 +276,12 @@ namespace MalbersAnimations
 
                     if (Aim && Weapon.StrafeOnAim) animal.Strafe = true;        //Restore the Strafing 
                 }
+
+
             }
+
+            if (Weapon)
+                Weapon.Owner = IsRiding ? Rider.Mount : gameObject; //Make sure the Horse is inlcuded on the Do not Hit owner whhen its riding
         }
 
         #endregion
@@ -358,7 +365,7 @@ namespace MalbersAnimations
         private void Do_2Hands_IK()
         {
             //REMEMBER TO SET THE WEAPON IK THAT IS NOT WORKING WHEN DRAWING A WEAPON
-            if (Weapon.TwoHandIK && Weapon.IKHandPoint.Value)
+            if (Weapon.TwoHandIK && Weapon.IKHandPoint)
             {
                 if (Hash_IKAim != 0) IK2HandsWeight = Anim.GetFloat(Hash_IKFreeHand);
 
@@ -1027,6 +1034,12 @@ namespace MalbersAnimations
             }
 
             Weapon.gameObject.SetActive(true);            //Set the Game Object Instance Active    
+
+
+            if (IsRiding && Rider != null)
+            {
+                Weapon.Owner = Rider.Mount; //Make sure the Horse is inlcuded on the Do not Hit owner
+            }
         }
 
         private void CheckCoroutines(TransformOffset Offset)
@@ -1150,11 +1163,13 @@ namespace MalbersAnimations
         {
             if (HasAnimal)
             {
-                if (Weapon.stance != null && !IsRiding)
+                if (Weapon.stance != null /*&& !IsRiding*/)
                 {
                     animal.Stance_RestoreDefault(); //Reset the Default Stance (Remove the Combat)
                     animal.Stance_Reset(); //Reset Stance if the animal was using a stance for the weapon
                 }
+
+
                 if (comboManager)  //Set to unarmed Combo ID
                     comboManager.SetActiveCombo(UnarmedModeID);
 
@@ -1227,12 +1242,17 @@ namespace MalbersAnimations
         {
             if (Weapon.IsRightHanded && RightHandEquipPoint)  //Parent to the Right Hand Equip Point
             {
-                Weapon.transform.parent = RightHandEquipPoint; //Parent to the 
+                SetParentWeapon(Weapon, RightHandEquipPoint);
             }
             else if (LeftHandEquipPoint)
             {
-                Weapon.transform.parent = LeftHandEquipPoint;
+                SetParentWeapon(Weapon, LeftHandEquipPoint);
             }
+        }
+
+        public virtual void SetParentWeapon(MWeapon weapon, Transform parent)
+        {
+            weapon.transform.parent = parent;
         }
 
 
@@ -1280,6 +1300,8 @@ namespace MalbersAnimations
         {
             if (Weapon == null) return;                    //Skip if there's no Active Weapon or is not inCombatMode, meaning there's an active weapon
             if (!Weapon.CanUnequip) return;                //Skip if there's no Active Weapon or is not inCombatMode, meaning there's an active weapon
+
+            //if (WeaponAction != Weapon_Action.Idle) return; //Do not store if we are not finishing storing
 
             ExitAim();
 

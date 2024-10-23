@@ -1,6 +1,5 @@
 ﻿using MalbersAnimations.Utilities;
 using UnityEngine;
-using static MalbersAnimations.ColliderReaction;
 
 namespace MalbersAnimations
 {
@@ -21,7 +20,7 @@ namespace MalbersAnimations
 
         [Tooltip("Transform to use the Position as Reference")]
         public Transform Reference;
-      
+
         [Tooltip("Use the Reference's Position")]
         public bool position = true;
         [Hide(nameof(position))]
@@ -42,10 +41,28 @@ namespace MalbersAnimations
         [Hide(nameof(rotation))]
         [Min(0)] public float lerpRot = 0f;
 
+
+        //private void OnEnable()
+        //{
+        //    if (Reference != null)
+        //    {
+
+        //    }
+        //}
+
+        //IEnumerator C_UpdatePos()
+        //{
+        //    while (true)
+        //    {
+        //        SetPositionReference(Time.deltaTime);
+        //        yield return null;
+        //    }
+        //}
+
         // Update is called once per frame
         void Update()
         {
-            if (Reference == null) return; 
+            if (Reference == null) return;
 
             if (PositionUpdate == UpdateMode.Update) SetPositionReference(Time.deltaTime);
             if (RotationUpdate == UpdateMode.Update) SetRotationReference(Time.deltaTime);
@@ -68,7 +85,7 @@ namespace MalbersAnimations
         }
 
         private void SetPositionReference(float delta)
-        { 
+        {
             if (position)
             {
                 var newPos = transform.position;
@@ -84,7 +101,7 @@ namespace MalbersAnimations
 
 
         private void SetRotationReference(float delta)
-        { 
+        {
             if (rotation)
                 transform.rotation = Quaternion.Lerp(transform.rotation, Reference.rotation, lerpRot == 0 ? 1 : delta * lerpRot);
         }

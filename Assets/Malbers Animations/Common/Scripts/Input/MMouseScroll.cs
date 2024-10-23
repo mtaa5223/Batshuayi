@@ -7,8 +7,8 @@ namespace MalbersAnimations
     [AddComponentMenu("Malbers/Input/Mouse Scroll")]
     public class MMouseScroll : MonoBehaviour
     {
-        public UnityEvent OnScrollUp = new UnityEvent();
-        public UnityEvent OnScrollDown = new UnityEvent();
+        public UnityEvent OnScrollUp = new();
+        public UnityEvent OnScrollDown = new();
 
         private float mousedelta = 0;
 

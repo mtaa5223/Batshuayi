@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MalbersAnimations.Scriptables;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -302,6 +303,26 @@ namespace MalbersAnimations
         }
 
 
+        /// <summary> Find the closest TransformReference from the origin </summary>
+        public static Transform NearestTransform(this Transform origin, params TransformReference[] transforms)
+        {
+            Transform bestTarget = null;
+            float closestDistanceSqr = Mathf.Infinity;
+            Vector3 currentPosition = origin.position;
+            foreach (Transform potentialTarget in transforms)
+            {
+                Vector3 directionToTarget = potentialTarget.position - currentPosition;
+                float dSqrToTarget = directionToTarget.sqrMagnitude;
+                if (dSqrToTarget < closestDistanceSqr)
+                {
+                    closestDistanceSqr = dSqrToTarget;
+                    bestTarget = potentialTarget;
+                }
+            }
+
+            return bestTarget;
+        }
+
         /// <summary> Find the farest transform from the origin </summary>
         public static Transform FarestTransform(this Transform t, params Transform[] transforms)
         {
@@ -361,7 +382,11 @@ namespace MalbersAnimations
         /// <param name="Position">Relative position to the Parent (World Position)</param>
         public static Transform SetParentScaleFixer(this Transform transform, Transform parent, Vector3 Position)
         {
-            if (parent.lossyScale.x == parent.lossyScale.y && parent.lossyScale.x == parent.lossyScale.z) //Check if the Scale is Uniform
+
+            Vector3 parentLossyScale = parent.lossyScale;
+            Vector3 desiredUniformScale = new Vector3(parentLossyScale.x, parentLossyScale.x, parentLossyScale.x);
+
+            if (parentLossyScale == desiredUniformScale) //Check if the Scale is Uniform
             {
                 transform.SetParent(parent, true);
                 transform.position = Position;
@@ -373,7 +398,7 @@ namespace MalbersAnimations
             NewScale.y = 1f / Mathf.Max(NewScale.y, Epsilon);
             NewScale.z = 1f / Mathf.Max(NewScale.z, Epsilon);
 
-            GameObject Hlper = new GameObject { name = transform.name + "Link" };
+            GameObject Hlper = new() { name = transform.name + "Link" };
 
             //  Debug.Log("Hlper = " + Hlper);
 
@@ -779,6 +804,35 @@ namespace MalbersAnimations
 
         #region Reflections
 
+        public static T GetPropertyValue<T>(this Component component, string propertyName)
+        {
+            if (component == null) throw new ArgumentNullException(nameof(component));
+
+            Type componentType = component.GetType();
+
+            PropertyInfo propertyInfo = componentType.GetProperty(propertyName);
+
+
+            if (propertyInfo == null)
+            {
+                Debug.LogError($"Property '{propertyName}' of type '{typeof(T)}' not found on component '{componentType.FullName}'.");
+                return default;
+            }
+            else
+            {
+                var propertyType = propertyInfo.PropertyType;
+                if (propertyType != typeof(T))
+                {
+                    Debug.LogError($"Property '{propertyName}' was found, but it does not have the type '{typeof(T)}'. '{componentType.FullName}'.");
+                    return default;
+                }
+            }
+
+            return (T)propertyInfo.GetValue(component);
+        }
+
+
+        /// <summary>Converts a Method Info into a Unity Action</summary>
         public static UnityAction<T> CreateDelegate<T>(object target, MethodInfo method)
         {
             var del = (UnityAction<T>)Delegate.CreateDelegate(typeof(UnityAction<T>), target, method);

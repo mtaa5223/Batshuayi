@@ -207,7 +207,11 @@ MonoBehaviour:
     Variable: {fileID: 0}
   EnterAngleSlope:
     UseConstant: 1
-    ConstantValue: 0
+    ConstantValue: 30
+    Variable: {fileID: 0}
+  FacingAngleSlope:
+    UseConstant: 1
+    ConstantValue: 90
     Variable: {fileID: 0}
   ExitSpeed:
     UseConstant: 1

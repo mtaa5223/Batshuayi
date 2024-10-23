@@ -196,7 +196,7 @@ namespace MalbersAnimations.Controller
             JumpPressForwardAdditive = 0;
             //IsPersistent = true;
             animal.UseGravity = false;
-            animal.ResetGravityValues();
+            animal.Gravity_ResetValues();
 
             JumpSpeed = new MSpeed(animal.CurrentSpeedModifier) //Inherit the Vertical and the Lerps
             {

@@ -72,7 +72,7 @@ namespace MalbersAnimations.Utilities
                             FoundSame = item;
                             MeshTransform = item.Mesh;
                             meshRenderer = item.MainRenderer;
-                            Debug.Log($"Found Equal Skinned Mesh Renderer (Using same Object)... {MeshTransform.name}");
+                            if (ACM.debug) Debug.Log($"Found Equal Skinned Mesh Renderer (Using same Object)... {MeshTransform.name}");
                             break;
                         }
                     }
@@ -83,7 +83,7 @@ namespace MalbersAnimations.Utilities
                             FoundSame = item;
                             MeshTransform = item.Mesh;
                             meshRenderer = item.MainRenderer;
-                            Debug.Log($"Found Equal  Mesh Renderer (Using same Object)...{MeshTransform.name}");
+                            if (ACM.debug) Debug.Log($"Found Equal  Mesh Renderer (Using same Object)...{MeshTransform.name}");
                             break;
                         }
                     }

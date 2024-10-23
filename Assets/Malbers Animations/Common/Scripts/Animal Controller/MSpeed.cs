@@ -318,7 +318,6 @@ namespace MalbersAnimations.Controller
 
                 if (list.index != -1)
                 {
-
                     var SelectedSpeed = list.serializedProperty.GetArrayElementAtIndex(list.index); //?!??!
 
                     if (SelectedSpeed != null)

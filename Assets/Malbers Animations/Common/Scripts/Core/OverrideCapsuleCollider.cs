@@ -1,6 +1,7 @@
 using UnityEngine;
 using MalbersAnimations.Scriptables;
 
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -51,13 +52,16 @@ namespace MalbersAnimations
         public bool enabled;
         public bool isTrigger;
         public Vector3 center;
-        public float height;
-        public int direction;
-        public float radius;
+        [Min(0)] public float height;
+        [Tooltip("[0: XAxis] [1:Y Axis] [2:Z Axis]")]
+        [Min(0)] public int direction;
+        [Min(0)] public float radius;
         public PhysicsMaterial material;
 
         [Utilities.Flag]
         public CapsuleModifier modify;
+
+        public readonly bool IsNull => modify == 0;
 
         public OverrideCapsuleCollider(CapsuleCollider collider)
         {
@@ -68,8 +72,8 @@ namespace MalbersAnimations
             height = collider.height;
             radius = collider.radius;
             direction = collider.direction;
-            material = collider.material;
-            modify = 0;
+            material = collider.sharedMaterial;
+            modify = (CapsuleModifier)(-1);
         }
 
 

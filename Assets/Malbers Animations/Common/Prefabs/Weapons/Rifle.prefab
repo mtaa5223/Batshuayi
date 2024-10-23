@@ -212,6 +212,7 @@ GameObject:
   - component: {fileID: 4537070842646239082}
   - component: {fileID: 4487265232576239360}
   - component: {fileID: 5325592175489945560}
+  - component: {fileID: 1396008774170611423}
   m_Layer: 30
   m_Name: Rifle
   m_TagString: Untagged
@@ -262,6 +263,7 @@ MonoBehaviour:
       serializedVersion: 2
       m_Bits: 4294967295
     Variable: {fileID: 11400000, guid: f489db1856e43dc47b175dd125135bdc, type: 2}
+  Tags: []
   AttackDirection: 0
   triggerInteraction: 1
   owner: {fileID: 0}
@@ -489,15 +491,23 @@ MonoBehaviour:
     UseConstant: 1
     ConstantValue: 0
     Variable: {fileID: 0}
+  strafeOnUnequip:
+    UseConstant: 1
+    ConstantValue: 0
+    Variable: {fileID: 0}
   AimIKRight: {fileID: 11400000, guid: ca9afe6a826551547a47c9df69513498, type: 2}
   AimIKLeft: {fileID: 11400000, guid: ca9afe6a826551547a47c9df69513498, type: 2}
   TwoHandIK:
     UseConstant: 1
     ConstantValue: 1
     Variable: {fileID: 0}
-  IKHandPoint:
+  IKHandLeft:
     UseConstant: 1
     ConstantValue: {fileID: 4943072555028419164}
+    Variable: {fileID: 0}
+  IKHandRight:
+    UseConstant: 1
+    ConstantValue: {fileID: 7603342776771270759}
     Variable: {fileID: 0}
   HolsterOffset:
     Position: {x: 0, y: 0, z: 0}
@@ -615,11 +625,11 @@ MonoBehaviour:
   OnReleaseFreeHand:
     m_PersistentCalls:
       m_Calls: []
-  Editor_Tabs1: 3
+  Editor_Tabs1: 0
   Editor_Tabs2: 4
   releaseProjectile: 1
   equipProjectile: 4
-  aimAction: 1
+  aimAction: 0
   releaseDelay:
     UseConstant: 1
     ConstantValue: 0
@@ -703,10 +713,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+  OnReloadStart:
+    m_PersistentCalls:
+      m_Calls: []
   OnReload:
     m_PersistentCalls:
       m_Calls: []
   m_UnequipOnAim:
+    UseConstant: 1
+    ConstantValue: 0
+    Variable: {fileID: 0}
+  m_AfterDistance:
     UseConstant: 1
     ConstantValue: 0
     Variable: {fileID: 0}
@@ -900,6 +917,28 @@ MonoBehaviour:
     m_DissipationDistance: 100
     m_PropagationSpeed: 343
   m_DefaultVelocity: {x: 0.01, y: 0.01, z: 0.01}
+--- !u!114 &1396008774170611423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4566762183731045176}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b4de088e089c164bb239be84964ea4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseColliders: 0
+  gizmoType: 2
+  debugSize: 0.4
+  DebugColor: {r: 0, g: 0.654902, b: 1, a: 0.27058825}
+  DrawAxis: 0
+  AxisSize: 0.65
+  _collider: {fileID: 0}
+  DrawLineTo: 0
+  ConnectTo: {fileID: 0}
+  Rect: {x: 1.69, y: 0.34, z: 0.76}
 --- !u!1 &4943072555028419163
 GameObject:
   m_ObjectHideFlags: 0
@@ -981,6 +1020,10 @@ MonoBehaviour:
   DebugColor: {r: 0.2225166, g: 1, b: 0.16509432, a: 1}
   DrawAxis: 1
   AxisSize: 0.1
+  _collider: {fileID: 0}
+  DrawLineTo: 0
+  ConnectTo: {fileID: 0}
+  Rect: {x: 1, y: 1, z: 1}
 --- !u!1 &7234163559320235575
 GameObject:
   m_ObjectHideFlags: 0

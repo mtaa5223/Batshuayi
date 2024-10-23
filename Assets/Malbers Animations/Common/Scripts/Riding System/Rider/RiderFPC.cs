@@ -81,7 +81,7 @@ namespace MalbersAnimations.HAP
             yield return MTools.AlignTransform(transform, Montura.MountPoint.position, rot, MountTime, MountAnim);
 
             End_Mounting();
-         
+
             MainCollider.enabled = true;
         }
 
@@ -97,7 +97,7 @@ namespace MalbersAnimations.HAP
 
             End_Dismounting();
             MainCollider.enabled = true;
-           
+
         }
 
 
@@ -140,6 +140,8 @@ namespace MalbersAnimations.HAP
 
 
 
+
+
 #if UNITY_EDITOR
     [CustomEditor(typeof(RiderFPC), true)]
     public class MRiderFPCEd : MRiderEd
@@ -163,7 +165,7 @@ namespace MalbersAnimations.HAP
         {
             base.OnInspectorGUI();
 
-         //   EditorGUILayout.BeginVertical(MalbersEditor.StyleGray);
+            //   EditorGUILayout.BeginVertical(MalbersEditor.StyleGray);
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
             {
                 EditorGUILayout.LabelField("First Person", EditorStyles.boldLabel);
@@ -178,7 +180,7 @@ namespace MalbersAnimations.HAP
                 EditorGUILayout.PropertyField(DismountOffset);
             }
             EditorGUILayout.EndVertical();
-         //   EditorGUILayout.EndVertical();
+            //   EditorGUILayout.EndVertical();
 
             serializedObject.ApplyModifiedProperties();
         }

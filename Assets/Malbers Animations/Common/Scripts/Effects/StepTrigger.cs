@@ -77,7 +77,7 @@ namespace MalbersAnimations
             }
         }
 
-  
+
         [ContextMenu("Find Sphere Trigger")]
         void GetTrigger()
         {
@@ -120,11 +120,19 @@ namespace MalbersAnimations
         }
 
 
-      
+
 
         void GizmoSelected(bool sel)
         {
-            if (m_Trigger && m_Trigger.enabled)
+
+
+            if (m_Trigger && m_Trigger.enabled
+#if UNITY_EDITOR
+                &&
+             UnityEditorInternal.InternalEditorUtility.GetIsInspectorExpanded(this) //Show Gizmos only when the Inspector is Open
+             )
+#endif
+
             {
                 var DebugColorWire = new Color(DebugColor.r, DebugColor.g, DebugColor.b, 1);
                 Gizmos.matrix = transform.localToWorldMatrix;

@@ -580,11 +580,11 @@ namespace MalbersAnimations.Controller
 
             using (new GUILayout.VerticalScope(EditorStyles.helpBox))
             {
-                if (index != -1)
+                if (index != -1 && index < Trackers.arraySize)
                 {
                     var element = Trackers.GetArrayElementAtIndex(index);
-
-                    EditorGUILayout.PropertyField(element);
+                    if (element != null)
+                        EditorGUILayout.PropertyField(element);
                 }
             }
 
@@ -600,7 +600,7 @@ namespace MalbersAnimations.Controller
 
             if (index == -1) return;
 
-            //   foreach (var item in tracker.Trackers)
+            if (M.Trackers.Count < index)
             {
                 var item = M.Trackers[index];
 

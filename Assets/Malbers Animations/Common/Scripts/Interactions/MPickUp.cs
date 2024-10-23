@@ -70,6 +70,9 @@ namespace MalbersAnimations.Controller
 
         private ICharacterAction character;
 
+        /// <summary>  Who is the owner of this Pick Up Script  </summary>
+        public GameObject Owner { get; private set; }
+
         [SerializeField] private TriggerProxy Proxy;
 
         /// <summary>Does the Animal is holding an Item</summary>
@@ -103,6 +106,8 @@ namespace MalbersAnimations.Controller
         private void Awake()
         {
             character = gameObject.FindInterface<ICharacterAction>();
+
+            Owner = character != null ? character.gameObject : gameObject;  //Set the Owner of the Pick Up Script
 
             CheckTriggerProxy();
         }
@@ -141,13 +146,12 @@ namespace MalbersAnimations.Controller
 
             if (newItem && newItem.enabled)
             {
-                if (newItem != FocusedItem && FocusedItem != null) //If we are choosing another focused Item then unfocus the one that we had.
-                {
-                    FocusedItem.SetFocused(null);
-                }
+                //If we are choosing another focused Item then unfocus the one old item
+                if (newItem != FocusedItem && FocusedItem != null)
+                    FocusedItem.SetFocused(Owner, false);
 
                 FocusedItem = newItem;
-                FocusedItem.SetFocused(gameObject);
+                FocusedItem.SetFocused(Owner, true);
 
                 Debugging("Focused Item - " + FocusedItem.name);
 
@@ -167,13 +171,13 @@ namespace MalbersAnimations.Controller
                 if (newItem == FocusedItem)
                 {
                     Debugging("Unfocused Item - " + FocusedItem.name);
-                    FocusedItem.SetFocused(null);
+                    FocusedItem.SetFocused(Owner, false);
                     FocusedItem = null;
                 }
                 else
                 {
                     //Was another one that is not focused anumore (Make sure is stays unfocused)
-                    if (newItem) newItem.SetFocused(null);
+                    if (newItem) newItem.SetFocused(Owner, false);
                 }
             }
         }
@@ -213,37 +217,45 @@ namespace MalbersAnimations.Controller
         {
             if (!isActiveAndEnabled) return; //Do nothing if this script is disabled
 
-            if (FocusedItem && !FocusedItem.InCoolDown)
+            if (FocusedItem)
             {
-                if (character != null && !character.IsPlayingAction) //Try Picking UP WHEN THE CHARACTER IS NOT MAKING ANY ANIMATION
+                if (!FocusedItem.CanBePicked)
                 {
-                    if (FocusedItem.Align)
+                    FocusedItem.OnPickedFailed.Invoke(character.gameObject);
+                    Debugging("Item Picked Failed - " + FocusedItem.name, FocusedItem);
+                }
+                else if (!FocusedItem.InCoolDown)
+                {
+                    if (character != null && !character.IsPlayingAction) //Try Picking UP WHEN THE CHARACTER IS NOT MAKING ANY ANIMATION
                     {
-                        var Holder = this.Holder;
-
-                        if (extraHolders != null && FocusedItem.holder > -1 && FocusedItem.holder < extraHolders.Count)
+                        if (FocusedItem.Align)
                         {
-                            Holder = extraHolders[FocusedItem.holder].transform;
+                            var Holder = this.Holder;
+
+                            if (extraHolders != null && FocusedItem.holder > -1 && FocusedItem.holder < extraHolders.Count)
+                            {
+                                Holder = extraHolders[FocusedItem.holder].transform;
+                            }
+
+                            if (TryAlign != null) StopCoroutine(TryAlign);
+
+                            TryAlign = MTools.AlignTransform_Position(FocusedItem.transform, Holder, FocusedItem.AlignTime);
+                            StartCoroutine(TryAlign);
+
+                            PickingItem = true;
+
+                            //StartCoroutine(MTools.AlignLookAtTransform(Root, FocusedItem.transform, FocusedItem.AlignTime));
+                            //StartCoroutine(MTools.AlignTransformRadius(Root, FocusedItem.transform.position, FocusedItem.AlignTime, FocusedItem.AlignDistance));
                         }
 
-                        if (TryAlign != null) StopCoroutine(TryAlign);
-
-                        TryAlign = MTools.AlignTransform_Position(FocusedItem.transform, Holder, FocusedItem.AlignTime);
-                        StartCoroutine(TryAlign);
-
-                        PickingItem = true;
-
-                        //StartCoroutine(MTools.AlignLookAtTransform(Root, FocusedItem.transform, FocusedItem.AlignTime));
-                        //StartCoroutine(MTools.AlignTransformRadius(Root, FocusedItem.transform.position, FocusedItem.AlignTime, FocusedItem.AlignDistance));
+                        FocusedItem.OnPrePicked.Invoke(character.gameObject); //Do the On Picked First  
+                        FocusedItem.PrePickedReaction?.React(character.gameObject); //Do the On Picked Reaction  
                     }
+                    Debugging("Try Pick Up");
 
-                    FocusedItem.OnPrePicked.Invoke(gameObject); //Do the On Picked First  
-                    FocusedItem.PrePickedReaction?.React(gameObject); //Do the On Picked Reaction  
+                    if (!FocusedItem.ByAnimation)
+                        Invoke(nameof(PickUpItem), FocusedItem.PickDelay.Value);
                 }
-                Debugging("Try Pick Up");
-
-                if (!FocusedItem.ByAnimation)
-                    Invoke(nameof(PickUpItem), FocusedItem.PickDelay.Value);
             }
         }
 
@@ -259,32 +271,20 @@ namespace MalbersAnimations.Controller
 
             if (Item)
             {
+                if (!Item.CanBePicked) //Check first if the item cannot be picked
+                {
+                    FocusedItem.OnPickedFailed.Invoke(character.gameObject);
+                    Debugging("Item Picked Failed - " + FocusedItem.name, FocusedItem);
+                    return;
+                }
+
                 Debugging("Item Picked - " + Item.name);
 
                 if (TryAlign != null) StopCoroutine(TryAlign);
 
                 PickingItem = false; //Try picking set to false
 
-                var Holder = this.Holder;
-                var PosOffset = this.PosOffset;
-                var RotOffset = this.RotOffset;
-
-                //Use extra holders 
-                if (Item.holder > -1 && Item.holder < extraHolders.Count)
-                {
-                    Holder = extraHolders[Item.holder].transform;
-                    PosOffset = extraHolders[Item.holder].position;
-                    RotOffset = extraHolders[Item.holder].rotation;
-                }
-
-                if (Holder)
-                {
-                    var localScale = Item.transform.localScale;
-                    Item.transform.parent = Holder;                 //Parent it to the Holder
-                    Item.transform.localPosition = PosOffset;       //Offset the Position
-                    Item.transform.localEulerAngles = RotOffset;    //Offset the Rotation
-                    Item.transform.localScale = localScale;         //Offset the Rotation
-                }
+                ParentItemToHolster();
 
                 Item.Picker = this;                      //Set on the Item who did the Picking
                 Item.Pick();                                    //Tell the Item that it was picked
@@ -309,15 +309,40 @@ namespace MalbersAnimations.Controller
                         PickUpArea.enabled = false;        //Disable the Pick Up Area
                 }
 
+                //if (item.DestroyOnPick)
+                //{
+                //    PickUpArea.gameObject.SetActive(true);      //Enable the Pick up Area
+                //    PickUpArea.enabled = true;                  //Enable the Collider just in case.
+                //    Destroy(item.gameObject);
+                //    Item = null;                                //Clear the everything
+                //}
 
-                if (item.DestroyOnPick)
-                {
-                    PickUpArea.gameObject.SetActive(true);      //Enable the Pick up Area
-                    PickUpArea.enabled = true;                  //Enable the Collider just in case.
-                    Destroy(item.gameObject);
-                    Item = null;                                //Clear the everything
-                }
+
                 Proxy.ResetTrigger();
+            }
+        }
+
+        protected virtual void ParentItemToHolster()
+        {
+            var Holder = this.Holder;
+            var PosOffset = this.PosOffset;
+            var RotOffset = this.RotOffset;
+
+            //Use extra holders 
+            if (Item.holder > -1 && Item.holder < extraHolders.Count)
+            {
+                Holder = extraHolders[Item.holder].transform;
+                PosOffset = extraHolders[Item.holder].position;
+                RotOffset = extraHolders[Item.holder].rotation;
+            }
+
+            if (Holder)
+            {
+                var localScale = Item.transform.localScale;
+                Item.transform.parent = Holder;                 //Parent it to the Holder
+                Item.transform.localPosition = PosOffset;       //Offset the Position
+                Item.transform.localEulerAngles = RotOffset;    //Offset the Rotation
+                Item.transform.localScale = localScale;         //Offset the Rotation
             }
         }
 
@@ -344,15 +369,13 @@ namespace MalbersAnimations.Controller
             }
         }
 
+        private void Debugging(string msg) => Debugging(msg, this);
 
 
-
-
-
-        private void Debugging(string msg)
+        private void Debugging(string msg, Object ob)
         {
 #if UNITY_EDITOR
-            if (debug) Debug.Log($"[{Root.name}] - [{msg}]", this);
+            if (debug) Debug.Log($"[{Root.name}] - [{msg}]", ob);
 #endif
         }
 

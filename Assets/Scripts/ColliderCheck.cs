@@ -60,12 +60,20 @@ public class ColliderCheck : MonoBehaviour
                     break;
                 case 5:
                 case 7:
-                case 9:
-                case 11:
+                case 10:
                     if (other.CompareTag("Player") && QuestManager.instance.isQuestStart == true)
                     {
                         cutScene.SetActive(true);
                         QuestManager.instance.QuestDiscount(0);
+                    }
+                    break;
+                case 9:
+                case 11:
+                case 12:
+                    if (other.CompareTag("Player") && QuestManager.instance.isQuestStart == true)
+                    {
+                        Debug.Log("case 9: Scene Move");
+                        QuestManager.instance.EndQuest();
                     }
                     break;
                 default:

@@ -17,7 +17,8 @@ public class Ep3Assign : MonoBehaviour
 
         UnityEvent ev1 = new UnityEvent();
 
-        ev1.AddListener(() => {
+        ev1.AddListener(() =>
+        {
             Debug.Log("첫 퀘스트 시작");
             QuestManager.instance.StartQuest();
         });

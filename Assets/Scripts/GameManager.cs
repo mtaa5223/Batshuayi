@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         questText.text = "에너지 : " + count;
-        if (QuestManager.instance.QuestID == 10)
+        if (QuestManager.instance.QuestID == 11)
         {
             TimeLine.SetActive(true);
         }

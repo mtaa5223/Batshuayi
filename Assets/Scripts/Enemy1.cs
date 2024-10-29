@@ -8,6 +8,8 @@ public class Enemy1 : MonoBehaviour
     public Transform target;
     public Rigidbody rigid;
 
+    public GameObject TImeLin123;
+
     private NavMeshAgent nav;
     private bool isSkillActive = false;
     Animator anim;
@@ -69,7 +71,7 @@ public class Enemy1 : MonoBehaviour
 
         if (QuestManager.instance.QuestDiscount(0))
         {
-            QuestManager.instance.StartQuest();
+            TImeLin123.SetActive(true);
         }
         StartCoroutine(DestroyEnemy());
 

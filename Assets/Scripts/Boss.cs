@@ -17,6 +17,7 @@ public class Boss : MonoBehaviour
     void Start()
     {
         anim = GetComponent<Animator>();
+        nav = GetComponent<NavMeshAgent>();
     }
 
     // Update�� �� ������ ȣ���
@@ -57,9 +58,6 @@ public class Boss : MonoBehaviour
         }
 
         yield return new WaitForSeconds(2f);
-
-
-        anim.SetBool("run", true);
 
         isSkillActive = false;
     }

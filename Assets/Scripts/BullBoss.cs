@@ -81,7 +81,7 @@ public class BullBoss : MonoBehaviour
     }
     IEnumerator DestroyEnemy()
     {
-        yield return new WaitForSeconds(8f);
+        yield return new WaitForSeconds(5f);
         Destroy(gameObject);
     }
     public void Attack1()

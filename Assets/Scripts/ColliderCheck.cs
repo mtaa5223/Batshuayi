@@ -12,10 +12,11 @@ public class ColliderCheck : MonoBehaviour
     public string moveScene;
     public TextMeshProUGUI loadingText;
     public RectTransform portalEffect;
+    public AudioSource audio;
 
     private void Start()
     {
-
+        audio = GetComponent<AudioSource>();
     }
 
     public void LoadAnotherScene()
@@ -69,11 +70,30 @@ public class ColliderCheck : MonoBehaviour
                     break;
                 case 9:
                 case 11:
-                case 12:
                     if (other.CompareTag("Player") && QuestManager.instance.isQuestStart == true)
                     {
                         Debug.Log("case 9: Scene Move");
                         QuestManager.instance.EndQuest();
+                    }
+                    break;
+                case 12:
+                    if (other.CompareTag("Player") && QuestManager.instance.isQuestStart == false)
+                    {
+                        Debug.Log("case 9: Scene Move");
+                        QuestManager.instance.StartQuest();
+                    }
+                    else if (other.CompareTag("Player") && QuestManager.instance.isQuestStart == true)
+                    {
+                        QuestManager.instance.QuestDiscount(0);
+                        cutScene.SetActive(true);
+                        audio.Play();
+                    }
+                    break;
+                case 13:
+                    if (other.CompareTag("Player") && QuestManager.instance.isQuestStart == true)
+                    {
+                        Debug.Log("case 9: Scene Move");
+                        QuestManager.instance.StartQuest();
                     }
                     break;
                 default:

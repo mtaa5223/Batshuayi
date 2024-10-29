@@ -1,6 +1,7 @@
-using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.AI;
 public class SwordGetScript : MonoBehaviour
 {
     [SerializeField] private GameObject[] Enemys;
@@ -10,11 +11,7 @@ public class SwordGetScript : MonoBehaviour
         if (QuestManager.instance.QuestID == 3)
         {
             QuestManager.instance.QuestDiscount(0);
-            QuestManager.instance.StartQuest();
-            foreach (GameObject sword in Sowrds)
-            {
-                sword.SetActive(false);
-            }
+            StartCoroutine(StartQuest());
 
             foreach (GameObject enemy in Enemys)
             {
@@ -24,5 +21,10 @@ public class SwordGetScript : MonoBehaviour
 
         QuestManager.instance.StartQuest();
 
+    }
+    IEnumerator StartQuest()
+    {
+        yield return new WaitForSeconds(2f);
+        QuestManager.instance.StartQuest();
     }
 }

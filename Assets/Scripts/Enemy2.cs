@@ -68,10 +68,16 @@ public class Enemy2 : MonoBehaviour
 
         if (QuestManager.instance.QuestDiscount(0))
         {
-            QuestManager.instance.StartQuest();
+            StartCoroutine(queststart());
+
         }
         StartCoroutine(DestroyEnemy());
 
+    }
+    IEnumerator queststart()
+    {
+        yield return new WaitForSeconds(2f);
+        QuestManager.instance.StartQuest();
     }
     IEnumerator DestroyEnemy()
     {
